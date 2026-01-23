@@ -204,9 +204,8 @@ class MM_Conversation_Model
             INNER JOIN $status_table mstat ON mstat.conversation_id = conversation.id
             WHERE mstat.user_id = %d 
             AND mstat.status IN (%d, %d)
-            AND conversation.site_id = %d 
+            AND (conversation.site_id = %d OR conversation.site_id = 0 OR conversation.site_id IS NULL)
             AND (conversation.message_count > 1 OR conversation.send_from != %d)
-            AND mstat.status = %d
             GROUP BY conversation.id 
             ORDER BY conversation.date_created DESC 
             LIMIT %d, %d",
@@ -215,7 +214,6 @@ class MM_Conversation_Model
             MM_Message_Status_Model::STATUS_UNREAD,
             get_current_blog_id(),
             $user_id,
-            MM_Message_Status_Model::STATUS_UNREAD,
             $offset,
             $per_page
         );
@@ -245,19 +243,16 @@ class MM_Conversation_Model
             "SELECT conversation.* FROM $conv_table conversation
             INNER JOIN $status_table mstat ON mstat.conversation_id = conversation.id
             WHERE mstat.user_id = %d 
-            AND mstat.status IN (%d, %d)
-            AND conversation.site_id = %d 
-            AND (conversation.message_count > 1 OR conversation.send_from != %d)
             AND mstat.status = %d
+            AND (conversation.site_id = %d OR conversation.site_id = 0 OR conversation.site_id IS NULL)
+            AND (conversation.message_count > 1 OR conversation.send_from != %d)
             GROUP BY conversation.id 
             ORDER BY conversation.date_created DESC 
             LIMIT %d, %d",
             $user_id,
             MM_Message_Status_Model::STATUS_READ,
-            MM_Message_Status_Model::STATUS_UNREAD,
             get_current_blog_id(),
             $user_id,
-            MM_Message_Status_Model::STATUS_READ,
             $offset,
             $per_page
         );
@@ -301,7 +296,7 @@ class MM_Conversation_Model
             INNER JOIN $status_table mstat ON mstat.conversation_id = conversation.id
             WHERE mstat.status IN (%d, %d)
             AND conversation.id IN ($placeholders)
-            AND conversation.site_id = %d
+            AND (conversation.site_id = %d OR conversation.site_id = 0 OR conversation.site_id IS NULL)
             GROUP BY conversation.id 
             ORDER BY conversation.date_created DESC 
             LIMIT %d, %d",
@@ -331,7 +326,7 @@ class MM_Conversation_Model
                     INNER JOIN $status_table mstat ON mstat.conversation_id = conversation.id
                     WHERE mstat.user_id = %d 
                     AND mstat.status IN (%d, %d)
-                    AND conversation.site_id = %d 
+                    AND (conversation.site_id = %d OR conversation.site_id = 0 OR conversation.site_id IS NULL)
                     AND (conversation.message_count > 1 OR conversation.send_from != %d)",
                     get_current_user_id(),
                     MM_Message_Status_Model::STATUS_READ,
@@ -365,16 +360,13 @@ class MM_Conversation_Model
                     FROM $conv_table conversation
                     INNER JOIN $status_table mstat ON mstat.conversation_id = conversation.id
                     WHERE mstat.user_id = %d 
-                    AND mstat.status IN (%d, %d)
-                    AND conversation.site_id = %d 
-                    AND (conversation.message_count > 1 OR conversation.send_from != %d)
-                    AND mstat.status = %d",
+                    AND mstat.status = %d
+                    AND (conversation.site_id = %d OR conversation.site_id = 0 OR conversation.site_id IS NULL)
+                    AND (conversation.message_count > 1 OR conversation.send_from != %d)",
                     get_current_user_id(),
-                    MM_Message_Status_Model::STATUS_READ,
                     MM_Message_Status_Model::STATUS_UNREAD,
                     get_current_blog_id(),
-                    get_current_user_id(),
-                    MM_Message_Status_Model::STATUS_UNREAD
+                    get_current_user_id()
                 )
             );
 
@@ -402,16 +394,13 @@ class MM_Conversation_Model
                     FROM $conv_table conversation
                     INNER JOIN $status_table mstat ON mstat.conversation_id = conversation.id
                     WHERE mstat.user_id = %d 
-                    AND mstat.status IN (%d, %d)
-                    AND conversation.site_id = %d 
-                    AND (conversation.message_count > 1 OR conversation.send_from != %d)
-                    AND mstat.status = %d",
+                    AND mstat.status = %d
+                    AND (conversation.site_id = %d OR conversation.site_id = 0 OR conversation.site_id IS NULL)
+                    AND (conversation.message_count > 1 OR conversation.send_from != %d)",
                     get_current_user_id(),
                     MM_Message_Status_Model::STATUS_READ,
-                    MM_Message_Status_Model::STATUS_UNREAD,
                     get_current_blog_id(),
-                    get_current_user_id(),
-                    MM_Message_Status_Model::STATUS_READ
+                    get_current_user_id()
                 )
             );
 

@@ -111,13 +111,14 @@ class Inbox_Shortcode_Controller
         $a = wp_parse_args($atts, array(
             'nav_view' => 'both'
         ));
+        $show_nav = (bool) $this->can_show_nav($a['nav_view']);
 
         if (!is_user_logged_in()) {
             do_action('mmg_before_load_login_form');
             mmg()->load_script('login');
-            return $this->load_template_part('shortcode/login', array(
-                'show_nav' => $this->can_show_nav($a['nav_view'])
-            ), false);
+            return $this->render_with_layout('shortcode/login', array(
+                'show_nav' => $show_nav
+            ), $show_nav, false);
         }
         mmg()->load_script('inbox');
         add_action('wp_footer', array(&$this, 'render_compose_form'));
@@ -128,7 +129,7 @@ class Inbox_Shortcode_Controller
         }
         $total_pages = 0;
         if ($type === 'setting') {
-            return $this->load_template_part('shortcode/setting', array('show_nav' => $this->can_show_nav($a['nav_view'])), false);
+            return $this->render_with_layout('shortcode/setting', array('show_nav' => $show_nav), $show_nav, false);
         }
 
         $models = match ($type) {
@@ -142,12 +143,12 @@ class Inbox_Shortcode_Controller
         };
         $total_pages = mmg()->global['conversation_total_pages'];
 
-        return $this->load_template_part('shortcode/inbox', array(
+        return $this->render_with_layout('shortcode/inbox', array(
             'models' => $models,
             'total_pages' => $total_pages,
             'paged' => mmg()->get('mpaged', 'int', 1),
-            'show_nav' => $this->can_show_nav($a['nav_view'])
-        ), false);
+            'show_nav' => $show_nav
+        ), $show_nav, false);
     }
 
     function render_compose_form()

@@ -61,7 +61,7 @@
                 <?php endif; ?>
             </div>
         <?php endif; ?>
-        <?php echo wp_kses_post($content); ?>
+        <?php echo $content; ?>
         <div class="clearfix"></div>
     </div>
     <div class="clearfix"></div>

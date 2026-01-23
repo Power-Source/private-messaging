@@ -14,22 +14,22 @@
                     <!-- Horizontal Tabs -->
                     <ul class="nav nav-tabs" role="tablist" style="margin-bottom: 20px;">
                         <li role="presentation" class="<?php echo mmg()->get('tab', 'general') == 'general' ? 'active' : null ?>">
-                            <a href="#general" role="tab" data-toggle="tab" class="mm-tab-link" data-tab="general">
+                            <a href="<?php echo esc_url(add_query_arg('tab', 'general')) ?>" role="tab" class="mm-tab-link" data-tab="general" data-target="#general">
                                 <i class="glyphicon glyphicon-wrench"></i> <?php _e("General Settings", mmg()->domain) ?>
                             </a>
                         </li>
                         <li role="presentation" class="<?php echo mmg()->get('tab') == 'email' ? 'active' : null ?>">
-                            <a href="#email" role="tab" data-toggle="tab" class="mm-tab-link" data-tab="email">
+                            <a href="<?php echo esc_url(add_query_arg('tab', 'email')) ?>" role="tab" class="mm-tab-link" data-tab="email" data-target="#email">
                                 <i class="glyphicon glyphicon-envelope"></i> <?php _e("Email Settings", mmg()->domain) ?>
                             </a>
                         </li>
                         <li role="presentation" class="<?php echo mmg()->get('tab') == 'shortcode' ? 'active' : null ?>">
-                            <a href="#shortcode" role="tab" data-toggle="tab" class="mm-tab-link" data-tab="shortcode">
+                            <a href="<?php echo esc_url(add_query_arg('tab', 'shortcode')) ?>" role="tab" class="mm-tab-link" data-tab="shortcode" data-target="#shortcode">
                                 <i class="glyphicon glyphicon-cog"></i> <?php _e("Shortcodes", mmg()->domain) ?>
                             </a>
                         </li>
                         <li role="presentation" class="<?php echo mmg()->get('tab') == 'attachment' ? 'active' : null ?>">
-                            <a href="#attachment" role="tab" data-toggle="tab" class="mm-tab-link" data-tab="attachment">
+                            <a href="<?php echo esc_url(add_query_arg('tab', 'attachment')) ?>" role="tab" class="mm-tab-link" data-tab="attachment" data-target="#attachment">
                                 <i class="glyphicon glyphicon-paperclip"></i> <?php _e("Attachments", mmg()->domain) ?>
                             </a>
                         </li>
@@ -52,19 +52,29 @@
                         </div>
                     </div>
                     
-                    <!-- AJAX Tab Loading Script -->
+                    <!-- URL-aware click-based tab switching -->
                     <script type="text/javascript">
                         jQuery(document).ready(function($) {
-                            // Smooth tab switching with fade effect
-                            $('[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-                                var tabPane = $($(this).attr('href'));
-                                tabPane.fadeIn(300);
-                            });
-                            
-                            // Optional: Add loading animation
-                            $('[data-toggle="tab"]').on('hide.bs.tab', function(e) {
-                                var tabPane = $($(this).attr('href'));
-                                tabPane.fadeOut(200);
+                            $('.mm-tab-link').on('click', function(e) {
+                                e.preventDefault();
+                                var target = $(this).data('target') || ('#' + $(this).data('tab'));
+                                var url = $(this).attr('href');
+                                
+                                // Update URL query (?tab=...)
+                                if (window.history && window.history.replaceState) {
+                                    window.history.replaceState({}, '', url);
+                                }
+                                
+                                // Toggle active class on tabs
+                                $('.nav-tabs li').removeClass('active');
+                                $(this).closest('li').addClass('active');
+                                
+                                // Reset inline styles to avoid lingering display:none
+                                $('.tab-pane').removeAttr('style');
+                                
+                                // Switch panes by class only (Bootstrap CSS handles display)
+                                $('.tab-pane').removeClass('active');
+                                $(target).addClass('active');
                             });
                         });
                     </script>

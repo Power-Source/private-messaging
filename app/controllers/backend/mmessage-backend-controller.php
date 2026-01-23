@@ -144,6 +144,9 @@ class MMessage_Backend_Controller
     function setting()
     {
         wp_enqueue_style('mm_style');
+        // Ensure Bootstrap assets are available for tabs
+        wp_enqueue_style('bootstrap');
+        wp_enqueue_script('bootstrap');
         add_action('mm_setting_general', array(&$this, 'general_view'));
         add_action('mm_setting_email', array(&$this, 'email_view'));
         add_action('mm_setting_shortcode', array(&$this, 'shortcode_view'));

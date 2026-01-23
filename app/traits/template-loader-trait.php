@@ -78,6 +78,26 @@ trait Template_Loader_Trait {
             return $content;
         }
     }
+
+    /**
+     * Render a template inside the main layout wrapper
+     *
+     * @param string $template Template path relative to views/
+     * @param array $args Variables to extract into template scope
+     * @param bool $show_nav Whether to show navigation controls
+     * @param bool $output Whether to echo or return
+     * @return string|void
+     */
+    protected function render_with_layout(string $template, array $args = [], bool $show_nav = true, bool $output = true) {
+        $content = $this->load_template_part($template, $args, false);
+
+        $layout_args = array_merge($args, [
+            'content' => $content,
+            'show_nav' => $show_nav,
+        ]);
+
+        return $this->load_template_part('layout/main', $layout_args, $output);
+    }
     
     /**
      * Get full path to template file

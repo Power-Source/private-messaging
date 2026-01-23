@@ -95,57 +95,59 @@ if (!class_exists('MMessaging')) {
         function load_script($scenario = '')
         {
             $runtime_path = $this->can_compress();
-            $action = match ($scenario) {
-                'inbox' => function () {
-                    // jQuery UI Tooltip not needed - Bootstrap tooltips available
-                },
-                'login' => function () {
-                    wp_enqueue_style('mm_style', $this->plugin_url . 'assets/main.css', array('bootstrap'), $this->version);
-                    //we need the modal for popup login
-                    wp_enqueue_script('mm_lean_model', $this->plugin_url . 'assets/jquery.leanModal.min.js', array('jquery'), $this->version);
-                },
-                'backend' => function () {
-                    // jQuery UI Tabs not needed - Bootstrap tabs used in views
-                },
-                default => function () use ($runtime_path) {
-                    if (is_user_logged_in()) {
-                        if ($runtime_path) {
-                            //Bootstrap for UI framework
-                            wp_enqueue_style('bootstrap');
-                            wp_enqueue_script('jquery');
-                            $csses = array('mm_style', 'mm_scroll', 'selectivejs');
-                            $jses = array(
-                                'mm_scroll', 'selectivejs', 'mm_lean_model');
-                            if ($this->can_upload() == true) {
-                                $csses[] = 'igu-uploader';
-                                $jses = array_merge($jses, array('popoverasync', 'jquery-frame-transport'));
-                            }
-                            if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
-                                $jses = array_merge($jses, array('mm_sceditor','mm_sceditor_translate', 'mm_sceditor_xhtml'));
-                            }
 
-                            $this->compress_assets($csses, $jses, $runtime_path);
-                        } else {
-                            //needed everywhere
-                            wp_enqueue_style('mm_style');
-                            wp_enqueue_script('mm_scroll');
-                            wp_enqueue_script('selectivejs');
-                            wp_enqueue_style('selectivejs');
-                            wp_enqueue_script('mm_lean_model');
-                            //wysiwyg
-                            if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
-                                wp_enqueue_script('mm_sceditor');
-                                wp_enqueue_script('mm_sceditor_translate');
-                                wp_enqueue_script('mm_sceditor_xhtml');
-                            }
-
-                            if ($this->setting()->allow_attachment == 1) {
-                                wp_enqueue_style('igu-uploader');
-                                wp_enqueue_script('popoverasync');
-                                wp_enqueue_script('jquery-frame-transport');
-                            }
+            // Core assets enqueuer used in all scenarios except login override
+            $enqueue_core = function () use ($runtime_path) {
+                if (is_user_logged_in()) {
+                    if ($runtime_path) {
+                        wp_enqueue_style('bootstrap');
+                        wp_enqueue_script('jquery');
+                        $csses = array('mm_style', 'mm_scroll', 'selectivejs');
+                        $jses = array('mm_scroll', 'selectivejs', 'mm_lean_model');
+                        if ($this->can_upload() == true) {
+                            $csses[] = 'igu-uploader';
+                            $jses = array_merge($jses, array('popoverasync', 'jquery-frame-transport'));
+                        }
+                        if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
+                            $jses = array_merge($jses, array('mm_sceditor','mm_sceditor_translate', 'mm_sceditor_xhtml'));
+                        }
+                        $this->compress_assets($csses, $jses, $runtime_path);
+                    } else {
+                        wp_enqueue_style('mm_style');
+                        wp_enqueue_script('mm_scroll');
+                        wp_enqueue_script('selectivejs');
+                        wp_enqueue_style('selectivejs');
+                        wp_enqueue_script('mm_lean_model');
+                        if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
+                            wp_enqueue_script('mm_sceditor');
+                            wp_enqueue_script('mm_sceditor_translate');
+                            wp_enqueue_script('mm_sceditor_xhtml');
+                        }
+                        if ($this->setting()->allow_attachment == 1) {
+                            wp_enqueue_style('igu-uploader');
+                            wp_enqueue_script('popoverasync');
+                            wp_enqueue_script('jquery-frame-transport');
                         }
                     }
+                }
+            };
+
+            $action = match ($scenario) {
+                'inbox' => function () use ($enqueue_core) {
+                    // Ensure core assets for inbox UI
+                    $enqueue_core();
+                },
+                'login' => function () {
+                    // Minimal assets for login modal
+                    wp_enqueue_style('mm_style', $this->plugin_url . 'assets/main.css', array('bootstrap'), $this->version);
+                    wp_enqueue_script('mm_lean_model', $this->plugin_url . 'assets/jquery.leanModal.min.js', array('jquery'), $this->version);
+                },
+                'backend' => function () use ($enqueue_core) {
+                    // Backend views still need core styles
+                    $enqueue_core();
+                },
+                default => function () use ($enqueue_core) {
+                    $enqueue_core();
                 }
             };
             $action();

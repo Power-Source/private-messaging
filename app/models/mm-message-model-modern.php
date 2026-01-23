@@ -7,7 +7,7 @@
  * @author: Hoang Ngo (Modernized)
  * @package: PrivateMessaging
  */
-class MM_Message_Model
+class MM_Message_Model_Modern
 {
     const UNREAD = 'unread', READ = 'read';
     const POST_TYPE = 'mm_message';
@@ -190,8 +190,8 @@ class MM_Message_Model
     {
         $post_data = array(
             'post_type' => self::POST_TYPE,
-            'post_title' => sanitize_text_field($this->subject ?? ''),
-            'post_content' => wp_kses_post($this->content ?? ''),
+            'post_title' => sanitize_text_field($this->subject),
+            'post_content' => wp_kses_post($this->content),
             'post_author' => absint($this->send_from),
             'post_parent' => absint($this->reply_to ?? 0),
             'post_status' => $this->post_status,
@@ -223,8 +223,8 @@ class MM_Message_Model
     {
         $post_data = array(
             'ID' => $this->id,
-            'post_title' => sanitize_text_field($this->subject ?? ''),
-            'post_content' => wp_kses_post($this->content ?? ''),
+            'post_title' => sanitize_text_field($this->subject),
+            'post_content' => wp_kses_post($this->content),
             'post_status' => $this->post_status,
         );
 

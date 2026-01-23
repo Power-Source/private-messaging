@@ -71,12 +71,12 @@ if (!class_exists('IG_Uploader')) {
             }
         }
 
-        function show_upload_control(IG_Model $p_model, $attribute, $is_admin = false, $attributes = array())
+        function show_upload_control($p_model, $attribute, $is_admin = false, $attributes = array())
         {
             $this->controller->upload_form($attribute, $p_model, $is_admin, $attributes);
         }
 
-        function show_media(IG_Model $p_model, $attribute)
+        function show_media($p_model, $attribute)
         {
             $this->controller->show_media($p_model, $attribute);
         }

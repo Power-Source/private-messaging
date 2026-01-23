@@ -113,8 +113,7 @@ if (!class_exists('MM_User_Capability')) {
 
         function setting_content()
         {
-            wp_enqueue_script('jquery-ui-tabs');
-            //wp_enqueue_style('mm_style');
+            // Bootstrap tabs werden verwendet, jQuery UI Tabs nicht nötig
             $roles = get_editable_roles();
             $index = array_keys($roles);
             $data = get_option('mm_user_cap');

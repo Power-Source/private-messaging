@@ -4,15 +4,13 @@ Plugin Name: Private Messaging
 Plugin URI: https://premium.wpmudev.org/project/private-messaging
 Description: Private user-to-user communication for placing bids, sharing project specs and hidden internal communication. Complete with front end integration, guarded contact information and protected file sharing.
 Author: PSOURCE
-Version: 1.0.1.2
-Author URI: http://premium.wpmudev.org
-WDP ID: 938495
+Version: 1.0.0
+Author URI: https://github.com/Power-Source
 Text Domain: private_messaging
 */
 
 /*
-Copyright 2007-2014 Incsub (http://incsub.com)
-Author – Hoang Ngo (Incsub)
+Copyright 2014 - 2026 PSOURCE (https://github.com/Power-Source)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -28,8 +26,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 if (!class_exists('MMessaging')) {
-    require_once(dirname(__FILE__) . '/framework/loader.php');
-
     class MMessaging
     {
         public $plugin_url;
@@ -101,25 +97,25 @@ if (!class_exists('MMessaging')) {
             $runtime_path = $this->can_compress();
             $action = match ($scenario) {
                 'inbox' => function () {
-                    wp_enqueue_script('jquery-ui-tooltip');
+                    // jQuery UI Tooltip not needed - Bootstrap tooltips available
                 },
                 'login' => function () {
-                    wp_enqueue_style('mm_style', $this->plugin_url . 'assets/main.css', array('ig-packed'), $this->version);
+                    wp_enqueue_style('mm_style', $this->plugin_url . 'assets/main.css', array('bootstrap'), $this->version);
                     //we need the modal for popup login
                     wp_enqueue_script('mm_lean_model', $this->plugin_url . 'assets/jquery.leanModal.min.js', array('jquery'), $this->version);
                 },
                 'backend' => function () {
-                    wp_enqueue_script('jquery-ui-tabs');
+                    // jQuery UI Tabs not needed - Bootstrap tabs used in views
                 },
                 default => function () use ($runtime_path) {
                     if (is_user_logged_in()) {
                         if ($runtime_path) {
-                            //still need include core for fonts
-                            wp_enqueue_style('ig-packed');
+                            //Bootstrap for UI framework
+                            wp_enqueue_style('bootstrap');
                             wp_enqueue_script('jquery');
                             $csses = array('mm_style', 'mm_scroll', 'selectivejs');
                             $jses = array(
-                                'mm_scroll', 'selectivejs', 'mm_lean_model', 'jquery-ui-tooltip');
+                                'mm_scroll', 'selectivejs', 'mm_lean_model');
                             if ($this->can_upload() == true) {
                                 $csses[] = 'igu-uploader';
                                 $jses = array_merge($jses, array('popoverasync', 'jquery-frame-transport'));
@@ -276,13 +272,22 @@ if (!class_exists('MMessaging')) {
 
         function scripts()
         {
-            wp_register_style('mm_style', $this->plugin_url . 'assets/main.min.css', array('ig-packed'), $this->version);
-            wp_register_style('mm_style_admin', $this->plugin_url . 'assets/admin.css', array('ig-packed'), $this->version);
+            // Register Bootstrap from WordPress (usually available in most setups)
+            // If not available, we'll register our own versions
+            if (!wp_style_is('bootstrap', 'registered')) {
+                // Fallback: Bootstrap CDN if not available locally
+                wp_register_style('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css', array(), $this->version);
+                wp_register_script('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js', array('jquery'), $this->version);
+            }
+
+            // Register plugin styles without framework dependency
+            wp_register_style('mm_style', $this->plugin_url . 'assets/main.min.css', array('bootstrap'), $this->version);
+            wp_register_style('mm_style_admin', $this->plugin_url . 'assets/admin.css', array('bootstrap'), $this->version);
             wp_register_style('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.css', array(), $this->version);
             wp_register_script('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.js', array('jquery'), $this->version);
 
             wp_register_script('selectivejs', $this->plugin_url . 'assets/selectivejs/js/standalone/selectize.js', array('jquery'), $this->version);
-            wp_register_style('selectivejs', $this->plugin_url . 'assets/selectivejs/css/selectize.bootstrap3.css', array(), $this->version);
+            wp_register_style('selectivejs', $this->plugin_url . 'assets/selectivejs/css/selectize.bootstrap3.css', array('bootstrap'), $this->version);
 
             wp_register_script('mm_lean_model', $this->plugin_url . 'assets/jquery.leanModal.min.js', array('jquery'), $this->version);
 

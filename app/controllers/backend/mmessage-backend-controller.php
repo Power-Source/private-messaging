@@ -129,7 +129,7 @@ class MMessage_Backend_Controller
     function view()
     {
         wp_enqueue_style('mm_style_admin');
-        wp_enqueue_script('ig-packed');
+        wp_enqueue_script('bootstrap');
         $id = mmg()->get('id', 0);
         $model = MM_Conversation_Model::model()->find($id);
         if (is_object($model)) {

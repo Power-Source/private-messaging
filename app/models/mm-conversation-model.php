@@ -639,14 +639,17 @@ class MM_Conversation_Model
     public function get_users_in()
     {
         $ids = array_filter(array_unique(explode(',', $this->user_index ?? '')));
-        $users = array();
-        foreach ($ids as $id) {
-            $user = get_user_by('id', $id);
-            if ($user) {
-                $users[] = $user;
-            }
+        if (empty($ids)) {
+            return array();
         }
-        return $users;
+        
+        // Batch query instead of N+1
+        $users = get_users(array(
+            'include' => $ids,
+            'fields' => 'all'
+        ));
+        
+        return is_array($users) ? $users : array();
     }
 
     /**

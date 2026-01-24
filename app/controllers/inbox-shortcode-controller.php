@@ -291,6 +291,29 @@ class Inbox_Shortcode_Controller
             exit;
         }
 
+        // Load Storage Model for validation
+        if (!class_exists('MM_Storage_Model')) {
+            require_once dirname(__DIR__) . '/models/mm-storage-model.php';
+        }
+        
+        // Check storage space before processing message
+        $current_user_id = get_current_user_id();
+        $message_size = strlen(sanitize_text_field(mmg()->post('MM_Message_Model[content]', ''))) +
+                       strlen(sanitize_text_field(mmg()->post('MM_Message_Model[subject]', '')));
+        
+        if (!MM_Storage_Model::has_sufficient_storage($current_user_id, $message_size)) {
+            $remaining = MM_Storage_Model::get_user_storage_remaining($current_user_id);
+            $remaining_formatted = MM_Storage_Model::format_bytes($remaining);
+            wp_send_json(array(
+                'status' => 'fail',
+                'errors' => array('storage' => sprintf(
+                    __('Speicherplatz nicht ausreichend. Du hast noch %s verfügbar.', mmg()->domain),
+                    $remaining_formatted
+                ))
+            ));
+            exit;
+        }
+
         $model = new MM_Message_Model();
         $raw_payload = isset($_POST['MM_Message_Model']) ? wp_unslash($_POST['MM_Message_Model']) : array();
         $model->import($raw_payload);

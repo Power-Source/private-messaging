@@ -13,7 +13,7 @@
             );
             ?>
             <style>
-                .mm-nav-shell {background: #0f172a; color: #e9edf3; border-radius: 12px; padding: 14px 18px; margin-bottom: 15px; box-shadow: 0 6px 18px rgba(0,0,0,0.10);} 
+                .mm-nav-shell {background: #0f172a; color: #e9edf3; border-radius: 12px; padding: 14px 18px; margin-bottom: 15px; box-shadow: 0 6px 18px rgba(0,0,0,0.10); position: relative;} 
                 .mm-nav-top {display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;} 
                 .mm-nav-title {font-size: 16px; font-weight: 700; letter-spacing: 0.01em;} 
                 .mm-nav-tabs {display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;} 
@@ -65,6 +65,19 @@
                         <span class="mm-pill-count"><?php echo intval($mm_counts['archive']); ?></span>
                     </a>
                 </div>
+                <?php 
+                // Render Storage Widget
+                if (!class_exists('MM_Storage_Widget')) {
+                    $storage_widget_path = dirname(dirname(__DIR__)) . '/models/mm-storage-widget.php';
+                    if (file_exists($storage_widget_path)) {
+                        require_once $storage_widget_path;
+                    }
+                }
+                
+                if (class_exists('MM_Storage_Widget') && is_user_logged_in()) {
+                    echo MM_Storage_Widget::render(get_current_user_id());
+                }
+                ?>
                 <?php if (is_user_logged_in()): ?>
                     <div class="hidden-md hidden-lg" style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
                         <a class="btn btn-default btn-sm" style="flex:1 1 48%;" href="<?php echo esc_url(add_query_arg('box', 'setting')) ?>">

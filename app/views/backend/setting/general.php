@@ -73,6 +73,56 @@
     </div>
     <?php wp_nonce_field('mm_settings','_mmnonce') ?>
     <div class="page-header" style="margin-top: 0">
+        <h4><?php _e('Storage per User', mmg()->domain) ?></h4>
+    </div>
+    <div class="form-group <?php echo $model->has_error("storage_unlimited") ? "has-error" : null ?>">
+        <label for="mm_setting_model-storage_unlimited" class="col-lg-2 control-label"><?php _e("Unlimited Storage", mmg()->domain); ?></label>
+        <div class="col-lg-10">
+            <div class="checkbox">
+                <label>
+                    <input type="hidden" name="MM_Setting_Model[storage_unlimited]" value="0">
+                    <input type="checkbox" 
+                           name="MM_Setting_Model[storage_unlimited]" 
+                           id="mm_setting_model-storage_unlimited" 
+                           value="1"
+                           <?php checked($model->storage_unlimited, 1); ?>
+                           onchange="document.getElementById('storage_limit_group').style.display = this.checked ? 'none' : 'block';">
+                    <?php _e("Allow users to have unlimited storage space for messages and attachments.", mmg()->domain) ?>
+                </label>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div id="storage_limit_group" class="form-group <?php echo $model->has_error("storage_limit") ? "has-error" : null ?>" style="<?php echo $model->storage_unlimited ? 'display:none;' : ''; ?>">
+        <label for="mm_setting_model-storage_limit" class="col-lg-2 control-label"><?php _e("Storage Limit", mmg()->domain); ?></label>
+        <div class="col-lg-10">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="number" 
+                               min="1" 
+                               max="1000"
+                               name="MM_Setting_Model[storage_limit_display]" 
+                               id="mm_setting_model-storage_limit" 
+                               class="form-control"
+                               value="<?php echo $model->storage_unit === 'GB' ? intval($model->storage_limit / (1024*1024*1024)) : intval($model->storage_limit / (1024*1024)); ?>"
+                               placeholder="50">
+                        <span class="input-group-btn">
+                            <select name="MM_Setting_Model[storage_unit]" class="form-control" onchange="updateStorageLimit()">
+                                <option value="MB" <?php selected($model->storage_unit, 'MB'); ?>>MB</option>
+                                <option value="GB" <?php selected($model->storage_unit, 'GB'); ?>>GB</option>
+                            </select>
+                        </span>
+                    </div>
+                    <small class="form-text text-muted"><?php _e("Default: 50 MB", mmg()->domain) ?></small>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <!-- Hidden field to store actual byte value -->
+    <input type="hidden" name="MM_Setting_Model[storage_limit]" id="storage_limit_bytes" value="<?php echo esc_attr($model->storage_limit); ?>">
+    <div class="page-header" style="margin-top: 0">
         <h4><?php _e('Add-ons', mmg()->domain) ?></h4>
     </div>
     <div class="alert alert-success plugin-status hide">
@@ -90,7 +140,30 @@
     </form>
 </div>
 <script type="text/javascript">
+    function updateStorageLimit() {
+        const displayValue = document.getElementById('mm_setting_model-storage_limit').value;
+        const unit = document.querySelector('select[name="MM_Setting_Model[storage_unit]"]').value;
+        const bytesField = document.getElementById('storage_limit_bytes');
+        
+        let bytes = 0;
+        if (unit === 'MB') {
+            bytes = displayValue * 1024 * 1024;
+        } else if (unit === 'GB') {
+            bytes = displayValue * 1024 * 1024 * 1024;
+        }
+        
+        bytesField.value = bytes;
+    }
+    
     jQuery(document).ready(function ($) {
+        // Initialize storage limit on form changes
+        $('input[name="MM_Setting_Model[storage_limit_display]"], select[name="MM_Setting_Model[storage_unit]"]').on('change', updateStorageLimit);
+        
+        // Ensure conversion when form is submitted
+        $('form').on('submit', function() {
+            updateStorageLimit();
+        });
+        
         $('.mm-plugin').click(function (e) {
             var that = $(this);
             e.preventDefault();

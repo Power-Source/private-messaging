@@ -27,6 +27,10 @@ class MM_Setting_Model
 
     public $allow_attachment = false;
 
+    public $storage_limit = 52428800; // 50MB in bytes (default)
+    public $storage_unit = 'MB'; // MB or GB
+    public $storage_unlimited = false;
+
     private static $_instance;
     
     /**
@@ -97,6 +101,9 @@ class MM_Setting_Model
             'plugins'          => $this->plugins,
             'inbox_page'       => $this->inbox_page,
             'allow_attachment' => $this->allow_attachment,
+            'storage_limit'    => $this->storage_limit,
+            'storage_unit'     => $this->storage_unit,
+            'storage_unlimited' => $this->storage_unlimited,
         );
         
         return update_option($this->option_key, $settings);
@@ -116,9 +123,9 @@ class MM_Setting_Model
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 // Sanitize different field types
-                if ($key === 'per_page') {
+                if ($key === 'per_page' || $key === 'storage_limit') {
                     $this->{$key} = absint($value);
-                } elseif (in_array($key, array('enable_receipt', 'user_receipt', 'allow_attachment'))) {
+                } elseif (in_array($key, array('enable_receipt', 'user_receipt', 'allow_attachment', 'storage_unlimited'))) {
                     $this->{$key} = (bool) $value;
                 } elseif (in_array($key, array('noti_subject', 'noti_content', 'receipt_subject', 'receipt_content'))) {
                     $this->{$key} = sanitize_textarea_field($value);
@@ -147,6 +154,9 @@ class MM_Setting_Model
             'plugins'          => $this->plugins,
             'inbox_page'       => $this->inbox_page,
             'allow_attachment' => $this->allow_attachment,
+            'storage_limit'    => $this->storage_limit,
+            'storage_unit'     => $this->storage_unit,
+            'storage_unlimited' => $this->storage_unlimited,
         );
     }
 

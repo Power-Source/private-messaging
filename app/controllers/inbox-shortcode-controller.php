@@ -388,11 +388,9 @@ class Inbox_Shortcode_Controller
                         $this->_send_message($user_id, $model);
                     }
                 } else {
-                    foreach ($user_ids as $user_id) {
-                        $send_to_lists = array($user_id);
-                        $send_to_lists = array_merge($send_to_lists, $cc_list);
-                        $this->_send_message_group($send_to_lists, $model);
-                    }
+                    // Group conversation: merge primary + CC, deduplicate
+                    $all_recipients = array_values(array_unique(array_merge($user_ids, $cc_list)));
+                    $this->_send_message_group($all_recipients, $model);
                 }
 
                 $this->set_flash('mm_sent_' . get_current_user_id(), __("Deine Nachricht wurde gesendet.", mmg()->domain));

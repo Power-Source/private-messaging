@@ -26,7 +26,7 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
                     <span class="help-block m-b-none error-send_to"><?php echo esc_html($model->get_error("send_to")); ?></span>
                 </div>
 
-                <?php do_action('mm_before_subject_field', $model, 'compose_form') ?>
+                <?php do_action('mm_before_subject_field', $model, 'compose_form', 'inline') ?>
                 <div class="form-group compose-field-subject <?php echo $model->has_error("subject") ? "has-error" : null ?>" <?php echo $reply_mode ? 'style="display:none;"' : ''; ?>>
                     <label for="mm_message_model-subject" class="control-label hidden-xs hidden-sm"><?php _e("Betreff", mmg()->domain); ?></label>
                     <input type="text" name="MM_Message_Model[subject]" id="mm_message_model-subject" class="form-control" placeholder="<?php echo esc_attr__('Betreff', mmg()->domain); ?>" value="<?php echo esc_attr($model->subject); ?>">

@@ -255,15 +255,39 @@ class PM_Attachment_Handler
         }
 
         // Verify file is within upload directory
-        if (realpath($file_path) !== $file_path || strpos(realpath($file_path), realpath($dirs['path'])) !== 0) {
+            // Security: Verify file is within upload directory (Path Traversal Protection)
+            $real_file_path = realpath($file_path);
+            $real_upload_dir = realpath($dirs['path']);
+        
+            // Both paths must exist and file must be inside the directory
+            if ($real_file_path === false || $real_upload_dir === false) {
             wp_die('Invalid file path', 'Forbidden', ['response' => 403]);
         }
+        
+            if (strpos($real_file_path, $real_upload_dir . DIRECTORY_SEPARATOR) !== 0) {
+                wp_die('Path traversal attempt detected', 'Forbidden', ['response' => 403]);
+            }
+
+            // Verify MIME type (additional safety check)
+            $mime_type = wp_check_filetype($real_file_path);
+            if (empty($mime_type['type'])) {
+                $mime_type['type'] = 'application/octet-stream';
+            }
+
+            // Additional: Blocked file types for security
+            $blocked_types = array('application/x-php', 'application/x-executable', 'application/x-elf', 'application/x-mach-binary');
+            if (in_array($mime_type['type'], $blocked_types, true)) {
+                wp_die('File type not allowed for download', 'Forbidden', ['response' => 403]);
+            }
 
         // Serve file
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Content-Length: ' . filesize($file_path));
-        readfile($file_path);
+            header('Content-Type: ' . esc_attr($mime_type['type']));
+            header('Content-Disposition: attachment; filename="' . esc_attr($filename) . '"');
+            header('Content-Length: ' . filesize($real_file_path));
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+            readfile($real_file_path);
         exit;
     }
 

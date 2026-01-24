@@ -4,13 +4,23 @@
         <?php if ($show_nav): ?>
             <?php
             $mm_current_box = mmg()->get('box', 'inbox');
-            $mm_counts = array(
-                'inbox'   => MM_Conversation_Model::count_all(),
-                'unread'  => MM_Conversation_Model::count_unread(),
-                'read'    => MM_Conversation_Model::count_read(),
-                'sent'    => MM_Conversation_Model::count_sent(),
-                'archive' => MM_Conversation_Model::count_archive(),
-            );
+
+            // Cache inbox counts to avoid repeated queries on every view render
+            $cache_key = 'mm_counts_' . get_current_user_id() . '_' . get_current_blog_id();
+            $mm_counts = get_transient($cache_key);
+
+            if ($mm_counts === false || !is_array($mm_counts)) {
+                $mm_counts = array(
+                    'inbox'   => MM_Conversation_Model::count_all(),
+                    'unread'  => MM_Conversation_Model::count_unread(),
+                    'read'    => MM_Conversation_Model::count_read(),
+                    'sent'    => MM_Conversation_Model::count_sent(),
+                    'archive' => MM_Conversation_Model::count_archive(),
+                );
+
+                // Short TTL keeps counts fresh while trimming duplicate queries
+                set_transient($cache_key, $mm_counts, 5 * MINUTE_IN_SECONDS);
+            }
             ?>
             <style>
                 .mm-nav-shell {background: #0f172a; color: #e9edf3; border-radius: 12px; padding: 14px 18px; margin-bottom: 15px; box-shadow: 0 6px 18px rgba(0,0,0,0.10); position: relative;} 

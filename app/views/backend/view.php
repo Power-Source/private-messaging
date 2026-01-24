@@ -19,34 +19,47 @@ $messages = $model->get_messages();
 
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <table class="table table-striped table-condensed">
-                                <thead>
+                            <table class="table table-striped table-condensed" style="margin: 0;">
+                                <thead style="display:none;">
                                 <tr>
-                                    <th style="width: 10%"><?php _e("Sender", mmg()->domain) ?></th>
-                                    <th style="width: 20%"><?php _e("Date", mmg()->domain) ?></th>
-                                    <th style="width: 60%"><?php _e("Content", mmg()->domain) ?></th>
+                                    <th><?php _e("Message", mmg()->domain) ?></th>
                                     <th style="width: 10%"><?php _e("", mmg()->domain) ?></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <?php foreach ($messages as $message): ?>
-                                    <tr>
-                                        <td><?php echo $message->get_name($message->send_from) ?></td>
-                                        <td><?php echo date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($message->date)); ?></td>
-                                        <td><?php echo wpautop($message->content) ?></td>
-                                        <td>
+                                    <tr style="border-bottom: 2px solid #e5e7eb;">
+                                        <td style="vertical-align: top; padding: 12px;">
+                                            <!-- Subject + Metadata Header -->
+                                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6;">
+                                                <div>
+                                                    <strong style="font-size: 14px; color: #111827;"><?php echo esc_html($message->subject ?: '(No subject)'); ?></strong>
+                                                </div>
+                                                <div style="text-align: right; flex-shrink: 0;">
+                                                    <div style="color: #6b7280; font-size: 10px; line-height: 1.3; white-space: nowrap; margin-left: 16px;">
+                                                        <div style="font-weight: 500;"><?php echo esc_html($message->get_name($message->send_from)); ?></div>
+                                                        <div><?php echo date('j.m.Y H:i', strtotime($message->date)); ?></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Message Content -->
+                                            <div style="color: #374151; font-size: 13px; line-height: 1.6;">
+                                                <?php echo wpautop($message->content); ?>
+                                            </div>
+                                        </td>
+                                        <td style="vertical-align: top; padding: 12px; width: 80px; text-align: center;">
                                             <a id="target-message-<?php echo $message->id ?>"
                                                href="#message-<?php echo $message->id ?>"
-                                               class="button button-small leanmodal-trigger"><i class="fa fa-edit"></i>
+                                               class="button button-small leanmodal-trigger" title="<?php _e('Edit', mmg()->domain); ?>" style="display: block; margin-bottom: 4px;">
+                                                <i class="fa fa-edit"></i>
                                             </a>
-                                            &nbsp;
                                             <form method="post" style="display: inline" class="delete-message-frm">
                                                 <input type="hidden" name="id" value="<?php echo $message->id ?>">
                                                 <input type="hidden" name="action" value="mm_delete_user_message">
                                                 <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('mm_delete_user_message'); ?>">
-
-                                                <button type="submit" class="button button-small"><i
-                                                        class="fa fa-trash"></i></button>
+                                                <button type="submit" class="button button-small" title="<?php _e('Delete', mmg()->domain); ?>" style="display: block;">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
                                             </form>
                                         </td>
                                     </tr>

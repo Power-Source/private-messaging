@@ -131,7 +131,6 @@ class MM_Messages_Table extends WP_List_Table
         } else {
             // Get all conversations for current blog
             $this->items = MM_Conversation_Model::find_all_by_site(get_current_blog_id(), $offset, $perpage);
-            error_log('MM Admin Table: find_all_by_site() returned ' . count($this->items) . ' items');
         }
     }
 

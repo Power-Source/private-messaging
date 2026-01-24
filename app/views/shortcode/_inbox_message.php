@@ -97,35 +97,29 @@ $has_history = count($history_messages) > 0;
         )); */ ?>
         <div class="clearfix"></div>
         <div class="page-header">
-            <h3 class="mm-message-subject"><?php echo apply_filters('mm_message_subject', $message->subject) ?></h3>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div style="text-align:center;display:flex;justify-content:center;align-items:center;">
-                                <?php echo PM_Avatar_Handler::get_avatar_html($message->send_from, 100, 'mm-detail-avatar'); ?>
-                            </div>
-                        </div>
-                        <div class="col-md-9">
-                            <strong><?php
-                                if ($message->send_from == get_current_user_id()) {
-                                    echo __("Ich", mmg()->domain) . ' (' . $message->get_name($message->send_from) . ')';
-                                } else {
-                                    echo $message->get_name($message->send_from);
-                                } ?></strong>
-
-                            <div class="clearfix"></div>
-                            <span><?php echo date('j. F Y, G:i', strtotime($message->date)) ?></span>
-
-                            <div class="clearfix"></div>
-                            <?php if (mmg()->get('box') == 'sent'): ?>
-                                <small><?php _e("An:", mmg()->domain) ?> <?php echo $message->get_name($message->send_to); ?></small>
-                            <?php endif; ?>
-                        </div>
-                    </div>
+            <!-- Avatar + Subject + Metadata in one line -->
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+                <!-- Avatar left -->
+                <div style="flex-shrink:0;">
+                    <?php echo PM_Avatar_Handler::get_avatar_html($message->send_from, 55, 'mm-detail-avatar'); ?>
                 </div>
-                <div class="clearfix"></div>
+                
+                <!-- Subject middle -->
+                <h3 class="mm-message-subject" style="margin:0;flex:1;font-size:18px;"><?php echo apply_filters('mm_message_subject', $message->subject) ?></h3>
+                
+                <!-- Metadata right -->
+                <div style="flex-shrink:0;text-align:right;">
+                    <strong style="display:block;font-size:13px;line-height:1.3;margin-bottom:2px;"><?php
+                        if ($message->send_from == get_current_user_id()) {
+                            echo __("Ich", mmg()->domain) . ' (' . $message->get_name($message->send_from) . ')';
+                        } else {
+                            echo $message->get_name($message->send_from);
+                        } ?></strong>
+                    <span style="display:block;font-size:12px;color:#6b7280;line-height:1.3;margin-bottom:1px;"><?php echo date('j. F Y, G:i', strtotime($message->date)) ?></span>
+                    <?php if (mmg()->get('box') == 'sent'): ?>
+                        <small style="display:block;font-size:11px;color:#9ca3af;line-height:1.3;"><?php _e("An:", mmg()->domain) ?> <?php echo $message->get_name($message->send_to); ?></small>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
         <div class="message-body" style="font-size:15px;line-height:1.7;color:#1f2937;">

@@ -61,7 +61,7 @@ $has_history = count($history_messages) > 0;
                         <button type="button"
                             data-conversation-id="<?php echo esc_attr($message->conversation_id) ?>"
                             class="btn btn-primary btn-sm mm-reply-inline" style="border-radius:8px;">
-                            <i class="fa fa-reply"></i> <?php _e("Reply", mmg()->domain) ?>
+                            <i class="fa fa-reply"></i> <?php _e("Antworten", mmg()->domain) ?>
                         </button>
                     <?php endif; ?>
 
@@ -70,14 +70,14 @@ $has_history = count($history_messages) > 0;
                             data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
                             data-type="<?php echo MM_Message_Status_Model::STATUS_READ ?>"
                             class="btn btn-default btn-sm mm-status" style="border-radius:8px;">
-                            <i class="fa fa-undo"></i> <?php _e("Unarchive", mmg()->domain) ?>
+                            <i class="fa fa-undo"></i> <?php _e("Archivierung aufheben", mmg()->domain) ?>
                         </button>
                     <?php else: ?>
                         <button type="button"
                             data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
                             data-type="<?php echo MM_Message_Status_Model::STATUS_ARCHIVE ?>"
                             class="btn btn-default btn-sm mm-status" style="border-radius:8px;">
-                            <i class="fa fa-archive"></i> <?php _e("Archive", mmg()->domain) ?>
+                            <i class="fa fa-archive"></i> <?php _e("Archivieren", mmg()->domain) ?>
                         </button>
                     <?php endif; ?>
 
@@ -86,7 +86,7 @@ $has_history = count($history_messages) > 0;
                         data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
                         data-nonce="<?php echo esc_attr($delete_nonce); ?>"
                         style="border-radius:8px;">
-                        <i class="fa fa-trash"></i> <?php _e("Delete", mmg()->domain) ?>
+                        <i class="fa fa-trash"></i> <?php _e("Löschen", mmg()->domain) ?>
                     </button>
                 </div>
             <?php endif; ?>
@@ -109,17 +109,17 @@ $has_history = count($history_messages) > 0;
                         <div class="col-md-9">
                             <strong><?php
                                 if ($message->send_from == get_current_user_id()) {
-                                    echo __("me", mmg()->domain) . ' (' . $message->get_name($message->send_from) . ')';
+                                    echo __("Ich", mmg()->domain) . ' (' . $message->get_name($message->send_from) . ')';
                                 } else {
                                     echo $message->get_name($message->send_from);
                                 } ?></strong>
 
                             <div class="clearfix"></div>
-                            <span><?php echo date('F j, Y, g:i a', strtotime($message->date)) ?></span>
+                            <span><?php echo date('j. F Y, G:i', strtotime($message->date)) ?></span>
 
                             <div class="clearfix"></div>
                             <?php if (mmg()->get('box') == 'sent'): ?>
-                                <small><?php _e("To:", mmg()->domain) ?> <?php echo $message->get_name($message->send_to); ?></small>
+                                <small><?php _e("An:", mmg()->domain) ?> <?php echo $message->get_name($message->send_to); ?></small>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -153,27 +153,21 @@ $has_history = count($history_messages) > 0;
                         $filename = trim($filename);
                         $file_info = PM_Attachment_Handler::get_file_info($message->conversation_id, $filename);
                         
-                        // DEBUG
-                        if (defined('WP_DEBUG') && WP_DEBUG) {
-                            error_log('  File: ' . $filename);
-                            error_log('  get_file_info result: ' . var_export($file_info, true));
-                        }
-                        
                         if (!$file_info) continue;
                         
                         $is_image = in_array(strtolower($file_info['extension']), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                         $is_video = in_array(strtolower($file_info['extension']), ['mp4', 'webm', 'ogg', 'mov']);
-                        $download_url = admin_url('admin-ajax.php?action=mm_download_attachment&conversation_id=' . $message->conversation_id . '&filename=' . urlencode($filename) . '&_wpnonce=' . wp_create_nonce('mm_download_attachment'));
+                        $file_url = $file_info['url'];
                     ?>
                         <?php if ($is_image): ?>
                             <!-- Image Preview (Inline) -->
                             <div class="mm-attachment-image" style="margin-bottom:16px;">
                                 <div style="position:relative;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                    <img src="<?php echo esc_url($download_url); ?>" 
+                                    <img src="<?php echo esc_url($file_url); ?>" 
                                          alt="<?php echo esc_attr($file_info['display_name']); ?>"
                                          class="mm-image-preview"
                                          style="width:100%;height:auto;max-width:600px;display:block;cursor:zoom-in;"
-                                         onclick="window.open('<?php echo esc_url($download_url); ?>', '_blank')">
+                                         onclick="window.open('<?php echo esc_url($file_url); ?>', '_blank')">
                                     <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top, rgba(0,0,0,0.7), transparent);padding:12px 16px;">
                                         <div style="color:#fff;font-size:13px;font-weight:500;text-shadow:0 1px 3px rgba(0,0,0,0.3);">
                                             <i class="fa fa-image" style="margin-right:6px;"></i><?php echo esc_html($file_info['display_name']); ?>
@@ -189,7 +183,7 @@ $has_history = count($history_messages) > 0;
                             <div class="mm-attachment-video" style="margin-bottom:16px;">
                                 <div style="position:relative;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);background:#000;">
                                     <video controls style="width:100%;max-width:600px;display:block;">
-                                        <source src="<?php echo esc_url($download_url); ?>" type="video/<?php echo esc_attr($file_info['extension']); ?>">
+                                        <source src="<?php echo esc_url($file_url); ?>" type="video/<?php echo esc_attr($file_info['extension']); ?>">
                                         Your browser doesn't support video.
                                     </video>
                                     <div style="padding:12px 16px;background:rgba(0,0,0,0.9);">
@@ -220,7 +214,7 @@ $has_history = count($history_messages) > 0;
                                             <?php echo esc_html($file_info['size_formatted']); ?> • <?php echo strtoupper($file_info['extension']); ?> File
                                         </div>
                                     </div>
-                                    <a href="<?php echo esc_url($download_url); ?>" 
+                                    <a href="<?php echo esc_url($file_url); ?>" 
                                        class="btn btn-sm"
                                        download
                                        style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:600;font-size:13px;box-shadow:0 4px 12px rgba(102,126,234,0.3);transition:all 0.3s ease;white-space:nowrap;"
@@ -257,11 +251,11 @@ $has_history = count($history_messages) > 0;
                                         <strong><?php echo $message->get_name($message->send_from) ?></strong>
 
                                         <div class="clearfix"></div>
-                                        <span><?php echo date('F j, Y, g:i a', strtotime($message->date)) ?></span>
+                                        <span><?php echo date('j. F Y, G:i', strtotime($message->date)) ?></span>
 
                                         <div class="clearfix"></div>
                                         <?php if (mmg()->get('box') == 'sent'): ?>
-                                            <small><?php _e("To:", mmg()->domain) ?> <?php echo $message->get_name($message->send_to) ?></small>
+                                            <small><?php _e("An:", mmg()->domain) ?> <?php echo $message->get_name($message->send_to) ?></small>
                                         <?php endif; ?>
                                     </div>
                                 </div>

@@ -42,11 +42,7 @@
                         <?php endif; ?>
                     </div>
                 </div>
-                <div class="mm-nav-context" style="display:none; justify-content:flex-end; gap:8px; margin-top:8px; flex-wrap:wrap;">
-                    <button type="button" class="btn btn-primary btn-sm mm-nav-reply"><i class="fa fa-reply"></i> <?php _e("Reply", mmg()->domain) ?></button>
-                    <button type="button" class="btn btn-default btn-sm mm-nav-archive"><i class="fa fa-archive"></i> <?php _e("Archive", mmg()->domain) ?></button>
-                    <button type="button" class="btn btn-danger btn-sm mm-nav-delete"><i class="fa fa-trash"></i> <?php _e("Delete", mmg()->domain) ?></button>
-                </div>
+                <!-- Top-bar action buttons removed (actions remain in conversation view) -->
                 <div class="mm-nav-tabs mm-toolbar-btn">
                     <a data-box="inbox" href="<?php echo esc_url(add_query_arg('box', 'inbox', get_permalink(mmg()->setting()->inbox_page))) ?>" class="mm-nav-pill <?php echo $mm_current_box == 'inbox' ? 'active' : null ?>">
                         <span class="mm-nav-icon"><i class="fa fa-inbox"></i></span> <?php _e("Eingang", mmg()->domain) ?>
@@ -151,8 +147,9 @@
         });
 
         // On load, if a stored box differs from current, redirect once to it
+        // BUT: never redirect FROM setting tab (let user stay there until they click away)
         var mmStoredBox = localStorage.getItem(mmBoxStorageKey);
-        if (mmStoredBox && mmStoredBox !== mmInitialBox && mmStoredBox !== 'setting') {
+        if (mmInitialBox !== 'setting' && mmStoredBox && mmStoredBox !== mmInitialBox && mmStoredBox !== 'setting') {
             var href = $('a[data-box="' + mmStoredBox + '"]').attr('href');
             if (href) { window.location.href = href; }
         } else if (!mmStoredBox) {

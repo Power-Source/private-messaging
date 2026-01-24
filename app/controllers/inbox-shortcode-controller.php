@@ -136,7 +136,9 @@ class Inbox_Shortcode_Controller
             update_user_meta($user_id, '_messages_setting', $setting);
             do_action('mm_user_setting_saved', $setting, get_current_user_id());
             $this->set_flash('user_setting_' . $user_id, __("Your settings have been successfully updated", mmg()->domain));
-            wp_redirect(esc_url($_SERVER['REQUEST_URI']));
+            // Return last viewed box instead of reloading
+            $last_box = isset($_POST['mm_last_box']) ? sanitize_text_field($_POST['mm_last_box']) : 'inbox';
+            wp_redirect(esc_url(add_query_arg('box', $last_box, $_SERVER['REQUEST_URI'])));
             exit;
         }
     }

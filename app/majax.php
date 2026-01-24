@@ -69,8 +69,9 @@ class MAjax
      */
     public function download_attachment()
     {
-        $conversation_id = absint(mmg()->get('conv_id'));
-        $filename = sanitize_file_name(mmg()->get('file'));
+        // Try new parameter names first, fall back to old ones for compatibility
+        $conversation_id = absint(mmg()->get('conversation_id') ?: mmg()->get('conv_id'));
+        $filename = sanitize_file_name(mmg()->get('filename') ?: mmg()->get('file'));
 
         PM_Attachment_Handler::download_file($conversation_id, $filename);
     }

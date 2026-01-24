@@ -7,7 +7,7 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
 <div class="ig-container" id="compose-form-container" style="margin-bottom:16px; display:none;" data-reply-mode="<?php echo $reply_mode ? '1' : '0'; ?>">
     <div class="panel panel-default" style="border-radius:10px;border-color:#e5e7eb;box-shadow:0 4px 16px rgba(0,0,0,0.04);">
         <div class="panel-heading" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #e5e7eb;">
-            <strong><?php echo $reply_mode ? __('Reply', mmg()->domain) : __('Compose Message', mmg()->domain); ?></strong>
+            <strong><?php echo $reply_mode ? __('Antworten', mmg()->domain) : __('Nachricht verfassen', mmg()->domain); ?></strong>
             <button type="button" class="close" id="compose-close-btn" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -19,8 +19,8 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
                 <?php endif; ?>
                 
                 <div class="form-group compose-field-sendto <?php echo $model->has_error("send_to") ? "has-error" : null ?>" <?php echo $reply_mode ? 'style="display:none;"' : ''; ?>>
-                    <label for="mm_message_model-send_to" class="control-label hidden-xs hidden-sm"><?php _e("Send To", mmg()->domain); ?></label>
-                    <input type="text" name="MM_Message_Model[send_to]" id="mm_message_model-send_to" class="form-control" placeholder="<?php echo esc_attr__('Send to (search user)', mmg()->domain); ?>" value="<?php echo esc_attr($model->send_to); ?>" list="mm-user-list" autocomplete="off">
+                    <label for="mm_message_model-send_to" class="control-label hidden-xs hidden-sm"><?php _e("Empfänger", mmg()->domain); ?></label>
+                    <input type="text" name="MM_Message_Model[send_to]" id="mm_message_model-send_to" class="form-control" placeholder="<?php echo esc_attr__('Empfänger (Benutzer suchen)', mmg()->domain); ?>" value="<?php echo esc_attr($model->send_to); ?>" list="mm-user-list" autocomplete="off">
                     <datalist id="mm-user-list"></datalist>
                     <?php do_action('mm_compose_form_after_send_to', $model) ?>
                     <span class="help-block m-b-none error-send_to"><?php echo esc_html($model->get_error("send_to")); ?></span>
@@ -28,15 +28,15 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
 
                 <?php do_action('mm_before_subject_field', $model, 'compose_form') ?>
                 <div class="form-group compose-field-subject <?php echo $model->has_error("subject") ? "has-error" : null ?>" <?php echo $reply_mode ? 'style="display:none;"' : ''; ?>>
-                    <label for="mm_message_model-subject" class="control-label hidden-xs hidden-sm"><?php _e("Subject", mmg()->domain); ?></label>
-                    <input type="text" name="MM_Message_Model[subject]" id="mm_message_model-subject" class="form-control" placeholder="<?php echo esc_attr__('Subject', mmg()->domain); ?>" value="<?php echo esc_attr($model->subject); ?>">
+                    <label for="mm_message_model-subject" class="control-label hidden-xs hidden-sm"><?php _e("Betreff", mmg()->domain); ?></label>
+                    <input type="text" name="MM_Message_Model[subject]" id="mm_message_model-subject" class="form-control" placeholder="<?php echo esc_attr__('Betreff', mmg()->domain); ?>" value="<?php echo esc_attr($model->subject); ?>">
                     <?php do_action('mm_compose_form_after_subject', $model) ?>
                     <span class="help-block m-b-none error-subject"><?php echo esc_html($model->get_error("subject")); ?></span>
                 </div>
 
                 <div class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
-                    <label for="mm_compose_content" class="control-label hidden-xs hidden-sm"><?php _e("Content", mmg()->domain); ?></label>
-                    <textarea name="MM_Message_Model[content]" id="mm_compose_content" class="form-control mm_wsysiwyg" style="min-height:100px" placeholder="<?php echo esc_attr__('Content', mmg()->domain); ?>"><?php echo esc_textarea($model->content ?? ''); ?></textarea>
+                    <label for="mm_compose_content" class="control-label hidden-xs hidden-sm"><?php _e("Inhalt", mmg()->domain); ?></label>
+                    <textarea name="MM_Message_Model[content]" id="mm_compose_content" class="form-control mm_wsysiwyg" style="min-height:100px" placeholder="<?php echo esc_attr__('Inhalt', mmg()->domain); ?>"><?php echo esc_textarea($model->content ?? ''); ?></textarea>
                     <?php do_action('mm_compose_form_after_content', $model) ?>
                     <span class="help-block m-b-none error-content"><?php echo esc_html($model->get_error("content")); ?></span>
                 </div>
@@ -47,10 +47,10 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
 
                 <?php if (mmg()->can_upload() == true) { ?>
                 <div class="form-group">
-                    <label class="control-label hidden-xs hidden-sm"><?php _e("Attachments", mmg()->domain); ?></label>
+                    <label class="control-label hidden-xs hidden-sm"><?php _e("Anhänge", mmg()->domain); ?></label>
                     <div class="mm-attachments-control">
                         <input type="file" id="mm-attachment-input" class="mm-attachment-input" multiple style="display:none;">
-                        <button type="button" class="btn btn-default btn-sm" id="mm-attachment-browse" onclick="document.getElementById('mm-attachment-input').click(); return false;"><?php _e("Choose Files", mmg()->domain) ?></button>
+                        <button type="button" class="btn btn-default btn-sm" id="mm-attachment-browse" onclick="document.getElementById('mm-attachment-input').click(); return false;"><?php _e("Dateien auswählen", mmg()->domain) ?></button>
                         <span class="mm-attachment-status" style="margin-left:10px;color:#666;font-size:12px;"></span>
                         <div id="mm-attachments-list" class="mm-attachments-list" style="margin-top:8px;"></div>
                         <input type="hidden" name="MM_Message_Model[attachment]" id="mm-message-model-attachment" value="">
@@ -108,7 +108,7 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
             // Inline error when no valid recipients remain
             if (cleanedRecipients.length === 0 && !$('#compose-form-container').data('reply-mode')) {
                 var errorEl = form.find('.error-send_to');
-                errorEl.text('<?php echo esc_js(__('You cannot send a message to yourself. Please choose a recipient.', mmg()->domain)); ?>').show();
+                errorEl.text('<?php echo esc_js(__('Du kannst keine Nachricht an dich selbst senden. Bitte wähle einen Empfänger.', mmg()->domain)); ?>').show();
                 sendToField.closest('.form-group').addClass('has-error');
                 return;
             }
@@ -129,7 +129,7 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
                         var container = $('#compose-form-container');
                         container.hide();
                         container.attr('data-reply-mode', '0');
-                        container.find('.panel-heading strong').text('<?php echo esc_js(__('Compose Message', mmg()->domain)); ?>');
+                        container.find('.panel-heading strong').text('<?php echo esc_js(__('Nachricht verfassen', mmg()->domain)); ?>');
                         container.find('.compose-field-sendto, .compose-field-subject').show();
                         form.find('input[name="MM_Message_Model[conversation_id]"]').remove();
                         form.reset();
@@ -450,7 +450,7 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
             container.hide();
             // Reset to compose mode
             container.attr('data-reply-mode', '0');
-            container.find('.panel-heading strong').text('<?php echo esc_js(__('Compose Message', mmg()->domain)); ?>');
+            container.find('.panel-heading strong').text('<?php echo esc_js(__('Nachricht verfassen', mmg()->domain)); ?>');
             container.find('.compose-field-sendto, .compose-field-subject').show();
             // Remove conversation_id if exists
             container.find('input[name="MM_Message_Model[conversation_id]"]').remove();

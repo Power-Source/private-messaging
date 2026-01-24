@@ -132,8 +132,8 @@ class PM_Attachment_Handler
     {
         return add_query_arg([
             'action' => 'mm_download_attachment',
-            'conv_id' => absint($conversation_id),
-            'file' => urlencode($filename),
+            'conversation_id' => absint($conversation_id),
+            'filename' => urlencode($filename),
             '_wpnonce' => wp_create_nonce('mm_download_' . $conversation_id),
         ], admin_url('admin-ajax.php'));
     }

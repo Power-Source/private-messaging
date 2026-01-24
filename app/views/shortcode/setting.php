@@ -56,6 +56,7 @@ if ($setting->user_receipt == false) {
             <?php do_action('mm_after_user_setting_form') ?>
             <div class="row">
                 <?php echo wp_nonce_field('mm_user_setting_' . get_current_user_id()) ?>
+                <input type="hidden" name="mm_last_box" value="<?php echo esc_attr(mmg()->get('box', 'inbox')); ?>">
                 <div class="col-md-10 col-md-offset-2">
                     <button name="mm_user_setting" value="1" class="btn btn-primary"
                             type="submit"><?php _e("Änderungen speichern", mmg()->domain) ?></button>

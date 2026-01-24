@@ -447,16 +447,8 @@ class MM_Conversation_Model
      */
     public static function count_sent($no_cache = false)
     {
-        $cache_key = 'mm_count_sent_' . get_current_user_id();
-
-        if ($no_cache || false === ($count = get_transient($cache_key))) {
-            $messages = MM_Message_Model::find_by_attribute('send_from', get_current_user_id());
-            $conversation_ids = array_unique(array_filter(array_column($messages, 'conversation_id')));
-            $count = count($conversation_ids);
-            set_transient($cache_key, $count, HOUR_IN_SECONDS);
-        }
-
-        return $count;
+        $conversations = self::get_sent();
+        return is_array($conversations) ? count($conversations) : 0;
     }
 
     /**

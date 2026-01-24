@@ -79,17 +79,17 @@
             <div class="col-md-12 no-padding">
                 <?php if ($paged <= 1): ?>
                     <a disabled href="#"
-                       class="btn btn-default btn-sm pull-left"><?php _e("Previous", mmg()->domain) ?></a>
+                       class="btn btn-default btn-sm pull-left"><?php _e("Vorherige", mmg()->domain) ?></a>
                 <?php else: ?>
                     <a href="<?php echo esc_url(add_query_arg('mpaged', $paged - 1)) ?>"
-                       class="btn btn-default btn-sm pull-left"><?php _e("Previous", mmg()->domain) ?></a>
+                       class="btn btn-default btn-sm pull-left"><?php _e("Vorherige", mmg()->domain) ?></a>
                 <?php endif; ?>
                 <?php if ($paged >= $total_pages): ?>
                     <a disabled href="#"
-                       class="btn btn-default btn-sm pull-right"><?php _e("Next", mmg()->domain) ?></a>
+                       class="btn btn-default btn-sm pull-right"><?php _e("Nächste", mmg()->domain) ?></a>
                 <?php else: ?>
                     <a href="<?php echo esc_url(add_query_arg('mpaged', $paged + 1)) ?>"
-                       class="btn btn-default btn-sm pull-right"><?php _e("Next", mmg()->domain) ?></a>
+                       class="btn btn-default btn-sm pull-right"><?php _e("Nächste", mmg()->domain) ?></a>
                 <?php endif; ?>
                 <div class="clearfix"></div>
             </div>
@@ -165,11 +165,11 @@
             $('body').on('click', '.mm-delete-conv', function (e) {
                 e.preventDefault();
                 var btn = $(this);
-                if (!confirm('<?php echo esc_js(__('Delete this conversation?', mmg()->domain)) ?>')) return;
+                if (!confirm('<?php echo esc_js(__('Diese Unterhaltung löschen?', mmg()->domain)) ?>')) return;
 
                 var convId = btn.data('id');
                 var nonce = btn.data('nonce');
-                setInlineStatus('<?php echo esc_js(__('Deleting…', mmg()->domain)) ?>', 'info');
+                setInlineStatus('<?php echo esc_js(__('Löschen…', mmg()->domain)) ?>', 'info');
                 btn.prop('disabled', true);
 
                 $.ajax({
@@ -178,22 +178,22 @@
                     data: { action: 'mm_delete_conversation', id: convId, _wpnonce: nonce },
                     success: function (res) {
                         if (res.status === 'success') {
-                            setInlineStatus('<?php echo esc_js(__('Conversation deleted', mmg()->domain)) ?>', 'success');
+                            setInlineStatus('<?php echo esc_js(__('Unterhaltung gelöscht', mmg()->domain)) ?>', 'success');
                             var active = $('.load-conv.active');
                             active.remove();
                             var first = $('.load-conv').first();
                             if (first.length) {
                                 first.trigger('click');
                             } else {
-                                $('#mmessage-content').html('<div class="well well-sm no-margin"><?php echo esc_js(__('No message found!', mmg()->domain)) ?></div>');
+                                $('#mmessage-content').html('<div class="well well-sm no-margin"><?php echo esc_js(__('Keine Nachricht gefunden!', mmg()->domain)) ?></div>');
                             }
                         } else {
-                            setInlineStatus(res.message || '<?php echo esc_js(__('Delete failed', mmg()->domain)) ?>', 'error');
+                            setInlineStatus(res.message || '<?php echo esc_js(__('Löschen fehlgeschlagen', mmg()->domain)) ?>', 'error');
                             btn.prop('disabled', false);
                         }
                     },
                     error: function () {
-                        setInlineStatus('<?php echo esc_js(__('Delete failed', mmg()->domain)) ?>', 'error');
+                        setInlineStatus('<?php echo esc_js(__('Löschen fehlgeschlagen', mmg()->domain)) ?>', 'error');
                         btn.prop('disabled', false);
                     }
                 });
@@ -208,12 +208,9 @@
                 var conversationId = $(this).data('conversation-id');
                 var container = $('#compose-form-container');
                 
-                console.log('Reply clicked, conversation_id:', conversationId);
-                console.log('Compose container:', container.length);
-                
                 // Set reply mode
                 container.attr('data-reply-mode', '1');
-                container.find('.panel-heading strong').text('<?php echo esc_js(__('Reply', mmg()->domain)); ?>');
+                container.find('.panel-heading strong').text('<?php echo esc_js(__('Antworten', mmg()->domain)); ?>');
                 container.find('.compose-field-sendto, .compose-field-subject').hide();
                 
                 // Show attachment section
@@ -245,7 +242,7 @@
     <div class="row">
         <div class="col-md-12 no-padding">
             <div class="well well-sm">
-                <?php _e("No message found!", mmg()->domain) ?>
+                <?php _e("Keine Nachricht gefunden!", mmg()->domain) ?>
             </div>
         </div>
     </div>

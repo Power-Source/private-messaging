@@ -56,32 +56,32 @@ foreach ($scripts as $script) {
     foreach ($script as $c) {
         //thourgh each coversation
         //create conversation
-        //create new conservation
-        $conservation = new MM_Conversation_Model();
-        $conservation->save();
+        //create new conversation
+        $conversation = new MM_Conversation_Model();
+        $conversation->save();
         $f = $c[0];
         //apply status of this conversation for sender and receive
-        MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_READ, $f['from']);
+        MM_Message_Status_Model::model()->status($conversation->id, MM_Message_Status_Model::STATUS_READ, $f['from']);
         //apply status for receive
-        MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_UNREAD, $f['to']);
+        MM_Message_Status_Model::model()->status($conversation->id, MM_Message_Status_Model::STATUS_UNREAD, $f['to']);
         foreach ($c as $key => $m) {
             if ($key == 0) {
-                $id = MM_Message_Model::send($m['to'], $conservation->id, array(
+                $id = MM_Message_Model::send($m['to'], $conversation->id, array(
                     'subject' => $m['subject'],
                     'content' => $m['content'],
                     'send_to' => $m['to'],
                     'send_from' => $m['from']
                 ));
-                $conservation->update_index($id);
+                $conversation->update_index($id);
             } else {
-                $last = $conservation->get_last_message();
-                $id = MM_Message_Model::reply($m['to'], $last->id, $conservation->id, array(
+                $last = $conversation->get_last_message();
+                $id = MM_Message_Model::reply($m['to'], $last->id, $conversation->id, array(
                     'subject' => $m['subject'],
                     'content' => $m['content'],
                     'send_to' => $m['to'],
                     'send_from' => $m['from']
                 ));
-                $conservation->update_index($id);
+                $conversation->update_index($id);
             }
         };
     }

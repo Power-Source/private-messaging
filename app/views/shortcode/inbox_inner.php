@@ -1,4 +1,11 @@
-<?php if (isset($compose_html)) { echo $compose_html; } ?>
+<?php 
+// Only include compose form on initial page load, not on AJAX reloads
+// Check if this is an AJAX request
+$is_ajax_reload = (defined('DOING_AJAX') && DOING_AJAX) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest');
+if (!$is_ajax_reload && isset($compose_html)) { 
+    echo $compose_html; 
+} 
+?>
 <?php if (count($models)): ?>
     <br/>
     <div class="row">

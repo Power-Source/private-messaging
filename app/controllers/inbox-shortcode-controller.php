@@ -348,7 +348,7 @@ class Inbox_Shortcode_Controller
                     PM_Attachment_Handler::move_attachments_to_conversation($model->attachment, 0, $conv_id);
                 }
                 
-                $this->set_flash('mm_sent_' . get_current_user_id(), __("Your message has been sent.", mmg()->domain));
+                $this->set_flash('mm_sent_' . get_current_user_id(), __("Deine Nachricht wurde gesendet.", mmg()->domain));
                 wp_send_json(array('status' => 'success'));
             } else {
                 // New message - check for existing conversation with same recipient + subject
@@ -373,7 +373,7 @@ class Inbox_Shortcode_Controller
                 if (empty($user_ids) && empty($cc_list)) {
                     wp_send_json(array(
                         'status' => 'fail',
-                        'errors' => array('send_to' => __('You cannot send a message to yourself. Please choose a recipient.', mmg()->domain))
+                        'errors' => array('send_to' => __('Du kannst keine Nachricht an dich selbst senden. Bitte wähle einen Empfänger.', mmg()->domain))
                     ));
                     exit;
                 }
@@ -395,7 +395,7 @@ class Inbox_Shortcode_Controller
                     }
                 }
 
-                $this->set_flash('mm_sent_' . get_current_user_id(), __("Your message has been sent.", mmg()->domain));
+                $this->set_flash('mm_sent_' . get_current_user_id(), __("Deine Nachricht wurde gesendet.", mmg()->domain));
                 wp_send_json(array(
                     'status' => 'success'
                 ));
@@ -437,21 +437,21 @@ class Inbox_Shortcode_Controller
             return false;
         }
 
-        //create new conservation
-        $conservation = new MM_Conversation_Model();
-        $conservation->save();
+        //create new conversation
+        $conversation = new MM_Conversation_Model();
+        $conversation->save();
         // Apply status for recipient only (do not add sender to status to keep sender out of inbox)
-        MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
-        $id = MM_Message_Model::send($user_id, $conservation->id, $model->export());
-        $conservation->update_index($id);
+        MM_Message_Status_Model::model()->status($conversation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
+        $id = MM_Message_Model::send($user_id, $conversation->id, $model->export());
+        $conversation->update_index($id);
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('MM_Send_Message::_send_message created conv=' . $conservation->id . ' msg=' . $id . ' from=' . $current_user_id . ' to=' . $user_id . ' user_index=' . $conservation->user_index . ' message_count=' . $conservation->message_count);
+            error_log('MM_Send_Message::_send_message created conv=' . $conversation->id . ' msg=' . $id . ' from=' . $current_user_id . ' to=' . $user_id . ' user_index=' . $conversation->user_index . ' message_count=' . $conversation->message_count);
         }
         
         // Move attachments from temporary (0) to conversation directory
         if (!empty($model->attachment)) {
-            PM_Attachment_Handler::move_attachments_to_conversation($model->attachment, 0, $conservation->id);
+            PM_Attachment_Handler::move_attachments_to_conversation($model->attachment, 0, $conversation->id);
         }
         
         return $id;
@@ -476,15 +476,15 @@ class Inbox_Shortcode_Controller
             return false;
         }
 
-        //create new conservation
-        $conservation = new MM_Conversation_Model();
-        $conservation->save();
+        //create new conversation
+        $conversation = new MM_Conversation_Model();
+        $conversation->save();
         // Apply status for recipients only
         foreach ($user_ids as $user_id) {
-            MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
+            MM_Message_Status_Model::model()->status($conversation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
         }
-        $message_id = MM_Message_Model::send(implode(',', $user_ids), $conservation->id, $model->export());
-        $conservation->update_index($message_id);
+        $message_id = MM_Message_Model::send(implode(',', $user_ids), $conversation->id, $model->export());
+        $conversation->update_index($message_id);
     }
 
     function logins_to_ids($users)

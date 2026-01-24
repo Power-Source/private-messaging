@@ -76,6 +76,9 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
     jQuery(document).ready(function($) {
         console.log('=== MM Compose jQuery Init ===');
         
+        // Remove any previously bound submit handlers to prevent duplicates
+        $(document).off('submit', '#compose-form-inline');
+        
         // Handle form submit via AJAX
         $(document).on('submit', '#compose-form-inline', function(e) {
             e.preventDefault();
@@ -125,7 +128,7 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
                     console.log('Submit response:', response);
                     
                     if (response.status === 'success') {
-                        // Close form
+                        // Close and reset form
                         var container = $('#compose-form-container');
                         container.hide();
                         container.attr('data-reply-mode', '0');
@@ -137,21 +140,24 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
                         window.mmAttachmentNames = {};
                         $('#mm-attachments-list').html('');
                         
-                        // Reload active conversation or inbox
-                        var activeConv = $('.load-conv.active');
-                        if (activeConv.length > 0) {
-                            activeConv.trigger('click');
-                        } else {
-                            // If no active conversation, reload inbox list
-                            $.ajax({
-                                type: 'POST',
-                                url: '<?php echo admin_url('admin-ajax.php') ?>',
-                                data: { action: 'mm_load_box', box: '<?php echo mmg()->get('box', 'inbox') ?>', _wpnonce: '<?php echo wp_create_nonce('mm_load_box') ?>' },
-                                success: function(data) {
-                                    $('#mmessage-list').html(data.html);
+                        // Refresh tab counts and inbox list WITHOUT reloading compose form
+                        $.ajax({
+                            type: 'POST',
+                            url: '<?php echo admin_url('admin-ajax.php') ?>',
+                            data: { action: 'mm_load_box', box: '<?php echo mmg()->get('box', 'inbox') ?>', _wpnonce: '<?php echo wp_create_nonce('mm_load_box') ?>' },
+                            success: function(data) {
+                                // Only update the message list, not the entire container
+                                // This prevents the compose form from being reloaded and re-initialized
+                                if (data.html) {
+                                    var newList = $(data.html).find('#mmessage-list').html();
+                                    if (newList) {
+                                        $('#mmessage-list').html(newList);
+                                    }
                                 }
-                            });
-                        }
+                                // Trigger page title/tab count update by reloading just the current view
+                                location.reload();
+                            }
+                        });
                     } else {
                         console.error('Validation errors:', response.errors);
                         // Display errors

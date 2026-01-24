@@ -46,6 +46,31 @@ class MM_Conversation_Model
     }
 
     /**
+     * Find all conversations for a specific blog site
+     */
+    public static function find_all_by_site($site_id, $offset = 0, $limit = 10)
+    {
+        global $wpdb;
+        $table = self::get_table();
+        
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM $table WHERE site_id = %d ORDER BY date_created DESC LIMIT %d OFFSET %d",
+                absint($site_id),
+                absint($limit),
+                absint($offset)
+            ),
+            ARRAY_A
+        );
+        
+        if (!$results) {
+            return array();
+        }
+
+        return array_map(array(__CLASS__, 'from_array'), $results);
+    }
+
+    /**
      * Find all conversations
      */
     public static function find_all()

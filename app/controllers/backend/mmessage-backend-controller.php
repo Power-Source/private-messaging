@@ -131,13 +131,26 @@ class MMessage_Backend_Controller
         wp_enqueue_style('mm_style_admin');
         wp_enqueue_script('bootstrap');
         $id = mmg()->get('id', 0);
+        $original_id = $id;
+        // Decrypt ID if it's encrypted (from URL)
+        if (!empty($id) && !is_numeric($id)) {
+            $id = mmg()->decrypt($id);
+        }
+        $id = absint($id);
+        
+        error_log('MM View Debug: original_id=' . $original_id . ' decrypted_id=' . $id);
+        
         $model = MM_Conversation_Model::model()->find($id);
+        
+        error_log('MM View Debug: find result = ' . (is_object($model) ? 'found' : 'not found'));
+        
         if (is_object($model)) {
             $this->load_template_part('backend/view', array(
                 'model' => $model
             ));
         } else {
             echo __("Conversation not found!", mmg()->domain);
+            echo '<br/><small>ID=' . esc_html($original_id) . ', Decrypted=' . esc_html($id) . '</small>';
         }
     }
 

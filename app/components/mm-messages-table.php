@@ -42,10 +42,11 @@ class MM_Messages_Table extends WP_List_Table
 
     public function column_col_action(MM_Conversation_Model $item)
     {
+        $encrypted_id = mmg()->encrypt($item->id);
         $text = sprintf('<a class="button button-small" href="%s"><i class="fa fa-eye"></i> ' . __("View", mmg()->domain) . '</a>&nbsp;
                 <a class="button button-small lock-conv" data-type="' . ($item->is_lock() ? 'unlock' : 'lock') . '" data-id="' . $item->id . '" href="#">%s</a>&nbsp;
                 <a class="button button-small" href="#"><i class="fa fa-trash"></i> ' . __("Delete", mmg()->domain) . '</a>',
-            admin_url('admin.php?page=mm_view&id=' . $item->id), ($item->is_lock()) ? '<i class="fa fa-unlock"></i> ' . __("Unlock", mmg()->domain) : '<i class="fa fa-lock"></i> ' . __("Lock", mmg()->domain));
+            admin_url('admin.php?page=mm_view&id=' . $encrypted_id), ($item->is_lock()) ? '<i class="fa fa-unlock"></i> ' . __("Unlock", mmg()->domain) : '<i class="fa fa-lock"></i> ' . __("Lock", mmg()->domain));
         return $text;
     }
 
@@ -128,9 +129,9 @@ class MM_Messages_Table extends WP_List_Table
                 ));
             }
         } else {
-            $this->items = MM_Conversation_Model::model()->find_all('site_id =%d', array(
-                get_current_blog_id()
-            ), $perpage, $offset);
+            // Get all conversations for current blog
+            $this->items = MM_Conversation_Model::find_all_by_site(get_current_blog_id(), $offset, $perpage);
+            error_log('MM Admin Table: find_all_by_site() returned ' . count($this->items) . ' items');
         }
     }
 

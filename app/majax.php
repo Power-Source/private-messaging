@@ -17,7 +17,6 @@ class MAjax
         add_action('wp_ajax_mm_delete_attachment', array($this, 'delete_attachment'));
         add_action('wp_ajax_mm_download_attachment', array($this, 'download_attachment'));
         add_action('wp_ajax_mm_preview_attachment', array($this, 'preview_attachment'));
-        add_action('wp_ajax_nopriv_mm_download_attachment', array($this, 'download_attachment'));
         // Register search handler
         add_action('wp_ajax_mm_search_conversations', array($this, 'search_conversations'));
     }
@@ -144,7 +143,6 @@ class MAjax
                 'query' => $query,
             ));
         } catch (Exception $e) {
-            error_log('MM Search Error: ' . $e->getMessage());
             wp_send_json_error(array(
                 'message' => $e->getMessage(),
                 'query' => $query,

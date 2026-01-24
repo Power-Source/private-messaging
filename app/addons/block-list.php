@@ -103,7 +103,7 @@ if (!class_exists('MM_Block_List')) {
             ?>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <p class="help-block"><?php _e("Block users list, separate by commas", mmg()->domain) ?></p>
+                    <p class="help-block"><?php _e("Liste der blockierten Benutzer, durch Kommas getrennt", mmg()->domain) ?></p>
                     <input id="mm-block-list-input" name="mm_user_block" type="text" class="form-control"
                            value="<?php echo $block_list ?>"/>
                 </div>

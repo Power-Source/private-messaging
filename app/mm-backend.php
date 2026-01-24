@@ -23,6 +23,10 @@ class MM_Backend
             return '';
         }
 
+        if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'mm_inject_message')) {
+            return '';
+        }
+
         $conversation_id = mmg()->post('conversation_id');
         $conversation = MM_Conversation_Model::model()->find($conversation_id);
         if (is_object($conversation)) {
@@ -50,6 +54,10 @@ class MM_Backend
     function lock_conversation()
     {
         if (!current_user_can('manage_options')) {
+            return '';
+        }
+
+        if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'mm_lock_conversation')) {
             return '';
         }
 
@@ -82,6 +90,10 @@ class MM_Backend
         if (!current_user_can('manage_options')) {
             return '';
         }
+
+        if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'mm_delete_user_message')) {
+            return '';
+        }
         $message_id = mmg()->post('id');
         $model = MM_Message_Model::model()->find($message_id);
         $conversation = MM_Conversation_Model::model()->find($model->conversation_id);
@@ -94,6 +106,10 @@ class MM_Backend
     function edit_user_message()
     {
         if (!current_user_can('manage_options')) {
+            return '';
+        }
+
+        if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'mmg_message_edit')) {
             return '';
         }
         $message_id = mmg()->post('data[id]');

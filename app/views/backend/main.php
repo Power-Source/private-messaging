@@ -33,7 +33,8 @@
                 data: {
                     action: 'mm_lock_conversation',
                     type: that.data('type'),
-                    id: that.data('id')
+                    id: that.data('id'),
+                    _wpnonce: '<?php echo wp_create_nonce('mm_lock_conversation'); ?>'
                 },
                 beforeSend: function () {
                     that.attr('disabled', 'disabled')

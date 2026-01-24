@@ -33,7 +33,7 @@ if(!class_exists('MM_AddOn_Table')) {
         {
             return $columns = array(
                 'col_name' => __('Name', mmg()->domain),
-                'col_description' => __('Description', mmg()->domain),
+                'col_description' => __('Beschreibung', mmg()->domain),
             );
         }
 
@@ -55,9 +55,9 @@ if(!class_exists('MM_AddOn_Table')) {
                 $components = array();
             }
             if (in_array($item['col_id'], $components)) {
-                $html .= '<br><a class="mm-plugin" data-type="deactive" data-id="' . esc_attr($item['col_id']) . '" href="#">' . __('Deactivate <i class="fa fa-circle-o-notch fa-spin loader-ani hide"></i>', mmg()->domain) . '</a>';
+                $html .= '<br><a class="mm-plugin" data-type="deactive" data-id="' . esc_attr($item['col_id']) . '" href="#">' . __('Deaktivieren <i class="fa fa-circle-o-notch fa-spin loader-ani hide"></i>', mmg()->domain) . '</a>';
             } else {
-                $html .= '<br><a class="mm-plugin" data-type="active" data-id="' . esc_attr($item['col_id']) . '"  href="#">' . __('Activate <i class="fa fa-circle-o-notch fa-spin loader-ani hide"></i>', mmg()->domain) . '</a>';
+                $html .= '<br><a class="mm-plugin" data-type="active" data-id="' . esc_attr($item['col_id']) . '"  href="#">' . __('Aktivieren <i class="fa fa-circle-o-notch fa-spin loader-ani hide"></i>', mmg()->domain) . '</a>';
             }
 
             return $html;
@@ -65,7 +65,7 @@ if(!class_exists('MM_AddOn_Table')) {
 
         public function column_col_description($item)
         {
-            return $item['col_description'] . '<br/>' . __('Created by: ', mmg()->domain) . '<strong>' . $item['col_author'] . '</strong>';
+            return $item['col_description'] . '<br/>' . __('Erstellt von: ', mmg()->domain) . '<strong>' . $item['col_author'] . '</strong>';
         }
 
         public function column_col_action($item)

@@ -77,6 +77,18 @@ class PM_Attachment_Handler
             return new WP_Error('invalid_type', 'File type not allowed. Allowed types: ' . implode(', ', self::ALLOWED_TYPES));
         }
 
+        // Double-check detected type vs extension
+        $type_info = wp_check_filetype_and_ext($file['tmp_name'], $file['name']);
+        if (!empty($type_info['ext']) && $type_info['ext'] !== $ext) {
+            return new WP_Error('invalid_type', 'File extension mismatch detected');
+        }
+
+        // Basic MIME sniffing fallback
+        $mime = function_exists('mime_content_type') ? mime_content_type($file['tmp_name']) : '';
+        if ($mime && strpos($mime, 'php') !== false) {
+            return new WP_Error('invalid_type', 'Executable file types are not allowed');
+        }
+
         return true;
     }
 
@@ -88,6 +100,16 @@ class PM_Attachment_Handler
         // User must be logged in
         if (!is_user_logged_in()) {
             return new WP_Error('not_logged_in', 'You must be logged in to upload files');
+        }
+
+        // Enforce role-based attachment permissions if configured
+        $allowed_roles = mmg()->setting()->allow_attachment;
+        if (is_array($allowed_roles) && count(array_filter($allowed_roles)) > 0) {
+            $user = wp_get_current_user();
+            $user_roles = (array) $user->roles;
+            if (!array_intersect($user_roles, $allowed_roles)) {
+                return new WP_Error('permission_denied', 'Your role cannot upload attachments');
+            }
         }
 
         // If conversation_id > 0, validate user is part of conversation
@@ -203,6 +225,11 @@ class PM_Attachment_Handler
      */
     public static function download_file($conversation_id, $filename)
     {
+        // Require authenticated user
+        if (!is_user_logged_in()) {
+            wp_die('Authentication required', 'Unauthorized', ['response' => 403]);
+        }
+
         // Verify nonce
         if (!wp_verify_nonce(mmg()->get('_wpnonce'), 'mm_download_' . $conversation_id)) {
             wp_die('Security check failed', 'Unauthorized', ['response' => 403]);

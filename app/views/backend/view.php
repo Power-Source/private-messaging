@@ -43,6 +43,7 @@ $messages = $model->get_messages();
                                             <form method="post" style="display: inline" class="delete-message-frm">
                                                 <input type="hidden" name="id" value="<?php echo $message->id ?>">
                                                 <input type="hidden" name="action" value="mm_delete_user_message">
+                                                <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('mm_delete_user_message'); ?>">
 
                                                 <button type="submit" class="button button-small"><i
                                                         class="fa fa-trash"></i></button>
@@ -166,7 +167,8 @@ $messages = $model->get_messages();
                 type: 'POST',
                 data: {
                     action: 'mmg_message_edit',
-                    data: send
+                    data: send,
+                    _wpnonce: '<?php echo wp_create_nonce('mmg_message_edit'); ?>'
                 },
                 url: ajaxurl,
                 beforeSend: function () {

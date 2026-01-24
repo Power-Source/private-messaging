@@ -51,7 +51,8 @@
                                     name="MM_Message_Model[content]" 
                                     id="mm_compose_content" 
                                     class="form-control mm_wsysiwyg"
-                                    style="height:100px"
+                                    style="min-height:160px"
+                                    rows="8"
                                 ><?php echo esc_textarea($model->content ?? ''); ?></textarea>
                                 <span class="help-block m-b-none error-content"><?php echo esc_html($model->get_error("content")); ?></span>
 

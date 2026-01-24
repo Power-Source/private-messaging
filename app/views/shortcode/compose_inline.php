@@ -36,7 +36,7 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
 
                 <div class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
                     <label for="mm_compose_content" class="control-label hidden-xs hidden-sm"><?php _e("Inhalt", mmg()->domain); ?></label>
-                    <textarea name="MM_Message_Model[content]" id="mm_compose_content" class="form-control mm_wsysiwyg" style="min-height:100px" placeholder="<?php echo esc_attr__('Inhalt', mmg()->domain); ?>"><?php echo esc_textarea($model->content ?? ''); ?></textarea>
+                    <textarea name="MM_Message_Model[content]" id="mm_compose_content" class="form-control mm_wsysiwyg" style="min-height:160px" rows="8" placeholder="<?php echo esc_attr__('Inhalt', mmg()->domain); ?>"><?php echo esc_textarea($model->content ?? ''); ?></textarea>
                     <?php do_action('mm_compose_form_after_content', $model) ?>
                     <span class="help-block m-b-none error-content"><?php echo esc_html($model->get_error("content")); ?></span>
                 </div>

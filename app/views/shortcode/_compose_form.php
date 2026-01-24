@@ -55,7 +55,8 @@ $model = new MM_Message_Model();
                                             name="MM_Message_Model[content]" 
                                             id="mm_compose_content" 
                                             class="form-control mm_wsysiwyg"
-                                            style="height:100px"
+                                            style="min-height:160px"
+                                            rows="8"
                                             placeholder="<?php echo esc_attr__('Content', mmg()->domain); ?>"
                                         ><?php echo esc_textarea($model->content ?? ''); ?></textarea>
                                         <?php do_action('mm_compose_form_after_content', $model) ?>

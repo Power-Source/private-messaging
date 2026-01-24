@@ -37,7 +37,8 @@ $form_id = 'inject-message-form';
                                         name="MM_Message_Model[content]" 
                                         id="mm_compose_content" 
                                         class="form-control mm_wsysiwyg"
-                                        style="height:100px"
+                                        style="min-height:160px"
+                                        rows="8"
                                         placeholder="<?php echo esc_attr__('Content', mmg()->domain); ?>"
                                     ><?php echo esc_textarea($model->content ?? ''); ?></textarea>
                                     <span
@@ -47,6 +48,7 @@ $form_id = 'inject-message-form';
                             </div>
                             <input type="hidden" name="action" value="mm_inject_message">
                             <input type="hidden" name="conversation_id" value="<?php echo esc_attr($conversation_id); ?>">
+                            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('mm_inject_message'); ?>">
 
                             <?php if (mmg()->can_upload()): ?>
                             <div class="form-group">

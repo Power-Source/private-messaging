@@ -138,8 +138,6 @@ class MM_Backend
                     $flag = true;
                 }
                 if ($flag == true) {
-                    //check
-                    // var_dump($_POST);die;
                     $allowed = mmg()->setting()->allow_attachment;
                     if (!is_array($allowed)) {
                         $allowed = array();

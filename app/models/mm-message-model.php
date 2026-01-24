@@ -168,9 +168,6 @@ class MM_Message_Model
             $this->rules = array(
                 'content' => 'required',
             );
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('MM_Message_Model::validate() - Reply mode detected (conversation_id=' . $this->conversation_id . '), only checking content');
-            }
         } else {
             // New message - need send_to, subject, content
             $this->rules = array(
@@ -178,9 +175,6 @@ class MM_Message_Model
                 'content' => 'required',
                 'send_to' => 'required'
             );
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('MM_Message_Model::validate() - New message mode (no conversation_id), checking send_to, subject, content');
-            }
         }
         
         // Normalize recipients to a comma-separated list of user IDs (strip self, dedupe)
@@ -225,10 +219,6 @@ class MM_Message_Model
             if ($rule === 'required' && empty($this->$field)) {
                 $this->errors[$field] = sprintf(__('%s ist erforderlich', 'private_messaging'), ucfirst($field));
             }
-        }
-        
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('MM_Message_Model::validate() - Result: ' . (empty($this->errors) ? 'PASS' : 'FAIL with errors: ' . json_encode($this->errors)));
         }
         
         return empty($this->errors);

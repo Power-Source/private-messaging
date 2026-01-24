@@ -99,8 +99,6 @@
                                 .appendTo(this);
                         },
                         open: function (event, ui) {
-                            console.log(event);
-                            console.log(ui);
                         }
                     },
                     tooltipClass: 'ig-container'
@@ -207,8 +205,6 @@
                 return false;
             }
             
-            console.log('Form data to send:', $(that).find(":input").serialize());
-            
             $.ajax({
                 type: 'POST',
                 url: '<?php echo admin_url('admin-ajax.php') ?>',
@@ -217,7 +213,6 @@
                     that.find('button').attr('disabled', 'disabled');
                 },
                 success: function (data) {
-                    console.log('Server response:', data);
                     that.find('.form-group').removeClass('has-error has-success');
                     that.find('button').removeAttr('disabled');
                     if (data.status == 'success') {

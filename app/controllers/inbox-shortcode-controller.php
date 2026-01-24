@@ -293,9 +293,6 @@ class Inbox_Shortcode_Controller
 
         $model = new MM_Message_Model();
         $raw_payload = isset($_POST['MM_Message_Model']) ? wp_unslash($_POST['MM_Message_Model']) : array();
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('MM_Send_Message incoming payload: ' . json_encode($raw_payload));
-        }
         $model->import($raw_payload);
         $model = apply_filters('mm_before_send_message', $model);
 
@@ -377,10 +374,6 @@ class Inbox_Shortcode_Controller
                     ));
                     exit;
                 }
-
-                if (defined('WP_DEBUG') && WP_DEBUG) {
-                    error_log('MM_Send_Message recipients after filter: primary=' . json_encode($user_ids) . ' cc=' . json_encode($cc_list) . ' current=' . $current_user_id);
-                }
                 
                 if (empty($cc_list)) {
                     // Single recipient: always create a new conversation
@@ -399,13 +392,6 @@ class Inbox_Shortcode_Controller
                 ));
             }
         } else {
-            // Debug: log received payload when validation fails
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('MM_Send_Message validation failed. Errors: ' . json_encode($model->get_error()));
-                error_log('MM_Send_Message received payload: ' . json_encode(mmg()->post('MM_Message_Model')));
-                error_log('MM_Send_Message is_reply: ' . ($is_reply ? 'true' : 'false'));
-                error_log('MM_Send_Message conversation_id: ' . $raw_payload['conversation_id']);
-            }
             wp_send_json(array(
                 'status' => 'fail',
                 'errors' => $model->get_error(),
@@ -442,10 +428,6 @@ class Inbox_Shortcode_Controller
         MM_Message_Status_Model::model()->status($conversation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
         $id = MM_Message_Model::send($user_id, $conversation->id, $model->export());
         $conversation->update_index($id);
-
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('MM_Send_Message::_send_message created conv=' . $conversation->id . ' msg=' . $id . ' from=' . $current_user_id . ' to=' . $user_id . ' user_index=' . $conversation->user_index . ' message_count=' . $conversation->message_count);
-        }
         
         // Move attachments from temporary (0) to conversation directory
         if (!empty($model->attachment)) {

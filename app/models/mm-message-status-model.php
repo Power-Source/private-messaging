@@ -159,10 +159,6 @@ class MM_Message_Status_Model
         
         $model->status = $new_status;
         $model->save();
-
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('MM_Message_Status_Model::status set conversation_id=' . $conversation_id . ' user_id=' . $user_id . ' status=' . $new_status . ' model_id=' . ($model->id ?? 0));
-        }
     }
 
     /**

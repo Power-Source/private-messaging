@@ -356,9 +356,6 @@ class PM_Attachment_Handler
             if (file_exists($from_path)) {
                 if (rename($from_path, $to_path)) {
                     $moved_count++;
-                    if (defined('WP_DEBUG') && WP_DEBUG) {
-                        error_log("PM Attachment moved: $filename from conv $from_conv_id to $to_conv_id");
-                    }
                 }
             }
         }

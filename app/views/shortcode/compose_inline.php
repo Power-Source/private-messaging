@@ -74,15 +74,12 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
 
     // Initialize on jQuery ready
     jQuery(document).ready(function($) {
-        console.log('=== MM Compose jQuery Init ===');
-        
         // Remove any previously bound submit handlers to prevent duplicates
         $(document).off('submit', '#compose-form-inline');
         
         // Handle form submit via AJAX
         $(document).on('submit', '#compose-form-inline', function(e) {
             e.preventDefault();
-            console.log('Form submitted');
             
             var form = $(this);
 
@@ -125,8 +122,6 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
                 processData: false,
                 contentType: false,
                 success: function(response) {
-                    console.log('Submit response:', response);
-                    
                     if (response.status === 'success') {
                         // Close and reset form
                         var container = $('#compose-form-container');
@@ -159,7 +154,6 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
                             }
                         });
                     } else {
-                        console.error('Validation errors:', response.errors);
                         // Display errors
                         if (response.errors) {
                             $.each(response.errors, function(field, message) {
@@ -173,7 +167,6 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('AJAX error:', error);
                     alert('Error sending message');
                 }
             });
@@ -182,7 +175,6 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
         // Initialize Selectize for Send To field
         var sendToField = $('#mm_message_model-send_to');
         if (sendToField.length && $.fn.selectize) {
-            console.log('Initializing Selectize');
             try {
                 sendToField.selectize({
                     valueField: 'id',
@@ -212,32 +204,22 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
                     }
                 });
             } catch(e) {
-                console.error('Selectize error:', e);
+                // Selectize initialization failed
             }
-        } else {
-            console.warn('Selectize or field not found');
         }
     });
 
     // Initialize on DOM ready for attachments
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('=== MM Compose Init (Attachments) ===');
-        
         var fileInput = document.getElementById('mm-attachment-input');
         var statusEl = document.querySelector('.mm-attachment-status');
         var listEl = document.getElementById('mm-attachments-list');
         
-        console.log('File input:', fileInput);
-        console.log('Status el:', statusEl);
-        console.log('List el:', listEl);
-        
         // Use jQuery for event delegation to handle dynamic changes
         jQuery(document).on('change', '#mm-attachment-input', function(e) {
-            console.log('FILE INPUT CHANGED - Files count:', this.files.length);
             var files = this.files;
             
             for (var i = 0; i < files.length; i++) {
-                console.log('Uploading file:', files[i].name, 'Size:', files[i].size);
                 uploadAttachment(files[i]);
             }
             
@@ -246,8 +228,6 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
         });
         
         function uploadAttachment(file) {
-            console.log('START uploadAttachment:', file.name);
-            
             var formData = new FormData();
             formData.append('action', 'mm_upload_attachment');
             formData.append('file', file);
@@ -265,14 +245,10 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
                 body: formData
             })
             .then(function(response) {
-                console.log('Response received:', response.status);
                 return response.json();
             })
             .then(function(data) {
-                console.log('Response JSON:', data);
-                
                 if (data.success) {
-                    console.log('Upload SUCCESS');
                     var fileData = data.data;
                     window.mmAttachmentIds.push(fileData.filename);
                     updateAttachmentList(fileData);
@@ -281,7 +257,6 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
                         statusEl.textContent = '';
                     }
                 } else {
-                    console.log('Upload FAILED:', data.data);
                     if (statusEl) {
                         statusEl.textContent = 'Error: ' + (data.data || 'Unknown error');
                         statusEl.style.color = '#d9534f';

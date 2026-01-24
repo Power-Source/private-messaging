@@ -565,10 +565,6 @@ class MM_Conversation_Model
         $this->message_count = count($messages);
 
         $this->save();
-
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('MM_Conversation_Model::update_index conv=' . $this->id . ' user_index=' . $this->user_index . ' message_count=' . $this->message_count . ' message_id=' . $message_id . ' remove=' . ($remove ? '1' : '0'));
-        }
     }
 
     /**
@@ -762,7 +758,6 @@ class MM_Conversation_Model
         );
         
         $post_ids = $wpdb->get_col($post_ids_sql);
-        error_log('MM Search SQL: Found ' . count($post_ids) . ' posts: ' . implode(',', $post_ids));
         
         if (empty($post_ids)) {
             mmg()->global['conversation_total_pages'] = 0;
@@ -781,7 +776,6 @@ class MM_Conversation_Model
         );
         
         $conversation_ids = $wpdb->get_col($conv_ids_sql);
-        error_log('MM Search SQL: Found conversation IDs: ' . implode(',', $conversation_ids));
         
         if (empty($conversation_ids)) {
             mmg()->global['conversation_total_pages'] = 0;
@@ -790,12 +784,6 @@ class MM_Conversation_Model
         
         // Step 3: Get full conversation objects - search should show ALL user's conversations
         $current_user = get_current_user_id();
-        error_log('MM Search SQL: Current user = ' . $current_user);
-        
-        // Debug: Check conversation details
-        $debug_conv_sql = "SELECT * FROM {$conv_table} WHERE id IN (" . implode(',', $conversation_ids) . ")";
-        $debug_convs = $wpdb->get_results($debug_conv_sql);
-        error_log('MM Search SQL: Conversation details: ' . print_r($debug_convs, true));
         
         // Use user_index to find conversations where current user is a participant
         // user_index contains comma-separated user IDs like "2,1" or "1,3,5"
@@ -817,7 +805,6 @@ class MM_Conversation_Model
         );
 
         $results = $wpdb->get_results($sql, ARRAY_A);
-        error_log('MM Search SQL: Final results = ' . count($results) . ' conversations');
         
         // Calculate total pages for pagination
         $count_sql = $wpdb->prepare(

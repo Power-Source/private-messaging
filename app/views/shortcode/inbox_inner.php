@@ -316,8 +316,6 @@ if (!$is_ajax_reload && isset($compose_html)) {
                 var dropdown = $('#mm-search-dropdown');
                 var clearBtn = $('#mm-search-clear');
 
-                console.log('Search input changed:', query);
-
                 // Show/hide clear button
                 if (query.length > 0) {
                     clearBtn.show();
@@ -331,11 +329,8 @@ if (!$is_ajax_reload && isset($compose_html)) {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(function() {
                     if (query.length < 2) {
-                        console.log('Query too short:', query);
                         return;
                     }
-
-                    console.log('Sending AJAX search for:', query);
 
                     $.ajax({
                         type: 'GET',
@@ -345,7 +340,6 @@ if (!$is_ajax_reload && isset($compose_html)) {
                             query: query
                         },
                         success: function(response) {
-                            console.log('Search response:', response);
                             if (response.success && response.data.results && response.data.results.length > 0) {
                                 var html = '';
                                 $.each(response.data.results, function(i, item) {
@@ -370,20 +364,17 @@ if (!$is_ajax_reload && isset($compose_html)) {
                                 // Bind click to search results
                                 $('.mm-search-item').off('click').on('click', function() {
                                     var convId = $(this).data('id');
-                                    console.log('Search result clicked:', convId);
                                     $('.load-conv[data-id="' + convId + '"]').trigger('click');
                                     dropdown.hide();
                                     $('#mm-search-input').val('');
                                     clearBtn.hide();
                                 });
                             } else {
-                                console.log('No results found. Response:', response);
                                 dropdown.html('<div style="padding:16px;text-align:center;color:#9ca3af;font-size:12px;font-style:italic;"><?php echo esc_js(__('Keine Ergebnisse gefunden', mmg()->domain)); ?></div>').show();
                             }
                         },
                         error: function(xhr, status, error) {
-                            console.error('Search error:', status, error, xhr.responseText);
-                            dropdown.html('<div style="padding:12px;text-align:center;color:#dc2626;font-size:12px;">Fehler beim Suchen: ' + status + '</div>').show();
+                            dropdown.html('<div style="padding:12px;text-align:center;color:#dc2626;font-size:12px;">Fehler beim Suchen</div>').show();
                         }
                     });
                 }, 300);

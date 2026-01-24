@@ -439,10 +439,8 @@ class MM_Group_Conversation
                             if (!query.length) return callback();
                             $.ajax({
                                 type: 'POST',
-                                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                                url: '<?php echo admin_url('admin-ajax.php?action=mm_suggest_include_users&_wpnonce='.wp_create_nonce('mm_suggest_include_users')) ?>',
                                 data: {
-                                    action: 'mm_suggest_include_users',
-                                    _wpnonce: '<?php echo wp_create_nonce('mm_suggest_include_users') ?>',
                                     query: query,
                                     parent_id: conversationId
                                 },

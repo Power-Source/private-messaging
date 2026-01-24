@@ -346,6 +346,7 @@ if (!class_exists('MMessaging')) {
             }
             include $this->plugin_path . 'app/components/mm-addon-table.php';
             include $this->plugin_path . 'app/handlers/pm-attachment-handler.php';
+            include $this->plugin_path . 'app/handlers/pm-avatar-handler.php';
             //load add on
             $addons = $this->setting()->plugins;
             if (!is_array($addons)) {

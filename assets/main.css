@@ -77,6 +77,14 @@
     margin-bottom: 1px;
 }
 
+.mmessage-container .list-group-item:hover {
+    background: #f9fafb;
+}
+
+.mmessage-container .list-group-item.active {
+    background: #eef2ff;
+}
+
 .mmessage-container .list-group-item p {
     margin-bottom: 0;
     border-radius: 0;
@@ -103,6 +111,22 @@
 
 .mmessage-container .list-group-item.read strong {
     font-weight: normal;
+}
+
+.mmessage-container .list-group-item.unread strong,
+.mmessage-container .list-group-item.unread span {
+    font-weight: 600;
+}
+
+.mmessage-container .mm-toolbar .btn {
+    border-radius: 8px;
+}
+
+.mmessage-container .mm-inline-status {
+    display: none;
+    font-size: 12px;
+    margin: 0 0 8px;
+    text-align: right;
 }
 
 .mm_login_form, .mm_sign_up {

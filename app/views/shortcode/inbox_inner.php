@@ -11,19 +11,25 @@ if (!$is_ajax_reload && isset($compose_html)) {
     <div class="row">
         <div class="col-md-5 col-sm-3 col-xs-3 no-padding">
             <div class="message-list">
-                <form class="mm-search-form" method="get"
-                      action="<?php echo parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); ?>">
-                    <div class="input-group input-group-sm">
-                        <input type="text" class="form-control"
-                               value="<?php echo mmg()->get('query', '') ?>" name="query"
-                               placeholder="<?php _e("Search", mmg()->domain) ?>">
-                        <button class="btn btn-link" type="submit">
+                <div class="mm-search-form" style="position:relative;margin-bottom:10px;">
+                    <div class="input-group input-group-sm" style="position:relative;">
+                        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;z-index:5;">
                             <i class="fa fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control mm-search-input"
+                               id="mm-search-input"
+                               value="<?php echo esc_attr(mmg()->get('query', '')) ?>"
+                               placeholder="<?php _e("Suchen...", mmg()->domain) ?>"
+                               style="border-radius:6px;padding-left:35px;padding-right:35px;">
+                        <button class="btn btn-link" type="button" id="mm-search-clear"
+                               style="position:absolute;right:8px;top:50%;transform:translateY(-50%);z-index:10;border:none;background:none;color:#dc2626;display:none;padding:0;font-size:16px;cursor:pointer;">
+                            <i class="fa fa-times"></i>
                         </button>
-
                         <div class="clearfix"></div>
                     </div>
-                </form>
+                    <div id="mm-search-dropdown" class="mm-search-dropdown" 
+                         style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ddd;border-top:none;border-radius:0 0 6px 6px;max-height:300px;overflow-y:auto;z-index:100;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.1);margin-top:-1px;"></div>
+                </div>
                 <div class="ps-container ps-active-x ps-active-y" id="mmessage-list">
                     <ul class="list-group no-margin">
                         <?php foreach ($models as $key => $model): ?>
@@ -35,39 +41,45 @@ if (!$is_ajax_reload && isset($compose_html)) {
                                 }
                             }
                             ?>
-                            <?php $message = $model->get_last_message(); ?>
+                            <?php $message = $model->get_last_message(); $is_unread = $model->has_unread(); ?>
                             <li data-id="<?php echo mmg()->encrypt($model->id) ?>"
-                                class="load-conv <?php echo $model->has_unread() == false ? 'read' : null ?> list-group-item <?php echo $active_conversation == true ? 'active' : null ?>">
-                                <div class="row">
-                                    <div class="col-md-3 no-padding">
-                                        <img style="width: 90%" class="img-responsive img-circle center-block"
-                                             src="<?php echo mmg()->get_avatar_url(get_avatar($message->send_from)) ?>">
-                                    </div>
-                                    <div class="col-md-9">
-                                        <div>
-                                            <strong class="small">
-                                                <?php echo $message->get_name($message->send_from) ?>
-                                            </strong>
-                                            <label
-                                                class="pull-right label label-primary"><?php echo date('j M', strtotime($message->date)) ?></label>
+                                class="load-conv list-group-item <?php echo $is_unread ? 'unread' : 'read' ?> <?php echo $active_conversation == true ? 'active' : null ?>"
+                                style="display:flex;align-items:flex-start;gap:12px;border:none;border-bottom:1px solid #e5e7eb;padding:10px 12px;cursor:pointer;margin:0;">
+                                <div style="flex-shrink:0;width:36px;height:36px;">
+                                    <?php echo PM_Avatar_Handler::get_avatar_html($message->send_from, 36, 'mm-list-avatar'); ?>
+                                </div>
+                                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap;">
+                                        <strong style="<?php echo $is_unread ? 'font-weight:600;color:#111827;' : 'color:#374151;'; ?>;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                            <?php echo $message->get_name($message->send_from) ?>
+                                        </strong>
+                                        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                                            <?php if (!empty($message->attachment)) : ?>
+                                                <i class="fa fa-paperclip" title="<?php esc_attr_e('Anhang', mmg()->domain) ?>" style="color:#6b7280;font-size:11px;"></i>
+                                            <?php endif; ?>
+                                            <span style="background:#eef2ff;color:#374151;border-radius:12px;padding:2px 8px;font-size:11px;white-space:nowrap;">
+                                                <?php echo date('j M', strtotime($message->date)) ?>
+                                            </span>
                                         </div>
-                                        <div>
-                                            <strong><?php
+                                    </div>
+                                    <div style="display:flex;gap:4px;align-items:center;">
+                                        <span style="<?php echo $is_unread ? 'font-weight:600;color:#111827;' : 'color:#111827;'; ?>;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                            <?php
                                                 $fmessage = $model->get_first_message();
                                                 $subject = trim(strip_tags(apply_filters('mm_message_subject', $fmessage->subject)), "\n");
-
-                                                echo mmg()->mb_word_wrap($subject, 50) ?></strong>
-                                        </div>
+                                                echo mmg()->mb_word_wrap($subject, 40);
+                                            ?>
+                                        </span>
                                     </div>
-                                    <div class="clearfix"></div>
-                                    <div class="col-md-12">
-                                        <p class="text-muted"><?php
-                                            $content = trim(strip_tags(apply_filters('mm_message_content', $message->content)), "\n");
-                                            echo mmg()->mb_word_wrap($content, 150) ?></p>
+                                    <div style="margin:0;">
+                                        <span style="color:#6b7280;font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;">
+                                            <?php
+                                                $content = trim(strip_tags(apply_filters('mm_message_content', $message->content)), "\n");
+                                                echo mmg()->mb_word_wrap($content, 80);
+                                            ?>
+                                        </span>
                                     </div>
-                                    <div class="clearfix"></div>
                                 </div>
-                                <div class="clearfix"></div>
                             </li>
                         <?php endforeach; ?>
                     </ul>
@@ -208,7 +220,61 @@ if (!$is_ajax_reload && isset($compose_html)) {
             $('#mmessage-list').perfectScrollbar({ suppressScrollX: true });
             $('#mmessage-content').perfectScrollbar({ suppressScrollX: true });
             if ($('.load-conv.active').length > 0) { $('.load-conv.active').first().trigger('click'); }
-            
+
+            // Keyboard shortcuts: j (next), k (prev), r (reply), a (archive/unarchive), Del (delete)
+            $(document).on('keydown', function (e) {
+                // Avoid interfering when typing in inputs/textareas or using modifier keys
+                var tag = e.target.tagName.toLowerCase();
+                if (tag === 'input' || tag === 'textarea' || e.ctrlKey || e.metaKey || e.altKey) return;
+
+                var items = $('.load-conv');
+                if (!items.length) return;
+                var active = $('.load-conv.active');
+                var idx = active.length ? items.index(active) : 0;
+
+                // j = next
+                if (e.key === 'j' || e.keyCode === 74) {
+                    e.preventDefault();
+                    var nextIdx = Math.min(idx + 1, items.length - 1);
+                    $(items.get(nextIdx)).trigger('click');
+                    return;
+                }
+                // k = prev
+                if (e.key === 'k' || e.keyCode === 75) {
+                    e.preventDefault();
+                    var prevIdx = Math.max(idx - 1, 0);
+                    $(items.get(prevIdx)).trigger('click');
+                    return;
+                }
+                // r = reply
+                if (e.key === 'r' || e.keyCode === 82) {
+                    e.preventDefault();
+                    var replyBtn = $('#mmessage-content .mm-reply-inline').first();
+                    if (replyBtn.length) replyBtn.trigger('click');
+                    return;
+                }
+                // a = archive / unarchive (toggle via existing button)
+                if (e.key === 'a' || e.keyCode === 65) {
+                    e.preventDefault();
+                    var statusBtn = $('#mmessage-content .mm-status').first();
+                    if (statusBtn.length) statusBtn.trigger('click');
+                    return;
+                }
+                // Delete key = delete conversation
+                if (e.key === 'Delete' || e.keyCode === 46) {
+                    e.preventDefault();
+                    var delBtn = $('#mmessage-content .mm-delete-conv').first();
+                    if (delBtn.length) delBtn.trigger('click');
+                    return;
+                }
+            });
+
+            // Helper function to escape HTML
+            function esc(text) {
+                if (!text) return '';
+                return $('<div/>').text(text).html();
+            }
+
             // Reply button handler - opens compose form in reply mode
             $('body').on('click', '.mm-reply-inline', function(e) {
                 e.preventDefault();
@@ -241,6 +307,91 @@ if (!$is_ajax_reload && isset($compose_html)) {
                 $('html, body').animate({
                     scrollTop: container.offset().top - 20
                 }, 300);
+            });
+
+            // Live search: As user types, fetch results via AJAX
+            var searchTimeout;
+            $('#mm-search-input').on('keyup', function() {
+                var query = $(this).val().trim();
+                var dropdown = $('#mm-search-dropdown');
+                var clearBtn = $('#mm-search-clear');
+
+                console.log('Search input changed:', query);
+
+                // Show/hide clear button
+                if (query.length > 0) {
+                    clearBtn.show();
+                } else {
+                    clearBtn.hide();
+                    dropdown.hide();
+                    return;
+                }
+
+                // Debounce search
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    if (query.length < 2) {
+                        console.log('Query too short:', query);
+                        return;
+                    }
+
+                    console.log('Sending AJAX search for:', query);
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '<?php echo admin_url('admin-ajax.php') ?>',
+                        data: {
+                            action: 'mm_search_conversations',
+                            query: query
+                        },
+                        success: function(response) {
+                            console.log('Search response:', response);
+                            if (response.success && response.data.results && response.data.results.length > 0) {
+                                var html = '';
+                                $.each(response.data.results, function(i, item) {
+                                    html += '<div class="mm-search-item" data-id="' + item.id + '" style="padding:10px 12px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background=\'#f9fafb\'" onmouseout="this.style.background=\'#fff\'">';
+                                    html += '<div style="font-weight:600;color:#111827;font-size:13px;">' + esc(item.subject) + '</div>';
+                                    html += '<div style="color:#6b7280;font-size:12px;margin-top:2px;">' + esc(item.sender) + '</div>';
+                                    html += '<div style="color:#6b7280;font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(item.snippet) + '</div>';
+                                    html += '<div style="color:#9ca3af;font-size:10px;margin-top:4px;">' + esc(item.date) + '</div>';
+                                    html += '</div>';
+                                });
+                                dropdown.html(html).show();
+                                
+                                // Bind click to search results
+                                $('.mm-search-item').off('click').on('click', function() {
+                                    var convId = $(this).data('id');
+                                    console.log('Search result clicked:', convId);
+                                    $('.load-conv[data-id="' + convId + '"]').trigger('click');
+                                    dropdown.hide();
+                                    $('#mm-search-input').val('');
+                                    clearBtn.hide();
+                                });
+                            } else {
+                                console.log('No results found. Response:', response);
+                                dropdown.html('<div style="padding:12px;text-align:center;color:#9ca3af;font-size:12px;"><?php echo esc_js(__('Keine Ergebnisse gefunden', mmg()->domain)); ?></div>').show();
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Search error:', status, error, xhr.responseText);
+                            dropdown.html('<div style="padding:12px;text-align:center;color:#dc2626;font-size:12px;">Fehler beim Suchen: ' + status + '</div>').show();
+                        }
+                    });
+                }, 300);
+            });
+
+            // Clear search
+            $('#mm-search-clear').on('click', function() {
+                $('#mm-search-input').val('').focus();
+                $(this).hide();
+                $('#mm-search-dropdown').hide();
+            });
+
+            // Close dropdown on escape
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    $('#mm-search-dropdown').hide();
+                }
             });
         });
     </script>

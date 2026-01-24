@@ -103,8 +103,9 @@ $has_history = count($history_messages) > 0;
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-3">
-                            <img style="width: 100%;max-width: 100px" class="img-responsive img-circle center-block"
-                                 src="<?php echo mmg()->get_avatar_url(get_avatar($message->send_from)) ?>">
+                            <div style="text-align:center;display:flex;justify-content:center;align-items:center;">
+                                <?php echo PM_Avatar_Handler::get_avatar_html($message->send_from, 100, 'mm-detail-avatar'); ?>
+                            </div>
                         </div>
                         <div class="col-md-9">
                             <strong><?php
@@ -243,9 +244,9 @@ $has_history = count($history_messages) > 0;
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <img style="max-width:100px;width: 100%"
-                                             class="img-responsive img-circle center-block"
-                                             src="<?php echo mmg()->get_avatar_url(get_avatar($message->send_from)) ?>">
+                                        <div style="text-align:center;display:flex;justify-content:center;align-items:center;">
+                                            <?php echo PM_Avatar_Handler::get_avatar_html($message->send_from, 100, 'mm-detail-avatar'); ?>
+                                        </div>
                                     </div>
                                     <div class="col-md-9">
                                         <strong><?php echo $message->get_name($message->send_from) ?></strong>

@@ -726,6 +726,124 @@ class MM_Conversation_Model
     }
 
     /**
+     * Search conversations by subject or participant name
+     * 
+     * @param string $query Search query
+     * @return array Conversation models matching the query
+     */
+    public static function search($query)
+    {
+        global $wpdb;
+        
+        if (empty($query)) {
+            return self::get_conversation();
+        }
+
+        $per_page = mmg()->setting()->per_page;
+        $paged = mmg()->get('mpaged', 1);
+        $offset = ($paged - 1) * $per_page;
+        
+        $conv_table = self::get_table();
+        $status_table = MM_Message_Status_Model::get_table();
+        $posts_table = $wpdb->posts;
+        $postmeta_table = $wpdb->postmeta;
+        
+        $search_term = '%' . $wpdb->esc_like($query) . '%';
+        
+        // Step 1: Find all posts matching the search term
+        $post_ids_sql = $wpdb->prepare(
+            "SELECT ID FROM {$posts_table} 
+            WHERE post_type = %s AND (post_title LIKE %s OR post_content LIKE %s) 
+            AND post_status = %s",
+            MM_Message_Model::POST_TYPE,
+            $search_term,
+            $search_term,
+            'publish'
+        );
+        
+        $post_ids = $wpdb->get_col($post_ids_sql);
+        error_log('MM Search SQL: Found ' . count($post_ids) . ' posts: ' . implode(',', $post_ids));
+        
+        if (empty($post_ids)) {
+            mmg()->global['conversation_total_pages'] = 0;
+            return array();
+        }
+        
+        // Step 2: Get conversation IDs from the post metadata
+        $placeholders = implode(',', array_fill(0, count($post_ids), '%d'));
+        $conv_ids_sql = $wpdb->prepare(
+            "SELECT DISTINCT CAST(meta_value AS UNSIGNED) as conv_id 
+            FROM {$postmeta_table} 
+            WHERE post_id IN ($placeholders)
+            AND meta_key = %s 
+            AND meta_value != ''",
+            array_merge($post_ids, array('_conversation_id'))
+        );
+        
+        $conversation_ids = $wpdb->get_col($conv_ids_sql);
+        error_log('MM Search SQL: Found conversation IDs: ' . implode(',', $conversation_ids));
+        
+        if (empty($conversation_ids)) {
+            mmg()->global['conversation_total_pages'] = 0;
+            return array();
+        }
+        
+        // Step 3: Get full conversation objects - search should show ALL user's conversations
+        $current_user = get_current_user_id();
+        error_log('MM Search SQL: Current user = ' . $current_user);
+        
+        // Debug: Check conversation details
+        $debug_conv_sql = "SELECT * FROM {$conv_table} WHERE id IN (" . implode(',', $conversation_ids) . ")";
+        $debug_convs = $wpdb->get_results($debug_conv_sql);
+        error_log('MM Search SQL: Conversation details: ' . print_r($debug_convs, true));
+        
+        // Use user_index to find conversations where current user is a participant
+        // user_index contains comma-separated user IDs like "2,1" or "1,3,5"
+        $conv_placeholders = implode(',', array_fill(0, count($conversation_ids), '%d'));
+        $sql = $wpdb->prepare(
+            "SELECT DISTINCT conversation.* 
+            FROM {$conv_table} conversation
+            WHERE conversation.id IN ($conv_placeholders)
+            AND FIND_IN_SET(%d, conversation.user_index) > 0
+            AND conversation.site_id = %d
+            ORDER BY conversation.date_created DESC 
+            LIMIT %d, %d",
+            array_merge($conversation_ids, array(
+                $current_user,
+                get_current_blog_id(),
+                $offset,
+                $per_page
+            ))
+        );
+
+        $results = $wpdb->get_results($sql, ARRAY_A);
+        error_log('MM Search SQL: Final results = ' . count($results) . ' conversations');
+        
+        // Calculate total pages for pagination
+        $count_sql = $wpdb->prepare(
+            "SELECT COUNT(DISTINCT conversation.id) as total
+            FROM {$conv_table} conversation
+            INNER JOIN {$status_table} mstat ON mstat.conversation_id = conversation.id
+            WHERE conversation.id IN ($conv_placeholders)
+            AND mstat.user_id = %d 
+            AND mstat.status IN (%d, %d)
+            AND conversation.site_id = %d",
+            array_merge($conversation_ids, array(
+                get_current_user_id(),
+                MM_Message_Status_Model::STATUS_READ,
+                MM_Message_Status_Model::STATUS_UNREAD,
+                get_current_blog_id()
+            ))
+        );
+        
+        $count_result = $wpdb->get_var($count_sql);
+        $total_pages = ceil($count_result / $per_page);
+        mmg()->global['conversation_total_pages'] = $total_pages;
+
+        return array_map(array(__CLASS__, 'from_array'), $results ?: array());
+    }
+
+    /**
      * Get table name
      */
     public static function get_table()

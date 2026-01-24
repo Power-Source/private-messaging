@@ -88,11 +88,17 @@ if (!class_exists('MM_Words_Filter')) {
                 return '';
             }
             parse_str(mmg()->post('data'), $data);
-            $rules = array(
-                'word' => 'required'
-            );
-            $validate = GUMP::is_valid($data, $rules);
-            if ($validate === true) {
+            
+            // Validate that word field is not empty
+            if (empty($data['word'])) {
+                wp_send_json(array(
+                    'status' => 0,
+                    'errors' => __('Word field is required', mmg()->domain)
+                ));
+                return;
+            }
+            
+            if (true) {
                 $model = new Words_Filter_Model();
                 $type = !isset($data['is_regex']) ? 'text' : 'regex';
                 if (strlen($data['key']) > 0) {

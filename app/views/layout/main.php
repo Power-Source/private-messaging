@@ -176,12 +176,7 @@
 
         var mmCurrentUserId = <?php echo intval(get_current_user_id()); ?>;
 
-        $('body').on('submit', '.compose-form', function (e) {
-            // Prevent duplicate AJAX submits when the inline compose handler (FormData) is active
-            if ($(this).is('#compose-form-inline')) {
-                return true; // let the dedicated inline handler run
-            }
-
+        $('body').on('submit', '.compose-form:not(#compose-form-inline)', function (e) {
             e.preventDefault();
             var that = $(this);
             var sendToField = $('#mm_message_model-send_to');

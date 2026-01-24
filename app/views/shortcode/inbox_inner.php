@@ -28,7 +28,7 @@ if (!$is_ajax_reload && isset($compose_html)) {
                         <div class="clearfix"></div>
                     </div>
                     <div id="mm-search-dropdown" class="mm-search-dropdown" 
-                         style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ddd;border-top:none;border-radius:0 0 6px 6px;max-height:300px;overflow-y:auto;z-index:100;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.1);margin-top:-1px;"></div>
+                         style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 6px 6px;max-height:400px;overflow-y:auto;z-index:100;display:none;box-shadow:0 4px 16px rgba(0,0,0,0.12);margin-top:-1px;"></div>
                 </div>
                 <div class="ps-container ps-active-x ps-active-y" id="mmessage-list">
                     <ul class="list-group no-margin">
@@ -349,11 +349,20 @@ if (!$is_ajax_reload && isset($compose_html)) {
                             if (response.success && response.data.results && response.data.results.length > 0) {
                                 var html = '';
                                 $.each(response.data.results, function(i, item) {
-                                    html += '<div class="mm-search-item" data-id="' + item.id + '" style="padding:10px 12px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background=\'#f9fafb\'" onmouseout="this.style.background=\'#fff\'">';
-                                    html += '<div style="font-weight:600;color:#111827;font-size:13px;">' + esc(item.subject) + '</div>';
-                                    html += '<div style="color:#6b7280;font-size:12px;margin-top:2px;">' + esc(item.sender) + '</div>';
-                                    html += '<div style="color:#6b7280;font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(item.snippet) + '</div>';
-                                    html += '<div style="color:#9ca3af;font-size:10px;margin-top:4px;">' + esc(item.date) + '</div>';
+                                    html += '<div class="mm-search-item" data-id="' + item.id + '" style="padding:8px 12px;border-bottom:1px solid #e5e7eb;cursor:pointer;transition:all 0.15s ease;display:flex;align-items:center;gap:10px;" onmouseover="this.style.background=\'#f3f4f6\'" onmouseout="this.style.background=\'transparent\'">';
+                                    
+                                    // Avatar
+                                    html += '<div style="flex-shrink:0;">' + item.avatar + '</div>';
+                                    
+                                    // Content
+                                    html += '<div style="flex:1;min-width:0;">';
+                                    html += '<div style="font-weight:600;color:#111827;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(item.subject) + '</div>';
+                                    html += '<div style="color:#9ca3af;font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(item.snippet) + '</div>';
+                                    html += '</div>';
+                                    
+                                    // Date
+                                    html += '<div style="flex-shrink:0;color:#9ca3af;font-size:10px;white-space:nowrap;">' + esc(item.date) + '</div>';
+                                    
                                     html += '</div>';
                                 });
                                 dropdown.html(html).show();
@@ -369,7 +378,7 @@ if (!$is_ajax_reload && isset($compose_html)) {
                                 });
                             } else {
                                 console.log('No results found. Response:', response);
-                                dropdown.html('<div style="padding:12px;text-align:center;color:#9ca3af;font-size:12px;"><?php echo esc_js(__('Keine Ergebnisse gefunden', mmg()->domain)); ?></div>').show();
+                                dropdown.html('<div style="padding:16px;text-align:center;color:#9ca3af;font-size:12px;font-style:italic;"><?php echo esc_js(__('Keine Ergebnisse gefunden', mmg()->domain)); ?></div>').show();
                             }
                         },
                         error: function(xhr, status, error) {

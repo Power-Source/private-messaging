@@ -163,9 +163,10 @@ class MAjax
                     $items[] = array(
                         'id' => mmg()->encrypt($conversation->id),
                         'subject' => $first_msg ? apply_filters('mm_message_subject', $first_msg->subject) : '(No subject)',
-                        'snippet' => mb_substr(strip_tags($message->content), 0, 80),
+                        'snippet' => mb_substr(strip_tags($message->content), 0, 60),
                         'sender' => $message->get_name($message->send_from),
                         'date' => date('j M', strtotime($message->date)),
+                        'avatar' => PM_Avatar_Handler::get_avatar_html($message->send_from, 32, 'mm-search-avatar'),
                     );
                 }
             }

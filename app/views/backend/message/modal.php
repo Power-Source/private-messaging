@@ -15,7 +15,7 @@ $form_id = 'inject-message-form';
                         <form method="post" class="form-horizontal" id="<?php echo $form_id ?>">
                         <div class="modal-body">
                             <div style="margin-bottom: 0"
-                                 class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
+                                 class="form-group">
                                 <label for="mm_message_model-subject" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Subject", mmg()->domain); ?></label>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
                                     <input type="text" 
@@ -23,14 +23,12 @@ $form_id = 'inject-message-form';
                                            id="mm_message_model-subject" 
                                            class="form-control" 
                                            placeholder="<?php echo esc_attr__('Subject', mmg()->domain); ?>"
-                                           value="<?php echo esc_attr($model->subject); ?>">
-                                    <span
-                                        class="help-block m-b-none error-subject"><?php echo esc_html($model->get_error("subject")); ?></span>
+                                           value="<?php echo esc_attr($model->subject ?? ''); ?>">
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
                             <div style="margin-bottom: 0"
-                                 class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
+                                 class="form-group">
                                 <label for="mm_compose_content" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Content", mmg()->domain); ?></label>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
                                     <textarea 
@@ -41,8 +39,6 @@ $form_id = 'inject-message-form';
                                         rows="8"
                                         placeholder="<?php echo esc_attr__('Content', mmg()->domain); ?>"
                                     ><?php echo esc_textarea($model->content ?? ''); ?></textarea>
-                                    <span
-                                        class="help-block m-b-none error-content"><?php echo esc_html($model->get_error("content")); ?></span>
                                 </div>
                                 <div class="clearfix"></div>
                             </div>

@@ -43,22 +43,67 @@ $messages = $model->get_messages();
                                                 </div>
                                             </div>
                                             <!-- Message Content -->
-                                            <div style="color: #374151; font-size: 13px; line-height: 1.6;">
+                                            <div style="color: #374151; font-size: 13px; line-height: 1.6; margin-bottom: 12px;">
                                                 <?php echo wpautop($message->content); ?>
                                             </div>
+                                            
+                                            <!-- Attachments -->
+                                            <?php 
+                                            if (!empty($message->attachment)) {
+                                                $attachment_files = array_filter(explode(',', $message->attachment));
+                                                if (count($attachment_files) > 0): 
+                                            ?>
+                                                <div class="mm-attachments" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                                                    <?php foreach ($attachment_files as $filename): 
+                                                        $filename = trim($filename);
+                                                        $file_info = PM_Attachment_Handler::get_file_info($message->conversation_id, $filename);
+                                                        if (!$file_info) continue;
+                                                        
+                                                        $is_image = in_array(strtolower($file_info['extension']), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                                        $file_url = $file_info['url'];
+                                                    ?>
+                                                        <?php if ($is_image): ?>
+                                                            <div style="margin-bottom: 12px;">
+                                                                <img src="<?php echo esc_url($file_url); ?>" 
+                                                                     alt="<?php echo esc_attr($file_info['display_name']); ?>"
+                                                                     style="max-width: 400px; max-height: 300px; border-radius: 8px; display: block; cursor: pointer;"
+                                                                     onclick="window.open('<?php echo esc_url($file_url); ?>', '_blank')">
+                                                                <small style="color: #6b7280; display: block; margin-top: 4px;">
+                                                                    <?php echo esc_html($file_info['display_name']); ?> (<?php echo esc_html($file_info['size_formatted']); ?>)
+                                                                </small>
+                                                            </div>
+                                                        <?php else: ?>
+                                                            <div style="margin-bottom: 8px; padding: 8px 12px; background: #f3f4f6; border-radius: 6px; display: inline-block;">
+                                                                <a href="<?php echo esc_url($file_url); ?>" target="_blank" style="color: #0073aa; text-decoration: none; font-size: 12px;">
+                                                                    <i class="fa fa-download"></i> <?php echo esc_html($file_info['display_name']); ?> (<?php echo esc_html($file_info['size_formatted']); ?>)
+                                                                </a>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            <?php 
+                                                endif;
+                                            }
+                                            ?>
                                         </td>
-                                        <td style="vertical-align: top; padding: 12px; width: 80px; text-align: center;">
+                                        <td style="vertical-align: top; padding: 12px; width: auto; text-align: right;">
                                             <a id="target-message-<?php echo $message->id ?>"
                                                href="#message-<?php echo $message->id ?>"
-                                               class="button button-small leanmodal-trigger" title="<?php _e('Edit', mmg()->domain); ?>" style="display: block; margin-bottom: 4px;">
-                                                <i class="fa fa-edit"></i>
+                                               class="leanmodal-trigger" 
+                                               title="<?php _e('Edit', mmg()->domain); ?>" 
+                                               style="display: inline-block; margin-right: 6px; padding: 8px 12px; background: #0073aa; color: white; border-radius: 4px; text-decoration: none; font-size: 13px; transition: background 0.2s;">
+                                                <i class="fa fa-edit"></i> <?php _e('Edit', mmg()->domain); ?>
                                             </a>
-                                            <form method="post" style="display: inline" class="delete-message-frm">
+                                            <form method="post" style="display: inline;" class="delete-message-frm">
                                                 <input type="hidden" name="id" value="<?php echo $message->id ?>">
                                                 <input type="hidden" name="action" value="mm_delete_user_message">
                                                 <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('mm_delete_user_message'); ?>">
-                                                <button type="submit" class="button button-small" title="<?php _e('Delete', mmg()->domain); ?>" style="display: block;">
-                                                    <i class="fa fa-trash"></i>
+                                                <button type="submit" 
+                                                        title="<?php _e('Delete', mmg()->domain); ?>" 
+                                                        style="display: inline-block; padding: 8px 12px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; transition: background 0.2s;"
+                                                        onmouseover="this.style.background='#c82333';"
+                                                        onmouseout="this.style.background='#dc3545';">
+                                                    <i class="fa fa-trash"></i> <?php _e('Delete', mmg()->domain); ?>
                                                 </button>
                                             </form>
                                         </td>
@@ -113,7 +158,7 @@ $messages = $model->get_messages();
         </div>
     </div>
 </div>
-<?php $this->render_partial('backend/message/modal', array(
+<?php $this->load_template_part('backend/message/modal', array(
     'conversation_id' => $model->id
 )) ?>
 <!-- /.modal -->

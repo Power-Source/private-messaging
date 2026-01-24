@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Private Messaging
-Plugin URI: https://premium.wpmudev.org/project/private-messaging
-Description: Private user-to-user communication for placing bids, sharing project specs and hidden internal communication. Complete with front end integration, guarded contact information and protected file sharing.
+Plugin Name: PS PM-System
 Author: PSOURCE
+Plugin URI: https://premium.wpmudev.org/project/private-messaging
+Description: Private Benutzer-zu-Benutzer-Kommunikation zur Abgabe von Angeboten, zum Teilen von Projektspezifikationen und zur versteckten internen Kommunikation. Komplett mit Front-End-Integration, geschützten Kontaktinformationen und geschützter Dateifreigabe.
 Version: 1.0.0
 Author URI: https://github.com/Power-Source
 Text Domain: private_messaging

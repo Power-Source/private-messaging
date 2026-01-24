@@ -25,9 +25,9 @@ class Message_Me_Shortcode_Controller
         $a = shortcode_atts(array(
             'user_id' => '',
             'user_name' => '',
-            'text' => __('Message me', mmg()->domain),
+            'text' => __('Kontaktiere mich', mmg()->domain),
             'class' => 'btn btn-sm btn-primary',
-            'subject' => __('You have new message!', mmg()->domain),
+            'subject' => __('Du hast eine neue Nachricht!', mmg()->domain),
             'in_the_loop' => false
         ), $atts);
 

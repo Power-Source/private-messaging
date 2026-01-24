@@ -68,25 +68,25 @@ class PM_Attachment_Handler
 
         // Check file size
         if ($file['size'] > self::MAX_FILE_SIZE) {
-            return new WP_Error('file_too_large', sprintf('File size exceeds %s MB limit', self::MAX_FILE_SIZE / 1048576));
+            return new WP_Error('file_too_large', sprintf('Die Dateigröße überschreitet das Limit von %s MB', self::MAX_FILE_SIZE / 1048576));
         }
 
         // Get file extension
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         if (!in_array($ext, self::ALLOWED_TYPES)) {
-            return new WP_Error('invalid_type', 'File type not allowed. Allowed types: ' . implode(', ', self::ALLOWED_TYPES));
+            return new WP_Error('invalid_type', 'Dateityp nicht erlaubt. Erlaubte Typen: ' . implode(', ', self::ALLOWED_TYPES));
         }
 
         // Double-check detected type vs extension
         $type_info = wp_check_filetype_and_ext($file['tmp_name'], $file['name']);
         if (!empty($type_info['ext']) && $type_info['ext'] !== $ext) {
-            return new WP_Error('invalid_type', 'File extension mismatch detected');
+            return new WP_Error('invalid_type', 'Dateierweiterung stimmt nicht überein');
         }
 
         // Basic MIME sniffing fallback
         $mime = function_exists('mime_content_type') ? mime_content_type($file['tmp_name']) : '';
         if ($mime && strpos($mime, 'php') !== false) {
-            return new WP_Error('invalid_type', 'Executable file types are not allowed');
+            return new WP_Error('invalid_type', 'Ausführbare Dateitypen sind nicht erlaubt');
         }
 
         return true;
@@ -99,7 +99,7 @@ class PM_Attachment_Handler
     {
         // User must be logged in
         if (!is_user_logged_in()) {
-            return new WP_Error('not_logged_in', 'You must be logged in to upload files');
+            return new WP_Error('not_logged_in', 'Du musst eingeloggt sein, um Dateien hochzuladen');
         }
 
         // Enforce role-based attachment permissions if configured
@@ -108,13 +108,13 @@ class PM_Attachment_Handler
             $user = wp_get_current_user();
             $user_roles = (array) $user->roles;
             if (!array_intersect($user_roles, $allowed_roles)) {
-                return new WP_Error('permission_denied', 'Your role cannot upload attachments');
+                return new WP_Error('permission_denied', 'Deine Rolle darf keine Anhänge hochladen');
             }
         }
 
         // If conversation_id > 0, validate user is part of conversation
         if ($conversation_id > 0 && !self::user_can_upload_to_conversation($conversation_id)) {
-            return new WP_Error('permission_denied', 'You do not have permission to upload to this conversation');
+            return new WP_Error('permission_denied', 'Du hast keine Berechtigung, Dateien in diese Konversation hochzuladen');
         }
 
         // Validate file
@@ -201,13 +201,13 @@ class PM_Attachment_Handler
         $file_path = $dirs['path'] . '/' . $filename;
 
         if (!file_exists($file_path)) {
-            return new WP_Error('file_not_found', 'File not found');
+            return new WP_Error('file_not_found', 'Datei nicht gefunden');
         }
 
         // Check file is image
         $mime_type = mime_content_type($file_path);
         if (strpos($mime_type, 'image/') === false) {
-            return new WP_Error('not_image', 'File is not an image');
+            return new WP_Error('not_image', 'Datei ist kein Bild');
         }
 
         // Read file and encode as base64
@@ -227,23 +227,23 @@ class PM_Attachment_Handler
     {
         // Require authenticated user
         if (!is_user_logged_in()) {
-            wp_die('Authentication required', 'Unauthorized', ['response' => 403]);
+            wp_die('Authentifizierung erforderlich', 'Nicht autorisiert', ['response' => 403]);
         }
 
         // Verify nonce
         if (!wp_verify_nonce(mmg()->get('_wpnonce'), 'mm_download_' . $conversation_id)) {
-            wp_die('Security check failed', 'Unauthorized', ['response' => 403]);
+            wp_die('Sicherheitsüberprüfung fehlgeschlagen', 'Nicht autorisiert', ['response' => 403]);
         }
 
         // Verify user can access conversation
         if (!self::user_can_access_conversation($conversation_id)) {
-            wp_die('You do not have permission to download this file', 'Unauthorized', ['response' => 403]);
+            wp_die('Du hast keine Berechtigung, diese Datei herunterzuladen', 'Nicht autorisiert', ['response' => 403]);
         }
 
         // Sanitize filename
         $filename = basename($filename);
         if (preg_match('/[^a-z0-9._-]/i', $filename)) {
-            wp_die('Invalid filename', 'Bad Request', ['response' => 400]);
+            wp_die('Ungültiger Dateiname', 'Fehlerhafte Anfrage', ['response' => 400]);
         }
 
         $dirs = self::get_conversation_upload_dir($conversation_id);
@@ -251,7 +251,7 @@ class PM_Attachment_Handler
 
         // Verify file exists and is in correct directory
         if (!file_exists($file_path) || !is_file($file_path)) {
-            wp_die('File not found', 'Not Found', ['response' => 404]);
+            wp_die('Datei nicht gefunden', 'Nicht gefunden', ['response' => 404]);
         }
 
         // Verify file is within upload directory
@@ -261,11 +261,11 @@ class PM_Attachment_Handler
         
             // Both paths must exist and file must be inside the directory
             if ($real_file_path === false || $real_upload_dir === false) {
-            wp_die('Invalid file path', 'Forbidden', ['response' => 403]);
+            wp_die('Ungültiger Dateipfad', 'Verboten', ['response' => 403]);
         }
         
             if (strpos($real_file_path, $real_upload_dir . DIRECTORY_SEPARATOR) !== 0) {
-                wp_die('Path traversal attempt detected', 'Forbidden', ['response' => 403]);
+                wp_die('Pfad-Traversal-Versuch erkannt', 'Verboten', ['response' => 403]);
             }
 
             // Verify MIME type (additional safety check)
@@ -277,7 +277,7 @@ class PM_Attachment_Handler
             // Additional: Blocked file types for security
             $blocked_types = array('application/x-php', 'application/x-executable', 'application/x-elf', 'application/x-mach-binary');
             if (in_array($mime_type['type'], $blocked_types, true)) {
-                wp_die('File type not allowed for download', 'Forbidden', ['response' => 403]);
+                wp_die('Dateityp für den Download nicht erlaubt', 'Verboten', ['response' => 403]);
             }
 
         // Serve file
@@ -297,7 +297,7 @@ class PM_Attachment_Handler
     public static function delete_file($conversation_id, $filename)
     {
         if (!self::user_can_upload_to_conversation($conversation_id)) {
-            return new WP_Error('permission_denied', 'You do not have permission');
+            return new WP_Error('permission_denied', 'Du hast keine Berechtigung, diese Datei zu löschen');
         }
 
         $filename = basename($filename);
@@ -309,7 +309,7 @@ class PM_Attachment_Handler
             return true;
         }
 
-        return new WP_Error('file_not_found', 'File does not exist');
+        return new WP_Error('file_not_found', 'Datei existiert nicht');
     }
 
     /**

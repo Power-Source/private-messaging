@@ -108,7 +108,7 @@ if (!class_exists('MM_User_Capability')) {
             if (isset($_POST['mm_user_cap'])) {
                 $data = mmg()->post('mm_role');
                 update_option('mm_user_cap', $data);
-                $this->set_flash('mm_user_cap', __("Settings saved!", mmg()->domain));
+                $this->set_flash('mm_user_cap', __("Einstellungen gespeichert!", mmg()->domain));
                 $this->redirect($_SERVER['REQUEST_URI']);
             }
         }
@@ -125,8 +125,8 @@ if (!class_exists('MM_User_Capability')) {
             <div class="row">
                 <div class="col-md-12">
                     <div class="page-header">
-                        <h3><?php _e("Capability Settings", mmg()->domain) ?></h3>
-                        <p class="text-muted"><?php _e("Control which user roles can send messages to other roles.", mmg()->domain) ?></p>
+                        <h3><?php _e("Capability Einstellungen", mmg()->domain) ?></h3>
+                        <p class="text-muted"><?php _e("Steuere, welche Benutzerrollen Nachrichten an andere Rollen senden können.", mmg()->domain) ?></p>
                     </div>
                     
                     <?php if ($this->has_flash('mm_user_cap')): ?>
@@ -164,7 +164,7 @@ if (!class_exists('MM_User_Capability')) {
                                     foreach ($roles as $key => $role): 
                                     ?>
                                         <div role="tabpanel" class="tab-pane <?php echo $first ? 'active' : ''; ?>" id="tab_<?php echo esc_attr($key); ?>">
-                                            <h4 style="margin-top:0;"><?php echo esc_html($role['name']); ?> <?php _e("can send to:", mmg()->domain); ?></h4>
+                                            <h4 style="margin-top:0;"><?php echo esc_html($role['name']); ?> <?php _e("kann senden an:", mmg()->domain); ?></h4>
                                             
                                             <?php foreach ($roles as $k => $r): ?>
                                                 <?php if ($k != $key): ?>
@@ -197,7 +197,7 @@ if (!class_exists('MM_User_Capability')) {
                         <div class="row" style="margin-top:20px;">
                             <div class="col-md-9 col-md-offset-3">
                                 <button name="mm_user_cap" type="submit" class="btn btn-primary">
-                                    <?php _e("Save Changes", mmg()->domain) ?>
+                                    <?php _e("Änderungen speichern", mmg()->domain) ?>
                                 </button>
                             </div>
                         </div>
@@ -212,7 +212,7 @@ if (!class_exists('MM_User_Capability')) {
             ?>
             <li class="<?php echo mmg()->get('tab') == 'cap' ? 'active' : null ?>">
                 <a href="<?php echo esc_url(add_query_arg('tab', 'cap')) ?>">
-                    <i class="fa fa-binoculars"></i> <?php _e("Capability Settings", mmg()->domain) ?></a>
+                    <i class="fa fa-binoculars"></i> <?php _e("Capability Einstellungen", mmg()->domain) ?></a>
             </li>
         <?php
         }

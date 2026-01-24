@@ -1,11 +1,11 @@
-<h4><?php _e("Which roles can upload attachments", mmg()->domain) ?></h4>
+<h4><?php _e("Welche Rollen Anhänge hochladen können", mmg()->domain) ?></h4>
 <form method="post" class="form-horizontal">
 <input type="hidden" name="MM_Setting_Model[allow_attachment][]" value="">
 <table class="table table-condensed table-hover">
     <thead>
     <tr>
-        <th><?php _e("Role name", mmg()->domain) ?></th>
-        <th><?php _e("Can upload", mmg()->domain) ?></th>
+        <th><?php _e("Rolle", mmg()->domain) ?></th>
+        <th><?php _e("Kann hochladen", mmg()->domain) ?></th>
     </tr>
     </thead>
     <tbody>
@@ -29,5 +29,5 @@
     </tbody>
 </table>
 <?php wp_nonce_field('mm_settings', '_mmnonce') ?>
-<button type="submit" class="btn btn-primary"><?php _e("Save Changes", mmg()->domain) ?></button>
+<button type="submit" class="btn btn-primary"><?php _e("Änderungen speichern", mmg()->domain) ?></button>
 </form>

@@ -26,7 +26,7 @@ class MMessage_Backend_Controller
 
     function footer_scripts()
     {
-        $pointer_content = "<p>" . __("Please visit settings > messaging to choose your inbox page and complete setup", mmg()->domain) . "</p>";
+        $pointer_content = "<p>" . __("Bitte besuche Einstellungen > Messaging, um deine Posteingangsseite auszuwählen und die Einrichtung abzuschließen", mmg()->domain) . "</p>";
         ?>
         <script type="text/javascript">
             //<![CDATA[
@@ -79,8 +79,8 @@ class MMessage_Backend_Controller
             $setting->plugins = $addons;
             $setting->save();
             wp_send_json(array(
-                'noty' => __("The add on <strong>{$meta['Name']}</strong> activated", mmg()->domain),
-                'text' => __("Deactivate", mmg()->domain)
+                'noty' => __("Die Erweiterung wurde <strong>{$meta['Name']}</strong> aktiviert", mmg()->domain),
+                'text' => __("Deaktivieren", mmg()->domain)
             ));
             exit;
         } else {
@@ -88,8 +88,8 @@ class MMessage_Backend_Controller
             $setting->plugins = $addons;
             $setting->save();
             wp_send_json(array(
-                'noty' => __("The add on <strong>{$meta['Name']}</strong> deactivate", mmg()->domain),
-                'text' => __("Activate", mmg()->domain)
+                'noty' => __("Die Erweiterung wurde <strong>{$meta['Name']}</strong> deaktiviert", mmg()->domain),
+                'text' => __("Aktivieren", mmg()->domain)
             ));
             exit;
         }
@@ -97,9 +97,9 @@ class MMessage_Backend_Controller
 
     function admin_menu()
     {
-        add_menu_page(__('Messaging', mmg()->domain), __('Messaging', mmg()->domain), 'manage_options', mmg()->prefix . 'main', array(&$this, 'main'), 'dashicons-email-alt');
-        add_submenu_page(mmg()->prefix . 'main', __('View Messages', mmg()->domain), __('View Messages', mmg()->domain), 'manage_options', mmg()->prefix . 'view', array(&$this, 'view'));
-        add_submenu_page(mmg()->prefix . 'main', __('Settings', mmg()->domain), __('Settings', mmg()->domain), 'manage_options', mmg()->prefix . 'setting', array(&$this, 'setting'));
+        add_menu_page(__('Konversationen', mmg()->domain), __('Konversationen', mmg()->domain), 'manage_options', mmg()->prefix . 'main', array(&$this, 'main'), 'dashicons-email-alt');
+        add_submenu_page(mmg()->prefix . 'main', __('Nachrichten anzeigen', mmg()->domain), __('Nachrichten anzeigen', mmg()->domain), 'manage_options', mmg()->prefix . 'view', array(&$this, 'view'));
+        add_submenu_page(mmg()->prefix . 'main', __('Einstellungen', mmg()->domain), __('Einstellungen', mmg()->domain), 'manage_options', mmg()->prefix . 'setting', array(&$this, 'setting'));
     }
 
     public function main()
@@ -120,7 +120,7 @@ class MMessage_Backend_Controller
             $model->load();
             $model->import($_POST['MM_Setting_Model']);
             $model->save();
-            $this->set_flash('setting_save', __('Your settings have been successfully updated.', mmg()->domain));
+            $this->set_flash('setting_save', __('Deine Einstellungen wurden erfolgreich aktualisiert.', mmg()->domain));
             wp_redirect($_SERVER['REQUEST_URI']);
             exit;
         }
@@ -142,7 +142,7 @@ class MMessage_Backend_Controller
                 'model' => $model
             ));
         } else {
-            echo __("Conversation not found!", mmg()->domain);
+            echo __("Konversation nicht gefunden!", mmg()->domain);
         }
     }
 

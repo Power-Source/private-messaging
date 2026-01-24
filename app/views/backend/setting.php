@@ -1,7 +1,7 @@
 <div class="wrap">
     <div class="ig-container">
         <div class="mmessage-container">
-            <h2><?php _e('Settings', mmg()->domain) ?></h2>
+            <h2><?php _e('Einstellungen', mmg()->domain) ?></h2>
 
             <div class="row">
                 <div class="col-md-12">
@@ -15,12 +15,12 @@
                     <ul class="nav nav-tabs" role="tablist" style="margin-bottom: 20px;">
                         <li role="presentation" class="<?php echo mmg()->get('tab', 'general') == 'general' ? 'active' : null ?>">
                             <a href="<?php echo esc_url(add_query_arg('tab', 'general')) ?>" role="tab" class="mm-tab-link" data-tab="general" data-target="#general">
-                                <i class="glyphicon glyphicon-wrench"></i> <?php _e("General Settings", mmg()->domain) ?>
+                                <i class="glyphicon glyphicon-wrench"></i> <?php _e("Allgemeine Einstellungen", mmg()->domain) ?>
                             </a>
                         </li>
                         <li role="presentation" class="<?php echo mmg()->get('tab') == 'email' ? 'active' : null ?>">
                             <a href="<?php echo esc_url(add_query_arg('tab', 'email')) ?>" role="tab" class="mm-tab-link" data-tab="email" data-target="#email">
-                                <i class="glyphicon glyphicon-envelope"></i> <?php _e("Email Settings", mmg()->domain) ?>
+                                <i class="glyphicon glyphicon-envelope"></i> <?php _e("E-Mail-Einstellungen", mmg()->domain) ?>
                             </a>
                         </li>
                         <li role="presentation" class="<?php echo mmg()->get('tab') == 'shortcode' ? 'active' : null ?>">
@@ -30,7 +30,7 @@
                         </li>
                         <li role="presentation" class="<?php echo mmg()->get('tab') == 'attachment' ? 'active' : null ?>">
                             <a href="<?php echo esc_url(add_query_arg('tab', 'attachment')) ?>" role="tab" class="mm-tab-link" data-tab="attachment" data-target="#attachment">
-                                <i class="glyphicon glyphicon-paperclip"></i> <?php _e("Attachments", mmg()->domain) ?>
+                                <i class="glyphicon glyphicon-paperclip"></i> <?php _e("Anhänge", mmg()->domain) ?>
                             </a>
                         </li>
                         <?php do_action('mm_setting_menu', $model) ?>

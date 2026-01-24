@@ -32,10 +32,10 @@ class MM_Messages_Table extends WP_List_Table
     function get_columns()
     {
         return $columns = array(
-            'col_name' => __('Conversation', mmg()->domain),
-            'col_last_message' => __('Last Message', mmg()->domain),
-            'col_started' => __('Started', mmg()->domain),
-            'col_last_activated' => __("Last Active", mmg()->domain),
+            'col_name' => __('Konversation', mmg()->domain),
+            'col_last_message' => __('Letzte Nachricht', mmg()->domain),
+            'col_started' => __('Gestartet', mmg()->domain),
+            'col_last_activated' => __("Zuletzt aktiv", mmg()->domain),
             'col_action' => ''
         );
     }
@@ -43,10 +43,10 @@ class MM_Messages_Table extends WP_List_Table
     public function column_col_action(MM_Conversation_Model $item)
     {
         $encrypted_id = mmg()->encrypt($item->id);
-        $text = sprintf('<a class="button button-small" href="%s"><i class="fa fa-eye"></i> ' . __("View", mmg()->domain) . '</a>&nbsp;
+        $text = sprintf('<a class="button button-small" href="%s"><i class="fa fa-eye"></i> ' . __("Ansehen", mmg()->domain) . '</a>&nbsp;
                 <a class="button button-small lock-conv" data-type="' . ($item->is_lock() ? 'unlock' : 'lock') . '" data-id="' . $item->id . '" href="#">%s</a>&nbsp;
-                <a class="button button-small" href="#"><i class="fa fa-trash"></i> ' . __("Delete", mmg()->domain) . '</a>',
-            admin_url('admin.php?page=mm_view&id=' . $encrypted_id), ($item->is_lock()) ? '<i class="fa fa-unlock"></i> ' . __("Unlock", mmg()->domain) : '<i class="fa fa-lock"></i> ' . __("Lock", mmg()->domain));
+                <a class="button button-small" href="#"><i class="fa fa-trash"></i> ' . __("Löschen", mmg()->domain) . '</a>',
+            admin_url('admin.php?page=mm_view&id=' . $encrypted_id), ($item->is_lock()) ? '<i class="fa fa-unlock"></i> ' . __("Entsperren", mmg()->domain) : '<i class="fa fa-lock"></i> ' . __("Sperren", mmg()->domain));
         return $text;
     }
 
@@ -57,7 +57,7 @@ class MM_Messages_Table extends WP_List_Table
             $users[] = MM_Message_Model::model()->get_name($ui);
         }
 
-        $text = sprintf(__("%s have joined in this conversation, %d messages in total", mmg()->domain),
+        $text = sprintf(__("%s haben an dieser Konversation teilgenommen, insgesamt %d Nachrichten", mmg()->domain),
             implode(', ', $users), $item->message_count);
 
         return $text;
@@ -138,9 +138,9 @@ class MM_Messages_Table extends WP_List_Table
     {
         $singular = $this->_args['singular'];
         ?>
-        <form method="get" action="<?php echo admin_url('admin . php') ?>">
+        <form method="get" action="<?php echo admin_url('admin.php') ?>">
             <input type="hidden" name="page" value="mm_main">
-            <?php $this->search_box(__("Search", mmg()->domain), 'mm_conv_search'); ?>
+            <?php $this->search_box(__("Suche", mmg()->domain), 'mm_conv_search'); ?>
         </form>
         <div class="clearfix" style="height:20px"></div>
 

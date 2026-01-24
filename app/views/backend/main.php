@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="page-heading">
-                        <h2><?php _e("Messages", mmg()->domain) ?></h2>
+                        <h2><?php _e("Nachrichten", mmg()->domain) ?></h2>
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-body">

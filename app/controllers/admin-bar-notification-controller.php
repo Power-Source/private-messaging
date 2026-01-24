@@ -50,7 +50,7 @@ class Admin_Bar_Notification_Controller
         //add node send new message
         $args = array(
             'id' => 'mm-compose-button',
-            'title' => __("Send New Message", mmg()->domain),
+            'title' => __("Sende neue Nachricht", mmg()->domain),
             'href' => '#compose-form-container-admin-bar',
             'parent' => 'mm-buttons-group',
             'meta' => array(
@@ -61,7 +61,7 @@ class Admin_Bar_Notification_Controller
         //add node inbox page
         $args = array(
             'id' => 'mm-inbox-button',
-            'title' => __("View Inbox", mmg()->domain),
+            'title' => __("Posteingang anzeigen", mmg()->domain),
             'href' => get_permalink(mmg()->setting()->inbox_page),
             'parent' => 'mm-buttons-group',
             'meta' => array(

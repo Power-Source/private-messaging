@@ -6,13 +6,13 @@ $messages = $model->get_messages();
     <div class="ig-container">
         <div class="mmessage-container">
             <div class="page-header">
-                <h2><?php _e("Message #" . $model->id, mmg()->domain) ?></h2>
+                <h2><?php _e("Nachricht #" . $model->id, mmg()->domain) ?></h2>
             </div>
             <div class="row">
                 <div class="clearfix"></div>
                 <div class="col-md-12">
                     <a class="button button-default inject-message"
-                       href="#inject-message"><?php _e("Send a message to this conversation", mmg()->domain) ?></a>
+                       href="#inject-message"><?php _e("Eine Nachricht an diese Konversation senden", mmg()->domain) ?></a>
 
                     <div class="clearfix"></div>
                     <br/>
@@ -22,7 +22,7 @@ $messages = $model->get_messages();
                             <table class="table table-striped table-condensed" style="margin: 0;">
                                 <thead style="display:none;">
                                 <tr>
-                                    <th><?php _e("Message", mmg()->domain) ?></th>
+                                    <th><?php _e("Nachricht", mmg()->domain) ?></th>
                                     <th style="width: 10%"><?php _e("", mmg()->domain) ?></th>
                                 </tr>
                                 </thead>
@@ -33,7 +33,7 @@ $messages = $model->get_messages();
                                             <!-- Subject + Metadata Header -->
                                             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6;">
                                                 <div>
-                                                    <strong style="font-size: 14px; color: #111827;"><?php echo esc_html($message->subject ?: '(No subject)'); ?></strong>
+                                                    <strong style="font-size: 14px; color: #111827;"><?php echo esc_html($message->subject ?: '(Kein Betreff)'); ?></strong>
                                                 </div>
                                                 <div style="text-align: right; flex-shrink: 0;">
                                                     <div style="color: #6b7280; font-size: 10px; line-height: 1.3; white-space: nowrap; margin-left: 16px;">
@@ -47,7 +47,7 @@ $messages = $model->get_messages();
                                                 <?php echo wpautop($message->content); ?>
                                             </div>
                                             
-                                            <!-- Attachments -->
+                                            <!-- Anhänge -->
                                             <?php 
                                             if (!empty($message->attachment)) {
                                                 $attachment_files = array_filter(explode(',', $message->attachment));
@@ -122,7 +122,7 @@ $messages = $model->get_messages();
                         <div class="modal-content">
                             <form method="post" class="message-save-form" data-id="<?php echo $message->id ?>">
                                 <div class="modal-header">
-                                    <h4 class="modal-title"><?php _e("Edit Message", mmg()->domain) ?></h4>
+                                    <h4 class="modal-title"><?php _e("Nachricht bearbeiten", mmg()->domain) ?></h4>
                                 </div>
                                 <div class="modal-body">
                                     <div class="alert alert-danger hide"></div>
@@ -130,14 +130,14 @@ $messages = $model->get_messages();
 
                                     <div class="form-group">
                                         <label class="label-control">
-                                            <?php _e("Subject", mmg()->domain) ?>
+                                            <?php _e("Betreff", mmg()->domain) ?>
                                         </label>
                                         <input type="text" name="subject" class="form-control"
                                                value="<?php echo $message->subject ?>">
                                     </div>
                                     <div class="form-group">
                                         <label class="label-control">
-                                            <?php _e("Content", mmg()->domain) ?>
+                                            <?php _e("Inhalt", mmg()->domain) ?>
                                         </label>
                                         <?php wp_editor(stripslashes($message->content), 'message-content-' . $message->id, array(
                                             'textarea_name' => 'content'
@@ -145,9 +145,9 @@ $messages = $model->get_messages();
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default compose-close"
-                                                data-dismiss="modal"><?php _e("Close", mmg()->domain) ?></button>
+                                                data-dismiss="modal"><?php _e("Schließen", mmg()->domain) ?></button>
                                         <button type="submit"
-                                                class="btn btn-primary"><?php _e("Save Changes", mmg()->domain) ?></button>
+                                                class="btn btn-primary"><?php _e("Änderungen speichern", mmg()->domain) ?></button>
                                     </div>
                                 </div>
                             </form>
@@ -251,7 +251,7 @@ $messages = $model->get_messages();
             return false;
         });
         $('.delete-message-frm').submit(function () {
-            if (confirm('<?php __("Are you sure",mmg()->domain) ?>')) {
+            if (confirm('<?php __("Bist du sicher?",mmg()->domain) ?>')) {
                 var that = $(this);
                 $.ajax({
                     type: 'POST',

@@ -146,11 +146,11 @@ $form_id = 'compose-form-admin-bar';
                             updateAttachmentField();
                             statusEl.text('');
                         } else {
-                            statusEl.text('<?php _e("Error", mmg()->domain) ?>: ' + (data.data || '<?php _e("Unknown error", mmg()->domain) ?>')).css('color', '#d9534f');
+                            statusEl.text('<?php _e("Fehler", mmg()->domain) ?>: ' + (data.data || '<?php _e("Unbekannter Fehler", mmg()->domain) ?>')).css('color', '#d9534f');
                         }
                     },
                     error: function() {
-                        statusEl.text('<?php _e("Upload failed", mmg()->domain) ?>').css('color', '#d9534f');
+                        statusEl.text('<?php _e("Upload fehlgeschlagen", mmg()->domain) ?>').css('color', '#d9534f');
                     }
                 });
             }

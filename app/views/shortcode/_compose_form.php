@@ -9,19 +9,19 @@ $model = new MM_Message_Model();
                     <div class="modal-dialog">
                         <div class="modal-content" id="compose-modal">
                             <div class="modal-header">
-                                <h4 class="modal-title"><?php _e("Compose Message", mmg()->domain) ?></h4>
+                                <h4 class="modal-title"><?php _e("Nachricht verfassen", mmg()->domain) ?></h4>
                             </div>
                             <form method="post" class="compose-form form-horizontal" id="compose-form">
                             <div class="modal-body">
                                 <div style="margin-bottom: 0"
                                      class="form-group <?php echo $model->has_error("send_to") ? "has-error" : null ?>">
-                                    <label for="mm_message_model-send_to" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Send To", mmg()->domain); ?></label>
+                                    <label for="mm_message_model-send_to" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Empfänger", mmg()->domain); ?></label>
                                     <div class="col-md-10 col-sm-12 col-xs-12">
                                         <input type="text" 
                                                name="MM_Message_Model[send_to]" 
                                                id="mm_message_model-send_to" 
                                                class="form-control" 
-                                               placeholder="<?php echo esc_attr__('Send to', mmg()->domain); ?>"
+                                               placeholder="<?php echo esc_attr__('Empfänger', mmg()->domain); ?>"
                                                value="<?php echo esc_attr($model->send_to); ?>">
                                         <?php do_action('mm_compose_form_after_send_to', $model) ?>
                                         <span class="help-block m-b-none error-send_to">
@@ -33,13 +33,13 @@ $model = new MM_Message_Model();
                                 <?php do_action('mm_before_subject_field', $model, 'compose_form') ?>
                                 <div style="margin-bottom: 0"
                                      class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
-                                    <label for="mm_message_model-subject" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Subject", mmg()->domain); ?></label>
+                                    <label for="mm_message_model-subject" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Betreff", mmg()->domain); ?></label>
                                     <div class="col-md-10 col-sm-12 col-xs-12">
                                         <input type="text" 
                                                name="MM_Message_Model[subject]" 
                                                id="mm_message_model-subject" 
                                                class="form-control" 
-                                               placeholder="<?php echo esc_attr__('Subject', mmg()->domain); ?>"
+                                               placeholder="<?php echo esc_attr__('Betreff', mmg()->domain); ?>"
                                                value="<?php echo esc_attr($model->subject); ?>">
                                         <?php do_action('mm_compose_form_after_subject', $model) ?>
                                         <span
@@ -49,7 +49,7 @@ $model = new MM_Message_Model();
                                 </div>
                                 <div style="margin-bottom: 0"
                                      class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
-                                    <label for="mm_compose_content" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Content", mmg()->domain); ?></label>
+                                    <label for="mm_compose_content" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Inhalt", mmg()->domain); ?></label>
                                     <div class="col-md-10 col-sm-12 col-xs-12">
                                         <textarea 
                                             name="MM_Message_Model[content]" 
@@ -57,7 +57,7 @@ $model = new MM_Message_Model();
                                             class="form-control mm_wsysiwyg"
                                             style="min-height:160px"
                                             rows="8"
-                                            placeholder="<?php echo esc_attr__('Content', mmg()->domain); ?>"
+                                            placeholder="<?php echo esc_attr__('Inhalt', mmg()->domain); ?>"
                                         ><?php echo esc_textarea($model->content ?? ''); ?></textarea>
                                         <?php do_action('mm_compose_form_after_content', $model) ?>
                                         <span
@@ -73,7 +73,7 @@ $model = new MM_Message_Model();
                                                                     <label class="control-label hidden-xs hidden-sm"><?php _e("Anhänge", mmg()->domain); ?></label>
                                                                     <div class="mm-attachments-control">
                                                                         <input type="file" id="mm-attachment-input-compose-legacy" class="mm-attachment-input" multiple style="display:none;">
-                                                                        <button type="button" class="btn btn-default btn-sm" onclick="document.getElementById('mm-attachment-input-compose-legacy').click(); return false;\"><?php _e("Dateien auswählen", mmg()->domain) ?></button>
+                                                                        <button type="button" class="btn btn-default btn-sm" onclick="document.getElementById('mm-attachment-input-compose-legacy').click(); return false;"><?php _e("Dateien auswählen", mmg()->domain) ?></button>
                                                                         <span class="mm-attachment-status-compose-legacy" style="margin-left:10px;color:#666;font-size:12px;"></span>
                                                                         <div id="mm-attachments-list-compose-legacy" class="mm-attachments-list" style="margin-top:8px;"></div>
                                                                         <input type="hidden" name="MM_Message_Model[attachment]" id="mm-message-model-attachment-compose-legacy" value="">
@@ -83,9 +83,9 @@ $model = new MM_Message_Model();
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default compose-close"
-                                        data-dismiss="modal"><?php _e("Close", mmg()->domain) ?></button>
+                                        data-dismiss="modal"><?php _e("Schließen", mmg()->domain) ?></button>
                                 <button type="submit"
-                                        class="btn btn-primary compose-submit"><?php _e("Send", mmg()->domain) ?></button>
+                                        class="btn btn-primary compose-submit"><?php _e("Senden", mmg()->domain) ?></button>
                             </div>
                             </form>
                         </div>

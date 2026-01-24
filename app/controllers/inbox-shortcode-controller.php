@@ -99,13 +99,13 @@ class Inbox_Shortcode_Controller
         $model = MM_Conversation_Model::model()->find($id);
 
         if (!$model || !$model->exist) {
-            wp_send_json(array('status' => 'fail', 'message' => __('Conversation not found', mmg()->domain)));
+            wp_send_json(array('status' => 'fail', 'message' => __('Konversation nicht gefunden', mmg()->domain)));
         }
 
         // Ensure current user is part of the conversation
         $participants = array_map('intval', explode(',', $model->user_index));
         if (!in_array(get_current_user_id(), $participants, true)) {
-            wp_send_json(array('status' => 'fail', 'message' => __('Not allowed to delete this conversation', mmg()->domain)));
+            wp_send_json(array('status' => 'fail', 'message' => __('Nicht berechtigt, diese Konversation zu löschen', mmg()->domain)));
         }
 
         $deleted = $model->delete();
@@ -113,7 +113,7 @@ class Inbox_Shortcode_Controller
             wp_send_json(array('status' => 'success'));
         }
 
-        wp_send_json(array('status' => 'fail', 'message' => __('Deletion failed', mmg()->domain)));
+        wp_send_json(array('status' => 'fail', 'message' => __('Löschen fehlgeschlagen', mmg()->domain)));
     }
 
     function process_request()
@@ -135,7 +135,7 @@ class Inbox_Shortcode_Controller
 
             update_user_meta($user_id, '_messages_setting', $setting);
             do_action('mm_user_setting_saved', $setting, get_current_user_id());
-            $this->set_flash('user_setting_' . $user_id, __("Your settings have been successfully updated", mmg()->domain));
+            $this->set_flash('user_setting_' . $user_id, __("Deine Einstellungen wurden erfolgreich aktualisiert.", mmg()->domain));
             // Return last viewed box instead of reloading
             $last_box = isset($_POST['mm_last_box']) ? sanitize_text_field($_POST['mm_last_box']) : 'inbox';
             wp_redirect(esc_url(add_query_arg('box', $last_box, $_SERVER['REQUEST_URI'])));
@@ -154,7 +154,7 @@ class Inbox_Shortcode_Controller
         if (!$model || !$model->exist) {
             wp_send_json(array(
                 'status' => 'fail',
-                'message' => __('Conversation not found', mmg()->domain),
+                'message' => __('Konversation nicht gefunden', mmg()->domain),
             ));
             exit;
         }
@@ -332,7 +332,7 @@ class Inbox_Shortcode_Controller
                 if (!$c_model || !$c_model->exist) {
                     wp_send_json(array(
                         'status' => 'fail',
-                        'errors' => array('conversation_id' => __('Conversation not found', mmg()->domain))
+                        'errors' => array('conversation_id' => __('Konversation nicht gefunden', mmg()->domain))
                     ));
                     exit;
                 }
@@ -354,7 +354,7 @@ class Inbox_Shortcode_Controller
                 if (!$first_message) {
                     wp_send_json(array(
                         'status' => 'fail',
-                        'errors' => array('conversation_id' => __('Could not find original message', mmg()->domain))
+                        'errors' => array('conversation_id' => __('Ursprüngliche Nachricht nicht gefunden', mmg()->domain))
                     ));
                     exit;
                 }

@@ -10,26 +10,26 @@ $form_id = 'inject-message-form';
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title"><?php _e("Compose Message", mmg()->domain) ?></h4>
+                            <h4 class="modal-title"><?php _e("Nachricht verfassen", mmg()->domain) ?></h4>
                         </div>
                         <form method="post" class="form-horizontal" id="<?php echo $form_id ?>">
                         <div class="modal-body">
                             <div style="margin-bottom: 0"
                                  class="form-group">
-                                <label for="mm_message_model-subject" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Subject", mmg()->domain); ?></label>
+                                <label for="mm_message_model-subject" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Betreff", mmg()->domain); ?></label>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
                                     <input type="text" 
                                            name="MM_Message_Model[subject]" 
                                            id="mm_message_model-subject" 
                                            class="form-control" 
-                                           placeholder="<?php echo esc_attr__('Subject', mmg()->domain); ?>"
+                                           placeholder="<?php echo esc_attr__('Betreff', mmg()->domain); ?>"
                                            value="<?php echo esc_attr($model->subject ?? ''); ?>">
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
                             <div style="margin-bottom: 0"
                                  class="form-group">
-                                <label for="mm_compose_content" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Content", mmg()->domain); ?></label>
+                                <label for="mm_compose_content" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Inhalt", mmg()->domain); ?></label>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
                                     <textarea 
                                         name="MM_Message_Model[content]" 
@@ -37,7 +37,7 @@ $form_id = 'inject-message-form';
                                         class="form-control mm_wsysiwyg"
                                         style="min-height:160px"
                                         rows="8"
-                                        placeholder="<?php echo esc_attr__('Content', mmg()->domain); ?>"
+                                        placeholder="<?php echo esc_attr__('Inhalt', mmg()->domain); ?>"
                                     ><?php echo esc_textarea($model->content ?? ''); ?></textarea>
                                 </div>
                                 <div class="clearfix"></div>
@@ -48,11 +48,11 @@ $form_id = 'inject-message-form';
 
                             <?php if (mmg()->can_upload()): ?>
                             <div class="form-group">
-                                <label class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Attachments", mmg()->domain); ?></label>
+                                <label class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Anhänge", mmg()->domain); ?></label>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
                                     <div class="mm-attachments-control">
                                         <input type="file" id="mm-attachment-input-<?php echo $form_id ?>" class="mm-attachment-input" multiple style="display:none;">
-                                        <button type="button" class="btn btn-default btn-sm" onclick="document.getElementById('mm-attachment-input-<?php echo $form_id ?>').click(); return false;\"><?php _e("Select Files", mmg()->domain) ?></button>
+                                        <button type="button" class="btn btn-default btn-sm" onclick="document.getElementById('mm-attachment-input-<?php echo $form_id ?>').click(); return false;"><?php _e("Dateien auswählen", mmg()->domain) ?></button>
                                         <span class="mm-attachment-status-<?php echo $form_id ?>" style="margin-left:10px;color:#666;font-size:12px;"></span>
                                         <div id="mm-attachments-list-<?php echo $form_id ?>" class="mm-attachments-list" style="margin-top:8px;"></div>
                                         <input type="hidden" name="MM_Message_Model[attachment]" id="mm-message-model-attachment-<?php echo $form_id ?>" value="">
@@ -64,9 +64,9 @@ $form_id = 'inject-message-form';
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default compose-close"
-                                    data-dismiss="modal"><?php _e("Close", mmg()->domain) ?></button>
+                                    data-dismiss="modal"><?php _e("Schließen", mmg()->domain) ?></button>
                             <button type="submit"
-                                    class="btn btn-primary compose-submit"><?php _e("Send", mmg()->domain) ?></button>
+                                    class="btn btn-primary compose-submit"><?php _e("Senden", mmg()->domain) ?></button>
                         </div>
                         </form>
                     </div>
@@ -107,7 +107,7 @@ $form_id = 'inject-message-form';
             formData.append('_wpnonce', '<?php echo wp_create_nonce('mm_upload_attachment') ?>');
 
             var statusEl = $('.mm-attachment-status-' + formId);
-            statusEl.text('Uploading ' + file.name + '...').css('color', '#333');
+            statusEl.text('Hochladen ' + file.name + '...').css('color', '#333');
 
             $.ajax({
                 url: '<?php echo admin_url('admin-ajax.php') ?>',
@@ -123,11 +123,11 @@ $form_id = 'inject-message-form';
                         updateAttachmentField();
                         statusEl.text('');
                     } else {
-                        statusEl.text('Error: ' + (data.data || 'Unknown error')).css('color', '#d9534f');
+                        statusEl.text('Fehler: ' + (data.data || 'Unbekannter Fehler')).css('color', '#d9534f');
                     }
                 },
                 error: function() {
-                    statusEl.text('Upload failed').css('color', '#d9534f');
+                    statusEl.text('Upload fehlgeschlagen').css('color', '#d9534f');
                 }
             });
         }

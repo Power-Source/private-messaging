@@ -3,7 +3,7 @@
 /**
  * Author: PSOURCE
  * Name: Broadcast
- * Description: Create and send messages to all users from the admin.
+ * Description: Erstelle und sende Nachrichten an alle Benutzer.
  */
 class MM_BroadCast_Messages
 {
@@ -52,7 +52,7 @@ class MM_BroadCast_Messages
     {
         ?>
         <label><input type="checkbox" name="broadcast" id="mmg-broadcast">
-            <?php _e("Send this message to all users", mmg()->domain) ?></label>
+            <?php _e("Sende diese Nachricht an alle Benutzer", mmg()->domain) ?></label>
     <?php
     }
 }

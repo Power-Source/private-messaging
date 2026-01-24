@@ -1,11 +1,11 @@
 <div class="tab-pane active">
     <div class="page-header" style="margin-top: 0">
-        <h3> <?php _e("General Options", mmg()->domain) ?></h3>
+        <h3> <?php _e("Allgemeine Optionen", mmg()->domain) ?></h3>
     </div>
 
     <form method="post" class="form-horizontal">
     <div class="form-group <?php echo $model->has_error("enable_receipt") ? "has-error" : null ?>">
-        <label for="mm_setting_model-enable_receipt" class="col-lg-2 control-label"><?php _e("Enable Message Receipt", mmg()->domain); ?></label>
+        <label for="mm_setting_model-enable_receipt" class="col-lg-2 control-label"><?php _e("Lesebestätigung aktivieren", mmg()->domain); ?></label>
         <div class="col-lg-10">
             <div class="checkbox">
                 <label>
@@ -15,14 +15,14 @@
                            id="mm_setting_model-enable_receipt" 
                            value="1"
                            <?php checked($model->enable_receipt, 1); ?>>
-                    <?php _e("Tick this box to enable email notifications of read messages.", mmg()->domain) ?>
+                    <?php _e("Dieses Kästchen aktivieren, um E-Mail-Benachrichtigungen über gelesene Nachrichten zu erhalten.", mmg()->domain) ?>
                 </label>
             </div>
         </div>
         <div class="clearfix"></div>
     </div>
     <div class="form-group <?php echo $model->has_error("user_receipt") ? "has-error" : null ?>">
-        <label for="mm_setting_model-user_receipt" class="col-lg-2 control-label"><?php _e("Allow the user to disable read message receipts?", mmg()->domain); ?></label>
+        <label for="mm_setting_model-user_receipt" class="col-lg-2 control-label"><?php _e("Benutzern erlauben, Lesebestätigungen zu deaktivieren?", mmg()->domain); ?></label>
         <div class="col-lg-10">
             <div class="checkbox">
                 <label>
@@ -32,23 +32,23 @@
                            id="mm_setting_model-user_receipt" 
                            value="1"
                            <?php checked($model->user_receipt, 1); ?>>
-                    <?php _e("This will allow the user to enable or disable read receipts.", mmg()->domain) ?>
+                    <?php _e("Dies ermöglicht dem Benutzer, Lesebestätigungen zu aktivieren oder zu deaktivieren.", mmg()->domain) ?>
                 </label>
             </div>
         </div>
         <div class="clearfix"></div>
     </div>
     <div class="page-header" style="margin-top: 0">
-        <h4><?php _e('Create Page', mmg()->domain) ?></h4>
+        <h4><?php _e('Seite erstellen', mmg()->domain) ?></h4>
     </div>
     <div class="form-group">
-        <label class="col-md-3 control-label"><?php _e('Inbox Page', mmg()->domain) ?></label>
+        <label class="col-md-3 control-label"><?php _e('PS System Seite', mmg()->domain) ?></label>
 
         <div class="col-md-9">
             <div class="row">
                 <div class="col-md-6">
                     <select name="MM_Setting_Model[inbox_page]" id="mm_setting_model-inbox_page" class="form-control">
-                        <option value=""><?php _e('--Choose--', mmg()->domain); ?></option>
+                        <option value=""><?php _e('--Auswählen--', mmg()->domain); ?></option>
                         <?php
                         $pages = get_pages();
                         foreach ($pages as $page) {
@@ -64,7 +64,7 @@
                 </div>
                 <div class="col-md-6">
                     <button type="button" data-id="inbox"
-                            class="button button-primary mm-create-page"><?php _e('Create Page', mmg()->domain) ?></button>
+                            class="button button-primary mm-create-page"><?php _e('Seite erstellen', mmg()->domain) ?></button>
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -73,10 +73,10 @@
     </div>
     <?php wp_nonce_field('mm_settings','_mmnonce') ?>
     <div class="page-header" style="margin-top: 0">
-        <h4><?php _e('Storage per User', mmg()->domain) ?></h4>
+        <h4><?php _e('Speicher pro Benutzer', mmg()->domain) ?></h4>
     </div>
     <div class="form-group <?php echo $model->has_error("storage_unlimited") ? "has-error" : null ?>">
-        <label for="mm_setting_model-storage_unlimited" class="col-lg-2 control-label"><?php _e("Unlimited Storage", mmg()->domain); ?></label>
+        <label for="mm_setting_model-storage_unlimited" class="col-lg-2 control-label"><?php _e("Unbegrenzter Speicher", mmg()->domain); ?></label>
         <div class="col-lg-10">
             <div class="checkbox">
                 <label>
@@ -87,14 +87,14 @@
                            value="1"
                            <?php checked($model->storage_unlimited, 1); ?>
                            onchange="document.getElementById('storage_limit_group').style.display = this.checked ? 'none' : 'block';">
-                    <?php _e("Allow users to have unlimited storage space for messages and attachments.", mmg()->domain) ?>
+                    <?php _e("Benutzern erlauben, unbegrenzten Speicherplatz für Nachrichten und Anhänge zu haben.", mmg()->domain) ?>
                 </label>
             </div>
         </div>
         <div class="clearfix"></div>
     </div>
     <div id="storage_limit_group" class="form-group <?php echo $model->has_error("storage_limit") ? "has-error" : null ?>" style="<?php echo $model->storage_unlimited ? 'display:none;' : ''; ?>">
-        <label for="mm_setting_model-storage_limit" class="col-lg-2 control-label"><?php _e("Storage Limit", mmg()->domain); ?></label>
+        <label for="mm_setting_model-storage_limit" class="col-lg-2 control-label"><?php _e("Speicherlimit", mmg()->domain); ?></label>
         <div class="col-lg-10">
             <div class="row">
                 <div class="col-md-6">
@@ -114,7 +114,7 @@
                             </select>
                         </span>
                     </div>
-                    <small class="form-text text-muted"><?php _e("Default: 50 MB", mmg()->domain) ?></small>
+                    <small class="form-text text-muted"><?php _e("Standard: 50 MB", mmg()->domain) ?></small>
                 </div>
             </div>
         </div>
@@ -134,7 +134,7 @@
     ?>
     <div class="row">
         <div class="col-md-12">
-            <button type="submit" class="btn btn-primary"><?php _e("Save Changes", mmg()->domain) ?></button>
+            <button type="submit" class="btn btn-primary"><?php _e("Änderungen speichern", mmg()->domain) ?></button>
         </div>
     </div>
     </form>
@@ -195,7 +195,7 @@
                 },
                 url: '<?php echo admin_url('admin-ajax.php') ?>',
                 beforeSend: function () {
-                    that.attr('disabled', 'disabled').text('<?php echo esc_js(__('Creating...',mmg()->domain)) ?>');
+                    that.attr('disabled', 'disabled').text('<?php echo esc_js(__('Erstellen...',mmg()->domain)) ?>');
                 },
                 success: function (data) {
                     var element = that.parent().parent().find('select').first();
@@ -203,7 +203,7 @@
                         html = $(html);
                         var clone = html.find('select[name="' + element.attr('name') + '"]');
                         element.replaceWith(clone);
-                        that.removeAttr('disabled').text('<?php echo esc_js(__('Create Page',mmg()->domain)) ?>');
+                        that.removeAttr('disabled').text('<?php echo esc_js(__('Seite erstellen',mmg()->domain)) ?>');
                     })
                 }
             })

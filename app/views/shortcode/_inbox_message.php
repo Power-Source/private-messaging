@@ -55,7 +55,7 @@ $has_history = count($history_messages) > 0;
                 <div class="mm-toolbar" style="display:flex;gap:8px;align-items:center;">
                     <?php if ($conversation->is_lock()): ?>
                         <button type="button" class="btn btn-info btn-sm" disabled style="border-radius:8px;opacity:0.6;">
-                            <i class="fa fa-lock"></i> <?php _e("Locked", mmg()->domain) ?>
+                            <i class="fa fa-lock"></i> <?php _e("Gesperrt", mmg()->domain) ?>
                         </button>
                     <?php else: ?>
                         <button type="button"

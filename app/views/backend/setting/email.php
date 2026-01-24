@@ -1,6 +1,6 @@
 <div class="tab-pane active">
     <div class="page-header">
-        <h3><?php _e("Email Settings", mmg()->domain) ?></h3>
+        <h3><?php _e("Email Einstellungen", mmg()->domain) ?></h3>
     </div>
 
     <?php
@@ -10,7 +10,7 @@
     <form method="post" class="form-horizontal">
 
     <div class="form-group <?php echo $model->has_error("noti_subject") ? "has-error" : null ?>">
-        <label for="mm_setting_model-noti_subject" class="col-lg-2 control-label">Subject</label>
+        <label for="mm_setting_model-noti_subject" class="col-lg-2 control-label">Betreff</label>
         <div class="col-lg-10">
             <textarea 
                 name="MM_Setting_Model[noti_subject]" 
@@ -24,7 +24,7 @@
         <div class="clearfix"></div>
     </div>
     <div class="form-group <?php echo $model->has_error("noti_content") ? "has-error" : null ?>">
-        <label for="mm_setting_model-noti_content" class="col-lg-2 control-label">Content</label>
+        <label for="mm_setting_model-noti_content" class="col-lg-2 control-label">Inhalt</label>
         <div class="col-lg-10">
             <textarea 
                 name="MM_Setting_Model[noti_content]" 
@@ -38,7 +38,7 @@
         <div class="clearfix"></div>
     </div>
     <div class="form-group <?php echo $model->has_error("receipt_subject") ? "has-error" : null ?>">
-        <label for="mm_setting_model-receipt_subject" class="col-lg-2 control-label">Receipt Subject</label>
+        <label for="mm_setting_model-receipt_subject" class="col-lg-2 control-label">Empfangsbetreff</label>
         <div class="col-lg-10">
             <textarea 
                 name="MM_Setting_Model[receipt_subject]" 
@@ -52,7 +52,7 @@
         <div class="clearfix"></div>
     </div>
     <div class="form-group <?php echo $model->has_error("receipt_content") ? "has-error" : null ?>">
-        <label for="mm_setting_model-receipt_content" class="col-lg-2 control-label">Receipt Content</label>
+        <label for="mm_setting_model-receipt_content" class="col-lg-2 control-label">Empfangsinhalt</label>
         <div class="col-lg-10">
             <textarea 
                 name="MM_Setting_Model[receipt_content]" 
@@ -67,7 +67,7 @@
     </div>
 
     <div class="form-group <?php echo $model->has_error("per_page") ? "has-error" : null ?>">
-        <label for="mm_setting_model-per_page" class="col-lg-2 control-label">Per Page</label>
+        <label for="mm_setting_model-per_page" class="col-lg-2 control-label">Pro Seite</label>
         <div class="col-lg-10">
             <input type="text" 
                    name="MM_Setting_Model[per_page]" 
@@ -82,7 +82,7 @@
     <?php wp_nonce_field('mm_settings','_mmnonce') ?>
     <div class="row">
         <div class="col-md-10 col-md-offset-2">
-            <button type="submit" class="btn btn-primary"><?php _e("Save Changes", mmg()->domain) ?></button>
+            <button type="submit" class="btn btn-primary"><?php _e("Änderungen speichern", mmg()->domain) ?></button>
         </div>
     </div>
     </form>

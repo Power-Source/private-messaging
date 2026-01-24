@@ -22,22 +22,6 @@
                 set_transient($cache_key, $mm_counts, 5 * MINUTE_IN_SECONDS);
             }
             ?>
-            <style>
-                .mm-nav-shell {background: #0f172a; color: #e9edf3; border-radius: 12px; padding: 14px 18px; margin-bottom: 15px; box-shadow: 0 6px 18px rgba(0,0,0,0.10); position: relative;} 
-                .mm-nav-top {display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;} 
-                .mm-nav-title {font-size: 16px; font-weight: 700; letter-spacing: 0.01em;} 
-                .mm-nav-tabs {display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;} 
-                .mm-nav-pill {display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); color: #dfe6ef; padding: 8px 12px; border-radius: 10px; text-decoration: none; border: 1px solid rgba(255,255,255,0.06); transition: all 0.12s ease;} 
-                .mm-nav-pill:hover {background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.12); color: #ffffff;} 
-                .mm-nav-pill.active {background: #9ca3af; color: #0f172a; border-color: #9ca3af; box-shadow: 0 6px 14px rgba(156,163,175,0.32);} 
-                .mm-pill-count {background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 8px; font-weight: 700; font-size: 12px; line-height: 1.2;} 
-                .mm-nav-pill.active .mm-pill-count {background: rgba(15,23,42,0.10);} 
-                .mm-nav-icon {opacity: 0.85;} 
-                .mm-nav-actions {display: inline-flex; gap: 8px;} 
-                .mm-nav-actions .btn {border-radius: 10px;} 
-                .mm-nav-context .btn {border-radius: 9px;} 
-                @media (max-width: 767px) { .mm-nav-tabs {gap: 6px;} .mm-nav-pill {flex: 1 1 calc(50% - 6px); justify-content: center;} }
-            </style>
             <div class="mm-nav-shell">
                 <div class="mm-nav-top">
                     <div class="mm-nav-title"><?php _e("Nachrichten", mmg()->domain) ?></div>
@@ -89,11 +73,11 @@
                 }
                 ?>
                 <?php if (is_user_logged_in()): ?>
-                    <div class="hidden-md hidden-lg" style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
-                        <a class="btn btn-default btn-sm" style="flex:1 1 48%;" href="<?php echo esc_url(add_query_arg('box', 'setting')) ?>">
+                    <div class="hidden-md hidden-lg mm-mobile-actions">
+                        <a class="btn btn-default btn-sm mm-mobile-btn" href="<?php echo esc_url(add_query_arg('box', 'setting')) ?>">
                             <i class="fa fa-gear"></i> <?php _e("Einstellungen", mmg()->domain) ?>
                         </a>
-                        <a class="btn btn-primary btn-sm mm-compose" style="flex:1 1 48%;" href="#compose-form-container">
+                        <a class="btn btn-primary btn-sm mm-compose mm-mobile-btn" href="#compose-form-container">
                             <span class="mm-compose-icon">+</span> <?php _e("Verfassen", mmg()->domain) ?>
                         </a>
                     </div>
@@ -132,11 +116,17 @@
 <?php endif; ?>
 <script type="text/javascript">
     jQuery(function ($) {
+        var layoutNS = '.mmLayout';
+
+        // Cleanup any prior bindings (in case of re-render)
+        $('body').off('click' + layoutNS, '.mm-compose');
+        $('body').off('click' + layoutNS, 'a[data-box]');
+
         // Remove any legacy leanModal overlay on load
         $('#lean_overlay').hide();
 
         // Toggle inline compose form
-        $('body').on('click', '.mm-compose', function (e) {
+        $('body').on('click' + layoutNS, '.mm-compose', function (e) {
             e.preventDefault();
             var target = $('#compose-form-container');
             if (!target.length) { return; }
@@ -160,7 +150,7 @@
         var mmBoxStorageKey = 'mm:last-box';
         var mmInitialBox = '<?php echo esc_js(mmg()->get('box', 'inbox')) ?>';
 
-        $('body').on('click', 'a[data-box]', function () {
+        $('body').on('click' + layoutNS, 'a[data-box]', function () {
             var box = $(this).data('box');
             if (box && box !== 'setting') {
                 localStorage.setItem(mmBoxStorageKey, box);

@@ -117,6 +117,17 @@ if (!$is_ajax_reload && isset($compose_html)) {
     <?php endif; ?>
     <script type="text/javascript">
         jQuery(function ($) {
+            var inboxNS = '.mmInbox';
+
+            // Cleanup previous bindings to avoid duplicates on re-render
+            $('body').off('click' + inboxNS, '.load-conv');
+            $('body').off('click' + inboxNS, '.mm-status');
+            $('body').off('click' + inboxNS, '.mm-delete-conv');
+            $('body').off('click' + inboxNS, '.mm-reply-inline');
+            $('#mm-search-input').off('keyup' + inboxNS);
+            $('#mm-search-clear').off('click' + inboxNS);
+            $(document).off('keydown' + inboxNS);
+
             function setInlineStatus(message, type) {
                 var box = $('#mmessage-content .mm-inline-status');
                 if (!box.length) return;
@@ -128,7 +139,7 @@ if (!$is_ajax_reload && isset($compose_html)) {
             }
 
             // Delegated bind so it works after AJAX replacement
-            $('body').on('click', '.load-conv', function () {
+            $('body').on('click' + inboxNS, '.load-conv', function () {
                 var that = $(this);
                 $.ajax({
                     type: 'POST',
@@ -155,7 +166,7 @@ if (!$is_ajax_reload && isset($compose_html)) {
                     }
                 })
             });
-            $('body').on('click', '.mm-status', function (e) {
+            $('body').on('click' + inboxNS, '.mm-status', function (e) {
                 e.preventDefault();
                 var that = $(this);
                 var status = $(this).data('type');
@@ -181,7 +192,7 @@ if (!$is_ajax_reload && isset($compose_html)) {
             });
 
             // Delete conversation with attachment cleanup
-            $('body').on('click', '.mm-delete-conv', function (e) {
+            $('body').on('click' + inboxNS, '.mm-delete-conv', function (e) {
                 e.preventDefault();
                 var btn = $(this);
                 if (!confirm('<?php echo esc_js(__('Diese Unterhaltung löschen?', mmg()->domain)) ?>')) return;
@@ -222,7 +233,7 @@ if (!$is_ajax_reload && isset($compose_html)) {
             if ($('.load-conv.active').length > 0) { $('.load-conv.active').first().trigger('click'); }
 
             // Keyboard shortcuts: j (next), k (prev), r (reply), a (archive/unarchive), Del (delete)
-            $(document).on('keydown', function (e) {
+            $(document).on('keydown' + inboxNS, function (e) {
                 // Avoid interfering when typing in inputs/textareas or using modifier keys
                 var tag = e.target.tagName.toLowerCase();
                 if (tag === 'input' || tag === 'textarea' || e.ctrlKey || e.metaKey || e.altKey) return;
@@ -276,7 +287,7 @@ if (!$is_ajax_reload && isset($compose_html)) {
             }
 
             // Reply button handler - opens compose form in reply mode
-            $('body').on('click', '.mm-reply-inline', function(e) {
+            $('body').on('click' + inboxNS, '.mm-reply-inline', function(e) {
                 e.preventDefault();
                 var conversationId = $(this).data('conversation-id');
                 var container = $('#compose-form-container');
@@ -311,7 +322,7 @@ if (!$is_ajax_reload && isset($compose_html)) {
 
             // Live search: As user types, fetch results via AJAX
             var searchTimeout;
-            $('#mm-search-input').on('keyup', function() {
+            $('#mm-search-input').on('keyup' + inboxNS, function() {
                 var query = $(this).val().trim();
                 var dropdown = $('#mm-search-dropdown');
                 var clearBtn = $('#mm-search-clear');
@@ -381,14 +392,14 @@ if (!$is_ajax_reload && isset($compose_html)) {
             });
 
             // Clear search
-            $('#mm-search-clear').on('click', function() {
+            $('#mm-search-clear').on('click' + inboxNS, function() {
                 $('#mm-search-input').val('').focus();
                 $(this).hide();
                 $('#mm-search-dropdown').hide();
             });
 
             // Close dropdown on escape
-            $(document).on('keydown', function(e) {
+            $(document).on('keydown' + inboxNS, function(e) {
                 if (e.key === 'Escape') {
                     $('#mm-search-dropdown').hide();
                 }

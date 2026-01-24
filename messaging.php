@@ -294,7 +294,8 @@ if (!class_exists('MMessaging')) {
             }
 
             // Register plugin styles without framework dependency
-            wp_register_style('mm_style', $this->plugin_url . 'assets/main.min.css', array('bootstrap'), $this->version);
+            // Use unminified CSS to ensure new nav/mobile styles load until minified bundle is refreshed
+            wp_register_style('mm_style', $this->plugin_url . 'assets/main.css', array('bootstrap'), $this->version);
             wp_register_style('mm_style_admin', $this->plugin_url . 'assets/admin.css', array('bootstrap'), $this->version);
             wp_register_style('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.css', array(), $this->version);
             wp_register_script('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.js', array('jquery'), $this->version);

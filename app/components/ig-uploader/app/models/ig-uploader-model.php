@@ -66,6 +66,16 @@ if (!class_exists('IG_Uploader_Model')) {
          */
         protected $exist = false;
 
+        /**
+         * Check if this model represents an existing record
+         *
+         * @return bool
+         */
+        public function exists(): bool
+        {
+            return (bool) $this->exist;
+        }
+
         protected static $_instance;
 
         public function __construct()

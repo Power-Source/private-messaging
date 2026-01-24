@@ -22,8 +22,43 @@ class Inbox_Shortcode_Controller
         add_action('wp_ajax_mm_send_message', array(&$this, 'send_message'));
         add_action('wp_ajax_mm_suggest_users', array(&$this, 'suggest_users'));
         add_action('wp_ajax_mm_load_conversation', array(&$this, 'load_conversation'));
+        add_action('wp_ajax_mm_load_box', array(&$this, 'load_box'));
+        add_action('wp_ajax_nopriv_mm_load_box', array(&$this, 'load_box'));
         add_action('wp_ajax_mm_status', array(&$this, 'change_status'));
         add_action('wp_footer', array(&$this, 'footer'));
+    }
+
+    function load_box()
+    {
+        if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'mm_load_box')) {
+            exit;
+        }
+        $type = sanitize_text_field(mmg()->post('box', 'inbox'));
+        if (isset($_POST['query']) && !empty($_POST['query'])) {
+            $type = 'search';
+        }
+        $models = match ($type) {
+            'inbox' => MM_Conversation_Model::get_conversation(),
+            'unread' => MM_Conversation_Model::get_unread(),
+            'read' => MM_Conversation_Model::get_read(),
+            'sent' => MM_Conversation_Model::get_sent(),
+            'archive' => MM_Conversation_Model::get_archive(),
+            'search' => MM_Conversation_Model::search(mmg()->get('query')),
+            default => MM_Conversation_Model::get_conversation(),
+        };
+        $total_pages = mmg()->global['conversation_total_pages'];
+        $compose_html = '';
+        if (is_user_logged_in()) {
+            $compose_html = $this->load_template_part('shortcode/compose_inline', [], false);
+        }
+        $html = $this->load_template_part('shortcode/inbox_inner', array(
+            'models' => $models,
+            'total_pages' => $total_pages,
+            'paged' => mmg()->get('mpaged', 'int', 1),
+            'compose_html' => $compose_html
+        ), false);
+        wp_send_json(array('html' => $html));
+        exit;
     }
 
     function footer()
@@ -121,15 +156,21 @@ class Inbox_Shortcode_Controller
             ), $show_nav, false);
         }
         mmg()->load_script('inbox');
-        add_action('wp_footer', array(&$this, 'render_compose_form'));
         //$a = shortcode_atts($atts, array());
         $type = mmg()->get('box', 'inbox');
         if (isset($_GET['query']) && !empty($_GET['query'])) {
             $type = 'search';
         }
         $total_pages = 0;
+        $compose_html = '';
+        if (is_user_logged_in()) {
+            $compose_html = $this->load_template_part('shortcode/compose_inline', [], false);
+        }
         if ($type === 'setting') {
-            return $this->render_with_layout('shortcode/setting', array('show_nav' => $show_nav), $show_nav, false);
+            return $this->render_with_layout('shortcode/setting', array(
+                'show_nav' => $show_nav,
+                'compose_html' => $compose_html
+            ), $show_nav, false);
         }
 
         $models = match ($type) {
@@ -147,7 +188,8 @@ class Inbox_Shortcode_Controller
             'models' => $models,
             'total_pages' => $total_pages,
             'paged' => mmg()->get('mpaged', 'int', 1),
-            'show_nav' => $show_nav
+            'show_nav' => $show_nav,
+            'compose_html' => $compose_html
         ), $show_nav, false);
     }
 
@@ -223,7 +265,11 @@ class Inbox_Shortcode_Controller
         }
 
         $model = new MM_Message_Model();
-        $model->import(mmg()->post('MM_Message_Model'));
+        $raw_payload = isset($_POST['MM_Message_Model']) ? wp_unslash($_POST['MM_Message_Model']) : array();
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('MM_Send_Message incoming payload: ' . json_encode($raw_payload));
+        }
+        $model->import($raw_payload);
         $model = apply_filters('mm_before_send_message', $model);
 
         if ($model->validate()) {
@@ -281,9 +327,14 @@ class Inbox_Shortcode_Controller
                 ));
             }
         } else {
+            // Debug: log received payload when validation fails
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('MM_Send_Message validation failed. Payload: ' . json_encode(mmg()->post('MM_Message_Model')));
+            }
             wp_send_json(array(
                 'status' => 'fail',
-                'errors' => $model->get_errors()
+                'errors' => $model->get_error(),
+                'payload' => $raw_payload
             ));
         }
         exit;

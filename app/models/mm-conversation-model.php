@@ -464,6 +464,11 @@ class MM_Conversation_Model
             return false;
         }
 
+        // Clean up attachments folder for this conversation
+        if (class_exists('PM_Attachment_Handler')) {
+            PM_Attachment_Handler::delete_conversation_attachments($this->id);
+        }
+
         global $wpdb;
         $table = self::get_table();
         

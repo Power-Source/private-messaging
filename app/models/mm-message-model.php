@@ -151,11 +151,15 @@ class MM_Message_Model
                 'content' => 'required',
             );
         }
+        // Normalize arrays coming from request (may be array of IDs)
+        if (is_array($this->send_to)) {
+            $this->send_to = implode(',', array_map('sanitize_text_field', $this->send_to));
+        }
         
         // Simple validation
         foreach ($this->rules as $field => $rule) {
             if ($rule === 'required' && empty($this->$field)) {
-                $this->errors[$field] = sprintf(__('%s is required', 'private_messaging'), ucfirst($field));
+                $this->errors[$field] = sprintf(__('%s ist erforderlich', 'private_messaging'), ucfirst($field));
             }
         }
         

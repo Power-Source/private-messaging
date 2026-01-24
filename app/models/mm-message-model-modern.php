@@ -155,7 +155,7 @@ class MM_Message_Model_Modern
         // Simple validation
         foreach ($this->rules as $field => $rule) {
             if ($rule === 'required' && empty($this->$field)) {
-                $this->errors[$field] = sprintf(__('%s is required', 'private_messaging'), ucfirst($field));
+                $this->errors[$field] = sprintf(__('%s ist erforderlich', 'private_messaging'), ucfirst($field));
             }
         }
         

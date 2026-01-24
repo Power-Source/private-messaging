@@ -5,8 +5,8 @@
         $model = new IG_Uploader_Model();
     }
     ?>
-    <form method="post" class="igu-upload-form" style="min-width:60%;max-width:304px">
-    <?php if ($model->exist) { ?>
+    <form method="post" class="igu-upload-form igu-form" style="min-width:60%;max-width:304px">
+    <?php if ($model->exists()) { ?>
         <input type="hidden" name="IG_Uploader_Model[id]" id="ig_uploader_model-id" value="<?php echo esc_attr($model->id); ?>">
     <?php } ?>
     <div style="margin-bottom: 0" class="form-group <?php echo $model->has_error("file") ? "has-error" : null ?>">
@@ -14,7 +14,7 @@
                 class="btn btn-default upload_image_button btn-xs"><?php _e("Choose File", ig_uploader()->domain) ?></button>
         <span class="file-upload-name"></span>
         <input type="hidden" name="IG_Uploader_Model[file]" id="attachment" value="<?php echo esc_attr($model->file); ?>">
-        <?php if ($model->exist && $model->file) : ?>
+        <?php if ($model->exists() && $model->file) : ?>
             <span
                 class="help-block m-b-none"><?php _e("File attached, upload new file will replace the current file.", ig_uploader()->domain) ?></span>
         <?php endif; ?>
@@ -48,13 +48,10 @@
         <div class="clearfix"></div>
     </div>
     <?php wp_nonce_field('igu_uploading'); ?>
-    <div class="row">
-        <div class="col-md-12">
-            <button class="btn btn-default btn-sm igu-close-uploader"
-                    type="button"><?php _e("Cancel", ig_uploader()->domain) ?></button>
-            <button class="btn btn-primary btn-sm" type="submit"><?php _e("Submit", ig_uploader()->domain) ?></button>
-        </div>
-        <div class="clearfix"></div>
+    <div class="igu-actions">
+        <button class="btn btn-default btn-sm igu-close-uploader"
+                type="button"><?php _e("Cancel", ig_uploader()->domain) ?></button>
+        <button class="btn btn-primary btn-sm" type="submit"><?php _e("Submit", ig_uploader()->domain) ?></button>
     </div>
     </form>
 </div>

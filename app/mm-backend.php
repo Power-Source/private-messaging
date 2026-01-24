@@ -64,14 +64,14 @@ class MM_Backend
             $model->status = MM_Conversation_Model::LOCK;
             $model->save();
             wp_send_json(array(
-                'text' => '<i class="fa fa-unlock"></i> ' . __('Unlock', mmg()->domain),
+                'text' => '<i class="fa fa-unlock"></i> ' . __('Entsperren', mmg()->domain),
                 'type' => 'unlock'
             ));
         } else {
             $model->status = MM_Conversation_Model::UNLOCK;
             $model->save();
             wp_send_json(array(
-                'text' => '<i class="fa fa-lock"></i> ' . __('Lock', mmg()->domain),
+                'text' => '<i class="fa fa-lock"></i> ' . __('Sperren', mmg()->domain),
                 'type' => 'lock'
             ));
         }

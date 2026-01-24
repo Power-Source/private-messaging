@@ -115,8 +115,6 @@ if (!class_exists('IG_Uploader_Controller')) {
         {
             if ($this->can_upload) {
                 wp_enqueue_style('igu-uploader');
-                wp_enqueue_script('webuipopover');
-                wp_enqueue_style('webuipopover');
                 wp_enqueue_media();
 
                 $ids = $target_model->$attribute;

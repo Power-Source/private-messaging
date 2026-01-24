@@ -1,26 +1,5 @@
-<?php if ($this->has_flash("mm_sent_" . get_current_user_id())): ?>
-    <div class="row">
-        <br/>
-
-        <div class="col-md-12 no-padding">
-            <div class="alert alert-success">
-                <?php echo $this->get_flash("mm_sent_" . get_current_user_id()) ?>
-            </div>
-            <div class="clearfix"></div>
-        </div>
-    </div>
-<?php endif; ?>
-
 <?php if (isset($compose_html)) { echo $compose_html; } ?>
-
-<?php if (isset($models) && count($models) > 0): ?>
-<div id="mm-inbox-view">
-<?php echo $this->load_template_part('shortcode/inbox_inner', array(
-    'models' => $models,
-    'total_pages' => $total_pages,
-    'paged' => $paged,
-    'compose_html' => $compose_html
-), false); ?>
+<?php if (count($models)): ?>
     <br/>
     <div class="row">
         <div class="col-md-5 col-sm-3 col-xs-3 no-padding">
@@ -118,8 +97,9 @@
         </div>
     <?php endif; ?>
     <script type="text/javascript">
-        jQuery(document).ready(function ($) {
-            $('.load-conv').click(function () {
+        jQuery(function ($) {
+            // Delegated bind so it works after AJAX replacement
+            $('body').on('click', '.load-conv', function () {
                 var that = $(this);
                 $.ajax({
                     type: 'POST',
@@ -129,9 +109,7 @@
                         id: $(this).data('id'),
                         _wpnonce: '<?php echo wp_create_nonce('mm_load_conversation') ?>'
                     },
-                    beforeSend: function () {
-                        that.css('cursor', 'wait');
-                    },
+                    beforeSend: function () { that.css('cursor', 'wait'); },
                     success: function (data) {
                         that.css('cursor', 'pointer');
                         $('.load-conv').removeClass('active');
@@ -141,14 +119,10 @@
                         $('.read-count').attr('title', data.count_read + ' ' + $('.unread-count').data('text'));
                         $('#mmessage-content').html(data.html);
                         $('#mmessage-content').perfectScrollbar('destroy');
-                        $('#mmessage-content').perfectScrollbar({
-                            suppressScrollX: true
-                        });
-
+                        $('#mmessage-content').perfectScrollbar({ suppressScrollX: true });
                         var reply_form = $(data.reply_form);
                         $('#reply-form-c').html(reply_form.find('#reply-form-c').html());
                         $('body').trigger('abc');
-                        //reply form
                     }
                 })
             });
@@ -157,65 +131,36 @@
                 var that = $(this);
                 var status = $(this).data('type');
                 if (status == '<?php echo MM_Message_Status_Model::STATUS_DELETE ?>') {
-                    if (confirm('<?php echo esc_js(__("Are you sure?",mmg()->domain)) ?>')) {
+                    if (confirm('<?php echo esc_js__("Are you sure?",mmg()->domain) ?>')) {
                         $.ajax({
                             type: 'POST',
                             url: '<?php echo admin_url('admin-ajax.php') ?>',
-                            data: {
-                                action: 'mm_status',
-                                id: $(this).data('id'),
-                                _wpnonce: '<?php echo wp_create_nonce('mm_status') ?>',
-                                type: status
-                            },
-                            beforeSend: function () {
-                                that.attr('disabled', 'disabled');
-                            },
-                            success: function () {
-                                $('.load-conv.active').remove();
-                                $('.load-conv').first().trigger('click');
-                            }
+                            data: { action: 'mm_status', id: $(this).data('id'), _wpnonce: '<?php echo wp_create_nonce('mm_status') ?>', type: status },
+                            beforeSend: function () { that.attr('disabled', 'disabled'); },
+                            success: function () { $('.load-conv.active').remove(); $('.load-conv').first().trigger('click'); }
                         })
                     }
                 } else {
                     $.ajax({
                         type: 'POST',
                         url: '<?php echo admin_url('admin-ajax.php') ?>',
-                        data: {
-                            action: 'mm_status',
-                            id: $(this).data('id'),
-                            _wpnonce: '<?php echo wp_create_nonce('mm_status') ?>',
-                            type: status
-                        },
-                        beforeSend: function () {
-                            that.attr('disabled', 'disabled');
-                        },
-                        success: function () {
-                            $('.load-conv.active').remove();
-                            $('.load-conv').first().trigger('click');
-                        }
+                        data: { action: 'mm_status', id: $(this).data('id'), _wpnonce: '<?php echo wp_create_nonce('mm_status') ?>', type: status },
+                        beforeSend: function () { that.attr('disabled', 'disabled'); },
+                        success: function () { $('.load-conv.active').remove(); $('.load-conv').first().trigger('click'); }
                     })
                 }
-
             });
-            $('#mmessage-list').perfectScrollbar({
-                suppressScrollX: true
-            });
-            $('#mmessage-content').perfectScrollbar({
-                suppressScrollX: true
-            });
-            //trigger read
-            if ($('.load-conv.active').size() > 0) {
-                $('.load-conv.active').first().trigger('click');
-            }
-        })
+            $('#mmessage-list').perfectScrollbar({ suppressScrollX: true });
+            $('#mmessage-content').perfectScrollbar({ suppressScrollX: true });
+            if ($('.load-conv.active').length > 0) { $('.load-conv.active').first().trigger('click'); }
+        });
     </script>
-</div>
 <?php else: ?>
     <br/>
     <div class="row">
         <div class="col-md-12 no-padding">
             <div class="well well-sm">
-                <?php _e("Keine Nachricht gefunden!", mmg()->domain) ?>
+                <?php _e("No message found!", mmg()->domain) ?>
             </div>
         </div>
     </div>

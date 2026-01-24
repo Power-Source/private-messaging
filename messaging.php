@@ -33,7 +33,7 @@ if (!class_exists('MMessaging')) {
         public $domain;
         public $prefix;
 
-        public $version = "1.0.1.2";
+        public $version = "1.0.0";
         public $db_version = '1.0';
 
         public $global = array();
@@ -315,6 +315,7 @@ if (!class_exists('MMessaging')) {
             ig_uploader()->init_uploader($this->can_upload(), $this->domain);
 
             include $this->plugin_path . 'app/components/mm-addon-table.php';
+            include $this->plugin_path . 'app/handlers/pm-attachment-handler.php';
             //load add on
             $addons = $this->setting()->plugins;
             if (!is_array($addons)) {
@@ -578,16 +579,14 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
             return $data;
         }
 
-        function setting()
-        {
+        function setting() {
             $setting = new MM_Setting_Model();
             $setting->load();
 
             return $setting;
         }
 
-        function html_beautifier($html)
-        {
+        function html_beautifier($html) {
             if (!class_exists('SmartDOMDocument')) {
                 require_once $this->plugin_path . 'vendors/SmartDOMDocument.class.php';
             }
@@ -598,8 +597,7 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
             return $clean;
         }
 
-        function get_logger($type = 'file', $location = '')
-        {
+        function get_logger($type = 'file', $location = '') {
             if (empty($location)) {
                 $location = $this->domain;
             }
@@ -608,14 +606,12 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
             return $logger;
         }
 
-        function get($key, $default = NULL)
-        {
+        function get($key, $default = NULL) {
             $value = isset($_GET[$key]) ? sanitize_text_field($_GET[$key]) : $default;
             return apply_filters('mm_query_get_' . $key, $value);
         }
 
-        function post($key, $default = NULL)
-        {
+        function post($key, $default = NULL) {
             $array_dereference = NULL;
             if (strpos($key, '[')) {
                 $bracket_pos = strpos($key, '[');
@@ -638,21 +634,7 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
         }
     }
 
-//include dashboard
-    global $wpmudev_notices;
-    $wpmudev_notices[] = array(
-        'id' => '938495',
-        'name' => 'Private Messaging',
-        'screens' => array(
-            'toplevel_page_mm_main',
-            'messaging_page_mm_setting',
-            'admin_page_mm_view'
-        )
-    );
-    //include_once(plugin_dir_path(__FILE__) . 'lib/dash-notices/wpmudev-dash-notification.php');
-
-    function mmg()
-    {
+    function mmg() {
         return MMessaging::get_instance();
     }
 
@@ -661,8 +643,7 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
     include_once mmg()->plugin_path . 'functions.php';
     //add action to load language
     add_action('plugins_loaded', 'mmg_load_languages');
-    function mmg_load_languages()
-    {
+    function mmg_load_languages() {
         load_plugin_textdomain(mmg()->domain, false, plugin_basename(mmg()->plugin_path . 'languages/'));
     }
 

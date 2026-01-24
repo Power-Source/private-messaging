@@ -42,7 +42,7 @@
                 <?php if (is_user_logged_in()): ?>
                     <div class="col-md-2 hidden-xs hidden-sm no-padding text-right">
                         <a class="btn btn-primary btn-sm mm-compose" href="#compose-form-container">
-                            <?php _e("Compose", mmg()->domain) ?>
+                            <span class="mm-compose-icon">+</span> <?php _e("Compose", mmg()->domain) ?>
                         </a>
                     </div>
                 <?php endif; ?>
@@ -54,7 +54,7 @@
                             <i class="fa fa-gear"></i> <?php _e("Settings", mmg()->domain) ?>
                         </a>
                         <a class="btn btn-primary btn-sm mm-compose" href="#compose-form-container">
-                            <?php _e("Compose", mmg()->domain) ?>
+                            <span class="mm-compose-icon">+</span> <?php _e("Compose", mmg()->domain) ?>
                         </a>
                     </div>
                     <div class="clearfix"></div>
@@ -95,25 +95,101 @@
 <?php endif; ?>
 <script type="text/javascript">
     jQuery(function ($) {
-        $(".mm-compose").leanModal({
-            closeButton: ".compose-close",
-            top: '0%',
-            width: '95%',
-            maxWidth: 659
+        // Remove any legacy leanModal overlay on load
+        $('#lean_overlay').hide();
+
+        // Toggle inline compose form
+        $('body').on('click', '.mm-compose', function (e) {
+            e.preventDefault();
+            var target = $('#compose-form-container');
+            if (!target.length) { return; }
+            $('#lean_overlay').hide();
+            var isOpen = target.is(':visible');
+            if (isOpen) {
+                target.slideUp(150);
+                $(this).removeClass('mm-compose-open');
+                $(this).find('.mm-compose-icon').text('+');
+            } else {
+                target.slideDown(150, function () {
+                    $('html, body').animate({scrollTop: target.offset().top - 60}, 150);
+                    target.find('input,textarea').first().focus();
+                });
+                $(this).addClass('mm-compose-open');
+                $(this).find('.mm-compose-icon').text('−');
+            }
+        });
+
+        // Inline AJAX tab switcher for Inbox/Unread/Read/Sent/Archive
+        var mmBoxNonce = '<?php echo wp_create_nonce('mm_load_box') ?>';
+        $('body').on('click', 'a[href*="box="]', function (e) {
+            var href = $(this).attr('href') || '';
+            if (href.indexOf('box=setting') !== -1) { return; }
+            var boxMatch = href.match(/[?&]box=([^&#]+)/);
+            if (!boxMatch) { return; }
+            e.preventDefault();
+            var box = decodeURIComponent(boxMatch[1]);
+            var btn = $(this);
+            // Ensure any lingering modal overlay is hidden
+            $('#lean_overlay').hide();
+            // Show lightweight loading state in content region
+            var container = $('#mm-inbox-view');
+            if (container.length) {
+                container.css('opacity', 0.6);
+            }
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                data: { action: 'mm_load_box', box: box, _wpnonce: mmBoxNonce },
+                beforeSend: function () { btn.addClass('disabled'); },
+                success: function (data) {
+                    btn.removeClass('disabled');
+                    if (data && data.html) {
+                        $('#mm-inbox-view').html(data.html);
+                        $('.mm-toolbar-btn a, a[href*="box="]').removeClass('active');
+                        btn.addClass('active');
+                        $('html, body').animate({scrollTop: $('#mm-inbox-view').offset().top - 60}, 200);
+                    }
+                    if (container.length) { container.css('opacity', 1); }
+                }
+            });
         });
 
         $('body').on('submit', '.compose-form', function () {
             var that = $(this);
+            
+            // Sync Selectize values to hidden input before send
+            var sendToField = $('#mm_message_model-send_to');
+            if (sendToField.length && sendToField[0].selectize) {
+                var selectizeValues = sendToField[0].selectize.getValue();
+                console.log('Selectize values before send:', selectizeValues);
+                console.log('Selectize type:', typeof selectizeValues);
+                
+                // Make sure the value is properly set
+                if (Array.isArray(selectizeValues)) {
+                    sendToField.val(selectizeValues.join(','));
+                } else if (selectizeValues) {
+                    sendToField.val(selectizeValues);
+                } else {
+                    console.warn('Selectize has no value!');
+                }
+                console.log('Send_to field value after sync:', sendToField.val());
+            } else {
+                console.warn('Selectize not initialized:', sendToField[0]);
+            }
+            
+            console.log('Form data to send:', $(that).find(":input").serialize());
+            
             $.ajax({
                 type: 'POST',
                 url: '<?php echo admin_url('admin-ajax.php') ?>',
                 data: $(that).find(":input").serialize(),
                 beforeSend: function () {
-                    that.parent().parent().find('button').attr('disabled', 'disabled');
+                    that.find('button').attr('disabled', 'disabled');
                 },
                 success: function (data) {
+                    console.log('Server response:', data);
                     that.find('.form-group').removeClass('has-error has-success');
-                    that.parent().parent().find('button').removeAttr('disabled');
+                    that.find('button').removeAttr('disabled');
                     if (data.status == 'success') {
                         that.find('.form-control').val('');
                         location.reload();
@@ -135,9 +211,7 @@
             })
             return false;
         });
-        $('body').on('modal.hidden', function () {
-            $('.webui-popover').remove();
-        });
+        $('body').on('modal.hidden', function () { /* noop */ });
         $('body').on('click', '.load-attachment-info', function (e) {
             e.preventDefault();
             $('.attachments-footer').html('');

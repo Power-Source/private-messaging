@@ -55,6 +55,10 @@ if (!class_exists('MMessaging')) {
             //enqueue scripts, use it here so both frontend and backend can use
             add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 20);
             add_action('admin_enqueue_scripts', array(&$this, 'scripts'), 20);
+            
+            // Remove deprecated jQuery UI scripts from ClassicPress
+            add_action('wp_enqueue_scripts', array(&$this, 'remove_deprecated_jquery_ui'), 999);
+            add_action('admin_enqueue_scripts', array(&$this, 'remove_deprecated_jquery_ui'), 999);
 
             if ($this->ready_to_use()) {
                 add_action('init', array(&$this, 'dispatch'));
@@ -295,6 +299,30 @@ if (!class_exists('MMessaging')) {
 
             $this->load_script();
         }
+        
+        /**
+         * Remove deprecated jQuery UI scripts that trigger ClassicPress warnings
+         */
+        function remove_deprecated_jquery_ui()
+        {
+            // Dequeue deprecated jQuery UI components
+            wp_dequeue_script('jquery-ui-core');
+            wp_dequeue_script('jquery-ui-mouse');
+            wp_dequeue_script('jquery-ui-sortable');
+            wp_dequeue_script('jquery-ui-draggable');
+            wp_dequeue_script('jquery-ui-droppable');
+            wp_dequeue_script('jquery-ui-resizable');
+            wp_dequeue_script('jquery-ui-selectable');
+            
+            // Also deregister them to prevent other plugins from loading
+            wp_deregister_script('jquery-ui-core');
+            wp_deregister_script('jquery-ui-mouse');
+            wp_deregister_script('jquery-ui-sortable');
+            wp_deregister_script('jquery-ui-draggable');
+            wp_deregister_script('jquery-ui-droppable');
+            wp_deregister_script('jquery-ui-resizable');
+            wp_deregister_script('jquery-ui-selectable');
+        }
 
         function dispatch()
         {
@@ -412,14 +440,15 @@ if (!class_exists('MMessaging')) {
 
         function get_avatar_url($get_avatar)
         {
+            if (empty($get_avatar)) {
+                return '';
+            }
+            
             if (preg_match("/src='(.*?)'/i", $get_avatar, $matches)) {
-                preg_match("/src='(.*?)'/i", $get_avatar, $matches);
-
-                return $matches[1];
+                return isset($matches[1]) ? $matches[1] : '';
             } else {
                 preg_match("/src=\"(.*?)\"/i", $get_avatar, $matches);
-
-                return $matches[1];
+                return isset($matches[1]) ? $matches[1] : '';
             }
         }
 

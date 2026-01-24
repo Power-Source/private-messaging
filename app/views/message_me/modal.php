@@ -18,18 +18,18 @@
                         ?>
                         <form method="post" id="message-me-form">
                         <div class="modal-header">
-                            <h4 class="modal-title text-left"><?php _e("Compose Message", mmg()->domain) ?></h4>
+                            <h4 class="modal-title text-left"><?php _e("Nachricht verfassen", mmg()->domain) ?></h4>
                         </div>
                         <div class="modal-body text-left">
                             <div class="alert alert-success hide mm-notice">
-                                <?php _e("Your message has been sent", mmg()->domain) ?>
+                                <?php _e("Deine Nachricht wurde gesendet", mmg()->domain) ?>
                             </div>
                             <div class="message-me-has-subject hide">
                                 <input type="hidden" name="MM_Message_Model[subject]" id="mm_message_model-subject" value="<?php echo esc_attr($model->subject); ?>">
                             </div>
                             <div class="message-me-no-subject hide">
                                 <div class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
-                                    <label for="mm_message_model-subject" class="col-lg-2 control-label"><?php _e("Subject", mmg()->domain); ?></label>
+                                    <label for="mm_message_model-subject" class="col-lg-2 control-label"><?php _e("Betreff", mmg()->domain); ?></label>
                                     <div class="col-lg-10">
                                         <input type="text" 
                                                name="MM_Message_Model[subject]" 
@@ -62,16 +62,16 @@
                             <?php
                             if (mmg()->can_upload()) {
                                 ig_uploader()->show_upload_control($model, 'attachment', false, array(
-                                    'title' => __("Attach media or other files.", mmg()->domain),
+                                    'title' => __("Füge Medien oder andere Dateien hinzu.", mmg()->domain),
                                     'c_id' => 'message_me_modal_container'
                                 ));
                             } ?>
                         </div>
                         <div class="modal-footer">
                             <button type="button"
-                                    class="btn btn-default compose-close"><?php _e("Close", mmg()->domain) ?></button>
+                                    class="btn btn-default compose-close"><?php _e("Schließen", mmg()->domain) ?></button>
                             <button type="submit"
-                                    class="btn btn-primary reply-submit"><?php _e("Send", mmg()->domain) ?></button>
+                                    class="btn btn-primary reply-submit"><?php _e("Senden", mmg()->domain) ?></button>
                         </div>
                         </form>
                     <?php } ?>

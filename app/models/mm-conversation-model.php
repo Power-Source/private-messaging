@@ -411,6 +411,55 @@ class MM_Conversation_Model
     }
 
     /**
+     * Count archived conversations for current user
+     */
+    public static function count_archive($no_cache = false)
+    {
+        $cache_key = 'mm_count_archive_' . get_current_user_id();
+
+        if ($no_cache || false === ($count = get_transient($cache_key))) {
+            global $wpdb;
+            $conv_table = self::get_table();
+            $status_table = MM_Message_Status_Model::get_table();
+
+            $count = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT COUNT(DISTINCT conversation.id)
+                    FROM $conv_table conversation
+                    INNER JOIN $status_table mstat ON mstat.conversation_id = conversation.id
+                    WHERE mstat.user_id = %d
+                    AND mstat.status = %d
+                    AND (conversation.site_id = %d OR conversation.site_id = 0 OR conversation.site_id IS NULL)",
+                    get_current_user_id(),
+                    MM_Message_Status_Model::STATUS_ARCHIVE,
+                    get_current_blog_id()
+                )
+            );
+
+            set_transient($cache_key, $count, HOUR_IN_SECONDS);
+        }
+
+        return $count;
+    }
+
+    /**
+     * Count conversations the current user sent
+     */
+    public static function count_sent($no_cache = false)
+    {
+        $cache_key = 'mm_count_sent_' . get_current_user_id();
+
+        if ($no_cache || false === ($count = get_transient($cache_key))) {
+            $messages = MM_Message_Model::find_by_attribute('send_from', get_current_user_id());
+            $conversation_ids = array_unique(array_filter(array_column($messages, 'conversation_id')));
+            $count = count($conversation_ids);
+            set_transient($cache_key, $count, HOUR_IN_SECONDS);
+        }
+
+        return $count;
+    }
+
+    /**
      * Save conversation (insert or update)
      */
     public function save()

@@ -28,13 +28,15 @@ if(!class_exists("SmartDOMDocument")) {
     * @link http://www.php.net/manual/en/domdocument.loadhtml.php
     *
     * @param string $html
-    * @param string $encoding
+    * @param int $options
     * 
     * @return bool
     */
-    public function loadHTML($html, $encoding = "UTF-8") {
-      $html = mb_convert_encoding($html, 'HTML-ENTITIES', $encoding);
-      return @parent::loadHTML($html); // suppress warnings
+    #[\ReturnTypeWillChange]
+    public function loadHTML($html, $options = 0) {
+        // Use htmlspecialchars to handle encoding instead of deprecated mb_convert_encoding with HTML-ENTITIES
+        $html = htmlspecialchars_decode(htmlspecialchars($html, ENT_QUOTES | ENT_HTML5, 'UTF-8'), ENT_QUOTES | ENT_HTML5);
+        return @parent::loadHTML($html, $options); // suppress warnings
     }
 
     /**

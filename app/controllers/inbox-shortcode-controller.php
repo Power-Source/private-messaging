@@ -25,6 +25,7 @@ class Inbox_Shortcode_Controller
         add_action('wp_ajax_mm_load_box', array(&$this, 'load_box'));
         add_action('wp_ajax_nopriv_mm_load_box', array(&$this, 'load_box'));
         add_action('wp_ajax_mm_status', array(&$this, 'change_status'));
+        add_action('wp_ajax_mm_delete_conversation', array(&$this, 'delete_conversation'));
         add_action('wp_footer', array(&$this, 'footer'));
     }
 
@@ -85,6 +86,36 @@ class Inbox_Shortcode_Controller
         }
     }
 
+    /**
+     * Delete a conversation and its attachments
+     */
+    function delete_conversation()
+    {
+        if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'mm_delete_conv')) {
+            wp_send_json(array('status' => 'fail', 'message' => __('Invalid nonce', mmg()->domain)));
+        }
+
+        $id = mmg()->decrypt(mmg()->post('id'));
+        $model = MM_Conversation_Model::model()->find($id);
+
+        if (!$model || !$model->exist) {
+            wp_send_json(array('status' => 'fail', 'message' => __('Conversation not found', mmg()->domain)));
+        }
+
+        // Ensure current user is part of the conversation
+        $participants = array_map('intval', explode(',', $model->user_index));
+        if (!in_array(get_current_user_id(), $participants, true)) {
+            wp_send_json(array('status' => 'fail', 'message' => __('Not allowed to delete this conversation', mmg()->domain)));
+        }
+
+        $deleted = $model->delete();
+        if ($deleted) {
+            wp_send_json(array('status' => 'success'));
+        }
+
+        wp_send_json(array('status' => 'fail', 'message' => __('Deletion failed', mmg()->domain)));
+    }
+
     function process_request()
     {
         if (isset($_POST['mm_user_setting']) && sanitize_text_field($_POST['mm_user_setting']) == 1) {
@@ -123,18 +154,8 @@ class Inbox_Shortcode_Controller
             $model->mark_as_read();
             do_action('mm_conversation_read', $model);
         }
-        $messages = $model->get_messages();
-        //update replace form
-        if ($model->is_lock() == false) {
-            $reply_form = $this->load_template_part('shortcode/_reply_form', array(
-                'message' => array_shift($messages)
-            ), false);
-        } else {
-            $reply_form = '';
-        }
         wp_send_json(array(
             'html' => $html,
-            'reply_form' => $reply_form,
             'count_unread' => MM_Conversation_Model::count_unread(true),
             'count_read' => MM_Conversation_Model::count_read(true)
         ));
@@ -196,10 +217,6 @@ class Inbox_Shortcode_Controller
     function render_compose_form()
     {
         $this->load_template_part('shortcode/_compose_form');
-        $messages = array_values($this->messages);
-        $this->load_template_part('shortcode/_reply_form', array(
-            'message' => array_shift($messages)
-        ));
     }
 
     function suggest_users()
@@ -272,46 +289,91 @@ class Inbox_Shortcode_Controller
         $model->import($raw_payload);
         $model = apply_filters('mm_before_send_message', $model);
 
+        // Determine if this is a reply or new message BEFORE validation
+        $is_reply = !empty($raw_payload['conversation_id']);
+        
         if ($model->validate()) {
-            if (mmg()->post('is_reply', 0) == 1) {
-                //reply case, we will send message to all users, but not the sender
-                $message_id = mmg()->decrypt(mmg()->post('id'));
-                $conv_id = mmg()->decrypt(mmg()->post('parent_id'));
-
+            // Check if this is a reply (conversation_id is set)
+            if ($is_reply) {
+                // Reply to existing conversation
+                $conv_id = absint($model->conversation_id);
                 $c_model = MM_Conversation_Model::model()->find($conv_id);
+                
+                if (!$c_model || !$c_model->exist) {
+                    wp_send_json(array(
+                        'status' => 'fail',
+                        'errors' => array('conversation_id' => __('Conversation not found', mmg()->domain))
+                    ));
+                    exit;
+                }
+                
                 $user_ids = $c_model->user_index;
-
                 $user_ids = $this->logins_to_ids($user_ids);
-                //we will need to explude the sender
+                // Remove current user from recipients
                 unset($user_ids[array_search(get_current_user_id(), $user_ids)]);
-                //we will check does any one included
-                $included = mmg()->post('user_include');
-                if (!empty($included)) {
-                    $included = $this->logins_to_ids($included);
-                }
-                if ($included) {
-                    $user_ids = array_merge($user_ids, $included);
-                }
-
+                
                 $user_ids = apply_filters('mm_reply_user_ids', $user_ids);
-
-                $this->_reply_message($conv_id, $message_id, $user_ids, $model);
-
+                
+                // Update all recipients to unread
+                foreach ($user_ids as $user_id) {
+                    MM_Message_Status_Model::model()->status($conv_id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
+                }
+                
+                // Get first message in conversation to extract subject
+                $first_message = MM_Message_Model::find_first_in_conversation($conv_id);
+                if (!$first_message) {
+                    wp_send_json(array(
+                        'status' => 'fail',
+                        'errors' => array('conversation_id' => __('Could not find original message', mmg()->domain))
+                    ));
+                    exit;
+                }
+                
+                // Create reply message
+                $message_id = MM_Message_Model::reply(implode(',', $user_ids), $first_message->id, $conv_id, $model->export());
+                $c_model->update_index($message_id);
+                
+                // Move attachments from temporary (0) to conversation directory
+                if (!empty($model->attachment)) {
+                    PM_Attachment_Handler::move_attachments_to_conversation($model->attachment, 0, $conv_id);
+                }
+                
                 $this->set_flash('mm_sent_' . get_current_user_id(), __("Your message has been sent.", mmg()->domain));
-                wp_send_json(array(
-                    'status' => 'success'
-                ));
+                wp_send_json(array('status' => 'success'));
             } else {
+                // New message - check for existing conversation with same recipient + subject
                 $send_to = $model->send_to;
                 $user_ids = $this->logins_to_ids($send_to);
 
                 $cc_list = mmg()->post('cc');
                 $cc_list = explode(',', $cc_list);
                 $cc_list = array_filter($cc_list);
+                
                 if (empty($cc_list)) {
-                    //create message
+                    // Single recipient - check for duplicate conversation
                     foreach ($user_ids as $user_id) {
-                        $this->_send_message($user_id, $model);
+                        $existing_conv = $this->find_existing_conversation($user_id, $model->subject);
+                        if ($existing_conv) {
+                            // Use existing conversation
+                            $user_ids_conv = $existing_conv->user_index;
+                            $user_ids_conv = $this->logins_to_ids($user_ids_conv);
+                            unset($user_ids_conv[array_search(get_current_user_id(), $user_ids_conv)]);
+                            
+                            foreach ($user_ids_conv as $uid) {
+                                MM_Message_Status_Model::model()->status($existing_conv->id, MM_Message_Status_Model::STATUS_UNREAD, $uid);
+                            }
+                            
+                            $message_id = MM_Message_Model::reply(implode(',', $user_ids_conv), 0, $existing_conv->id, $model->export());
+                            $existing_conv->update_index($message_id);
+                            
+                            // Move attachments from temporary (0) to conversation directory
+                            if (!empty($model->attachment)) {
+                                PM_Attachment_Handler::move_attachments_to_conversation($model->attachment, 0, $existing_conv->id);
+                            }
+                        } else {
+                            // Create new conversation
+                            $this->_send_message($user_id, $model);
+                        }
                     }
                 } else {
                     foreach ($user_ids as $user_id) {
@@ -329,7 +391,10 @@ class Inbox_Shortcode_Controller
         } else {
             // Debug: log received payload when validation fails
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('MM_Send_Message validation failed. Payload: ' . json_encode(mmg()->post('MM_Message_Model')));
+                error_log('MM_Send_Message validation failed. Errors: ' . json_encode($model->get_error()));
+                error_log('MM_Send_Message received payload: ' . json_encode(mmg()->post('MM_Message_Model')));
+                error_log('MM_Send_Message is_reply: ' . ($is_reply ? 'true' : 'false'));
+                error_log('MM_Send_Message conversation_id: ' . $raw_payload['conversation_id']);
             }
             wp_send_json(array(
                 'status' => 'fail',
@@ -363,7 +428,59 @@ class Inbox_Shortcode_Controller
         MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
         $id = MM_Message_Model::send($user_id, $conservation->id, $model->export());
         $conservation->update_index($id);
+        
+        // Move attachments from temporary (0) to conversation directory
+        if (!empty($model->attachment)) {
+            PM_Attachment_Handler::move_attachments_to_conversation($model->attachment, 0, $conservation->id);
+        }
+        
         return $id;
+    }
+    
+    /**
+     * Find existing conversation with same recipient and subject
+     */
+    function find_existing_conversation($user_id, $subject)
+    {
+        global $wpdb;
+        
+        $current_user = get_current_user_id();
+        $table = $wpdb->prefix . 'mm_conversation';
+        $message_table = $wpdb->prefix . 'mm_message';
+        
+        // Find conversations where user_index contains both current user and target user
+        $conversations = $wpdb->get_results($wpdb->prepare(
+            "SELECT c.* FROM {$table} c 
+            WHERE (c.user_index LIKE %s OR c.user_index LIKE %s OR c.user_index LIKE %s OR c.user_index = %s)
+            ORDER BY c.id DESC",
+            $current_user . ',%',
+            '%,' . $current_user . ',%',
+            '%,' . $current_user,
+            $current_user
+        ));
+        
+        foreach ($conversations as $conv) {
+            $user_index = explode(',', $conv->user_index);
+            $user_index = array_map('intval', $user_index);
+            
+            // Check if conversation has exactly 2 participants (current user + target user)
+            if (count($user_index) === 2 && in_array($current_user, $user_index) && in_array($user_id, $user_index)) {
+                // Get first message to check subject
+                $first_message = $wpdb->get_row($wpdb->prepare(
+                    "SELECT * FROM {$message_table} WHERE conversation_id = %d ORDER BY id ASC LIMIT 1",
+                    $conv->id
+                ));
+                
+                if ($first_message && trim($first_message->subject) === trim($subject)) {
+                    // Found existing conversation with same subject
+                    $conversation = new MM_Conversation_Model();
+                    $conversation->import((array)$conv);
+                    return $conversation;
+                }
+            }
+        }
+        
+        return false;
     }
 
     function _send_message_group($user_ids, $model)

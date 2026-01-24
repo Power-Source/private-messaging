@@ -9,20 +9,20 @@ $model = new MM_Message_Model();
                 <div class="modal-dialog">
                     <div class="modal-content" id="compose-modal-admin-bar">
                         <div class="modal-header">
-                            <h4 class="modal-title"><?php _e("Compose Message", mmg()->domain) ?></h4>
+                            <h4 class="modal-title"><?php _e("Nachricht verfassen", mmg()->domain) ?></h4>
                         </div>
                         <form method="post" class="form-horizontal" id="compose-form-admin-bar">
                         <div class="modal-body">
 
                             <div style="margin-bottom: 0"
                                  class="form-group <?php echo $model->has_error("send_to") ? "has-error" : null ?>">
-                                <label for="admin-bar-mm-send-to" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Send To", mmg()->domain); ?></label>
+                                <label for="admin-bar-mm-send-to" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Empfänger", mmg()->domain); ?></label>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
                                     <input type="text" 
                                            name="MM_Message_Model[send_to]" 
                                            id="admin-bar-mm-send-to" 
                                            class="form-control" 
-                                           placeholder="<?php echo esc_attr__('Send to', mmg()->domain); ?>"
+                                           placeholder="<?php echo esc_attr__('Empfänger', mmg()->domain); ?>"
                                            value="<?php echo esc_attr($model->send_to); ?>">
                                     <!--<span
                                 class="help-block m-b-none"><?php /*_e("Please enter the username, separate by commas", mmg()->domain) */ ?></span>-->
@@ -34,13 +34,13 @@ $model = new MM_Message_Model();
                             <?php do_action('mm_before_subject_field', $model, 'admin-bar') ?>
                             <div style="margin-bottom: 0"
                                  class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
-                                <label for="mm_message_model-subject" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Subject", mmg()->domain); ?></label>
+                                <label for="mm_message_model-subject" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Betreff", mmg()->domain); ?></label>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
                                     <input type="text" 
                                            name="MM_Message_Model[subject]" 
                                            id="mm_message_model-subject" 
                                            class="form-control" 
-                                           placeholder="<?php echo esc_attr__('Subject', mmg()->domain); ?>"
+                                           placeholder="<?php echo esc_attr__('Betreff', mmg()->domain); ?>"
                                            value="<?php echo esc_attr($model->subject); ?>">
                                     <span
                                         class="help-block m-b-none error-subject"><?php echo esc_html($model->get_error("subject")); ?></span>
@@ -49,14 +49,14 @@ $model = new MM_Message_Model();
                             </div>
                             <div style="margin-bottom: 0"
                                  class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
-                                <label for="mm_compose_content" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Content", mmg()->domain); ?></label>
+                                <label for="mm_compose_content" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Inhalt", mmg()->domain); ?></label>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
                                     <textarea 
                                         name="MM_Message_Model[content]" 
                                         id="mm_compose_content" 
                                         class="form-control mm_wsysiwyg"
                                         style="height:100px"
-                                        placeholder="<?php echo esc_attr__('Content', mmg()->domain); ?>"
+                                        placeholder="<?php echo esc_attr__('Inhalt', mmg()->domain); ?>"
                                     ><?php echo esc_textarea($model->content ?? ''); ?></textarea>
                                     <span
                                         class="help-block m-b-none error-content"><?php echo esc_html($model->get_error("content")); ?></span>
@@ -68,15 +68,15 @@ $model = new MM_Message_Model();
                             <input type="hidden" name="action" value="mm_send_message">
                             <?php if (mmg()->can_upload() == true) {
                                 ig_uploader()->show_upload_control($model, 'attachment', false, array(
-                                    'title' => __("Attach media or other files.", mmg()->domain)
+                                    'title' => __("Medien oder andere Dateien anhängen.", mmg()->domain)
                                 ));
                             } ?>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default compose-close"
-                                    data-dismiss="modal"><?php _e("Close", mmg()->domain) ?></button>
+                                    data-dismiss="modal"><?php _e("Schließen", mmg()->domain) ?></button>
                             <button type="submit"
-                                    class="btn btn-primary compose-submit"><?php _e("Send", mmg()->domain) ?></button>
+                                    class="btn btn-primary compose-submit"><?php _e("Senden", mmg()->domain) ?></button>
                         </div>
                         </form>
                     </div>

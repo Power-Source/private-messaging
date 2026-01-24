@@ -139,6 +139,38 @@ class PM_Attachment_Handler
     }
 
     /**
+     * Get file information (size, extension, display name)
+     */
+    public static function get_file_info($conversation_id, $filename)
+    {
+        $dirs = self::get_conversation_upload_dir($conversation_id);
+        $file_path = $dirs['path'] . '/' . $filename;
+
+        if (!file_exists($file_path)) {
+            return false;
+        }
+
+        $file_size = filesize($file_path);
+        $path_info = pathinfo($filename);
+        
+        // Extract display name from filename (format: timestamp_originalname.ext)
+        $display_name = $filename;
+        if (preg_match('/^\d+_(.+)$/', $filename, $matches)) {
+            $display_name = $matches[1];
+        }
+
+        return [
+            'filename' => $filename,
+            'display_name' => $display_name,
+            'extension' => strtolower($path_info['extension'] ?? ''),
+            'size' => $file_size,
+            'size_formatted' => size_format($file_size, 2),
+            'path' => $file_path,
+            'url' => $dirs['url'] . '/' . $filename,
+        ];
+    }
+
+    /**
      * Get preview data (Base64 encoded for images)
      */
     public static function get_preview_data($conversation_id, $filename)
@@ -289,5 +321,48 @@ class PM_Attachment_Handler
     private static function user_can_upload_to_conversation($conversation_id)
     {
         return self::user_can_access_conversation($conversation_id);
+    }
+    
+    /**
+     * Move attachments from temporary directory (0) to conversation directory
+     * Called after message is sent and conversation_id is known
+     */
+    public static function move_attachments_to_conversation($attachment_string, $from_conv_id, $to_conv_id)
+    {
+        if (empty($attachment_string) || $from_conv_id == $to_conv_id) {
+            return false;
+        }
+        
+        $filenames = explode(',', $attachment_string);
+        $filenames = array_filter(array_map('trim', $filenames));
+        
+        if (empty($filenames)) {
+            return false;
+        }
+        
+        $from_dirs = self::get_conversation_upload_dir($from_conv_id);
+        $to_dirs = self::get_conversation_upload_dir($to_conv_id);
+        
+        // Create target directory if needed
+        if (!file_exists($to_dirs['path'])) {
+            wp_mkdir_p($to_dirs['path']);
+        }
+        
+        $moved_count = 0;
+        foreach ($filenames as $filename) {
+            $from_path = $from_dirs['path'] . '/' . $filename;
+            $to_path = $to_dirs['path'] . '/' . $filename;
+            
+            if (file_exists($from_path)) {
+                if (rename($from_path, $to_path)) {
+                    $moved_count++;
+                    if (defined('WP_DEBUG') && WP_DEBUG) {
+                        error_log("PM Attachment moved: $filename from conv $from_conv_id to $to_conv_id");
+                    }
+                }
+            }
+        }
+        
+        return $moved_count;
     }
 }

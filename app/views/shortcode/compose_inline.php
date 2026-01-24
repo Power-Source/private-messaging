@@ -1,15 +1,24 @@
 <?php
-// Inline Compose Form
+// Inline Compose Form - supports both new messages and replies
 $model = new MM_Message_Model();
+$reply_mode = isset($reply_mode) ? $reply_mode : false;
+$conversation_id = isset($conversation_id) ? $conversation_id : null;
 ?>
-<div class="ig-container" id="compose-form-container" style="margin-bottom:16px; display:none;">
+<div class="ig-container" id="compose-form-container" style="margin-bottom:16px; display:none;" data-reply-mode="<?php echo $reply_mode ? '1' : '0'; ?>">
     <div class="panel panel-default" style="border-radius:10px;border-color:#e5e7eb;box-shadow:0 4px 16px rgba(0,0,0,0.04);">
         <div class="panel-heading" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #e5e7eb;">
-            <strong><?php _e("Compose Message", mmg()->domain) ?></strong>
+            <strong><?php echo $reply_mode ? __('Reply', mmg()->domain) : __('Compose Message', mmg()->domain); ?></strong>
+            <button type="button" class="close" id="compose-close-btn" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         <div class="panel-body">
             <form method="post" class="compose-form" id="compose-form-inline">
-                <div class="form-group <?php echo $model->has_error("send_to") ? "has-error" : null ?>">
+                <?php if ($reply_mode && $conversation_id): ?>
+                    <input type="hidden" name="MM_Message_Model[conversation_id]" value="<?php echo esc_attr($conversation_id); ?>">
+                <?php endif; ?>
+                
+                <div class="form-group compose-field-sendto <?php echo $model->has_error("send_to") ? "has-error" : null ?>" <?php echo $reply_mode ? 'style="display:none;"' : ''; ?>>
                     <label for="mm_message_model-send_to" class="control-label hidden-xs hidden-sm"><?php _e("Send To", mmg()->domain); ?></label>
                     <input type="text" name="MM_Message_Model[send_to]" id="mm_message_model-send_to" class="form-control" placeholder="<?php echo esc_attr__('Send to (search user)', mmg()->domain); ?>" value="<?php echo esc_attr($model->send_to); ?>" list="mm-user-list" autocomplete="off">
                     <datalist id="mm-user-list"></datalist>
@@ -18,7 +27,7 @@ $model = new MM_Message_Model();
                 </div>
 
                 <?php do_action('mm_before_subject_field', $model, 'compose_form') ?>
-                <div class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
+                <div class="form-group compose-field-subject <?php echo $model->has_error("subject") ? "has-error" : null ?>" <?php echo $reply_mode ? 'style="display:none;"' : ''; ?>>
                     <label for="mm_message_model-subject" class="control-label hidden-xs hidden-sm"><?php _e("Subject", mmg()->domain); ?></label>
                     <input type="text" name="MM_Message_Model[subject]" id="mm_message_model-subject" class="form-control" placeholder="<?php echo esc_attr__('Subject', mmg()->domain); ?>" value="<?php echo esc_attr($model->subject); ?>">
                     <?php do_action('mm_compose_form_after_subject', $model) ?>
@@ -49,8 +58,9 @@ $model = new MM_Message_Model();
                 </div>
                 <?php } ?>
 
-                <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:6px;">
-                    <button type="submit" class="btn btn-primary compose-submit"><?php _e("Send", mmg()->domain) ?></button>
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:6px;">
+                    <button type="button" class="btn btn-default" id="compose-close-btn-bottom"><?php _e("Abbrechen", mmg()->domain) ?></button>
+                    <button type="submit" class="btn btn-primary compose-submit"><?php _e("Senden", mmg()->domain) ?></button>
                 </div>
             </form>
         </div>
@@ -64,6 +74,72 @@ $model = new MM_Message_Model();
     // Initialize on jQuery ready
     jQuery(document).ready(function($) {
         console.log('=== MM Compose jQuery Init ===');
+        
+        // Handle form submit via AJAX
+        $(document).on('submit', '#compose-form-inline', function(e) {
+            e.preventDefault();
+            console.log('Form submitted');
+            
+            var form = $(this);
+            var formData = new FormData(this);
+            
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log('Submit response:', response);
+                    
+                    if (response.status === 'success') {
+                        // Close form
+                        var container = $('#compose-form-container');
+                        container.hide();
+                        container.attr('data-reply-mode', '0');
+                        container.find('.panel-heading strong').text('<?php echo esc_js(__('Compose Message', mmg()->domain)); ?>');
+                        container.find('.compose-field-sendto, .compose-field-subject').show();
+                        form.find('input[name="MM_Message_Model[conversation_id]"]').remove();
+                        form.reset();
+                        window.mmAttachmentIds = [];
+                        window.mmAttachmentNames = {};
+                        $('#mm-attachments-list').html('');
+                        
+                        // Reload active conversation or inbox
+                        var activeConv = $('.load-conv.active');
+                        if (activeConv.length > 0) {
+                            activeConv.trigger('click');
+                        } else {
+                            // If no active conversation, reload inbox list
+                            $.ajax({
+                                type: 'POST',
+                                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                                data: { action: 'mm_load_box', box: '<?php echo mmg()->get('box', 'inbox') ?>', _wpnonce: '<?php echo wp_create_nonce('mm_load_box') ?>' },
+                                success: function(data) {
+                                    $('#mmessage-list').html(data.html);
+                                }
+                            });
+                        }
+                    } else {
+                        console.error('Validation errors:', response.errors);
+                        // Display errors
+                        if (response.errors) {
+                            $.each(response.errors, function(field, message) {
+                                var errorEl = form.find('.error-' + field);
+                                if (errorEl.length) {
+                                    errorEl.text(message).show();
+                                    form.find('[name*="[' + field + ']"]').closest('.form-group').addClass('has-error');
+                                }
+                            });
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                    alert('Error sending message');
+                }
+            });
+        });
         
         // Initialize Selectize for Send To field
         var sendToField = $('#mm_message_model-send_to');
@@ -117,20 +193,19 @@ $model = new MM_Message_Model();
         console.log('Status el:', statusEl);
         console.log('List el:', listEl);
         
-        if (fileInput) {
-            fileInput.addEventListener('change', function(e) {
-                console.log('FILE INPUT CHANGED - Files count:', this.files.length);
-                var files = this.files;
-                
-                for (var i = 0; i < files.length; i++) {
-                    console.log('Uploading file:', files[i].name, 'Size:', files[i].size);
-                    uploadAttachment(files[i]);
-                }
-                
-                // Reset input
-                this.value = '';
-            });
-        }
+        // Use jQuery for event delegation to handle dynamic changes
+        jQuery(document).on('change', '#mm-attachment-input', function(e) {
+            console.log('FILE INPUT CHANGED - Files count:', this.files.length);
+            var files = this.files;
+            
+            for (var i = 0; i < files.length; i++) {
+                console.log('Uploading file:', files[i].name, 'Size:', files[i].size);
+                uploadAttachment(files[i]);
+            }
+            
+            // Reset input
+            this.value = '';
+        });
         
         function uploadAttachment(file) {
             console.log('START uploadAttachment:', file.name);
@@ -141,6 +216,7 @@ $model = new MM_Message_Model();
             formData.append('conversation_id', 0);
             formData.append('_wpnonce', '<?php echo wp_create_nonce('mm_upload_attachment') ?>');
             
+            var statusEl = document.querySelector('.mm-attachment-status');
             if (statusEl) {
                 statusEl.textContent = 'Uploading ' + file.name + '...';
                 statusEl.style.color = '#333';
@@ -176,6 +252,7 @@ $model = new MM_Message_Model();
             })
             .catch(function(error) {
                 console.error('FETCH ERROR:', error);
+                var statusEl = document.querySelector('.mm-attachment-status');
                 if (statusEl) {
                     statusEl.textContent = 'Upload failed: ' + error.message;
                     statusEl.style.color = '#d9534f';
@@ -186,6 +263,7 @@ $model = new MM_Message_Model();
         function updateAttachmentList(fileData) {
             console.log('updateAttachmentList:', fileData);
             
+            var listEl = document.getElementById('mm-attachments-list');
             var fileSizeKB = (fileData.size / 1024).toFixed(1);
             var isImage = /\.(jpg|jpeg|png|gif)$/i.test(fileData.original_name);
             
@@ -329,6 +407,31 @@ $model = new MM_Message_Model();
                 field.value = window.mmAttachmentIds.join(',');
             }
         }
+    });
+    
+    // Close button handlers (delegated via jQuery for better reliability)
+    jQuery(document).ready(function($) {
+        $(document).on('click', '#compose-close-btn, #compose-close-btn-bottom', function(e) {
+            e.preventDefault();
+            console.log('Close button clicked');
+            var container = $('#compose-form-container');
+            container.hide();
+            // Reset to compose mode
+            container.attr('data-reply-mode', '0');
+            container.find('.panel-heading strong').text('<?php echo esc_js(__('Compose Message', mmg()->domain)); ?>');
+            container.find('.compose-field-sendto, .compose-field-subject').show();
+            // Remove conversation_id if exists
+            container.find('input[name="MM_Message_Model[conversation_id]"]').remove();
+            // Clear form
+            $('#compose-form-inline')[0].reset();
+            window.mmAttachmentIds = [];
+            window.mmAttachmentNames = {};
+            $('#mm-attachments-list').html('');
+            var field = document.getElementById('mm-message-model-attachment');
+            if (field) {
+                field.value = '';
+            }
+        });
     });
 </script>
 <?php do_action('mm_compose_form_end') ?>

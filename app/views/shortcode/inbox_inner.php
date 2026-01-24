@@ -98,6 +98,16 @@
     <?php endif; ?>
     <script type="text/javascript">
         jQuery(function ($) {
+            function setInlineStatus(message, type) {
+                var box = $('#mmessage-content .mm-inline-status');
+                if (!box.length) return;
+                var color = '#1f2937';
+                if (type === 'success') color = '#15803d';
+                if (type === 'error') color = '#b91c1c';
+                if (type === 'info') color = '#1d4ed8';
+                box.stop(true, true).css({ color: color }).text(message).fadeIn(120).delay(2000).fadeOut(200);
+            }
+
             // Delegated bind so it works after AJAX replacement
             $('body').on('click', '.load-conv', function () {
                 var that = $(this);
@@ -131,7 +141,7 @@
                 var that = $(this);
                 var status = $(this).data('type');
                 if (status == '<?php echo MM_Message_Status_Model::STATUS_DELETE ?>') {
-                    if (confirm('<?php echo esc_js__("Are you sure?",mmg()->domain) ?>')) {
+                    if (confirm('<?php echo esc_js(__("Are you sure?", mmg()->domain)) ?>')) {
                         $.ajax({
                             type: 'POST',
                             url: '<?php echo admin_url('admin-ajax.php') ?>',
@@ -150,9 +160,84 @@
                     })
                 }
             });
+
+            // Delete conversation with attachment cleanup
+            $('body').on('click', '.mm-delete-conv', function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                if (!confirm('<?php echo esc_js(__('Delete this conversation?', mmg()->domain)) ?>')) return;
+
+                var convId = btn.data('id');
+                var nonce = btn.data('nonce');
+                setInlineStatus('<?php echo esc_js(__('Deleting…', mmg()->domain)) ?>', 'info');
+                btn.prop('disabled', true);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '<?php echo admin_url('admin-ajax.php') ?>',
+                    data: { action: 'mm_delete_conversation', id: convId, _wpnonce: nonce },
+                    success: function (res) {
+                        if (res.status === 'success') {
+                            setInlineStatus('<?php echo esc_js(__('Conversation deleted', mmg()->domain)) ?>', 'success');
+                            var active = $('.load-conv.active');
+                            active.remove();
+                            var first = $('.load-conv').first();
+                            if (first.length) {
+                                first.trigger('click');
+                            } else {
+                                $('#mmessage-content').html('<div class="well well-sm no-margin"><?php echo esc_js(__('No message found!', mmg()->domain)) ?></div>');
+                            }
+                        } else {
+                            setInlineStatus(res.message || '<?php echo esc_js(__('Delete failed', mmg()->domain)) ?>', 'error');
+                            btn.prop('disabled', false);
+                        }
+                    },
+                    error: function () {
+                        setInlineStatus('<?php echo esc_js(__('Delete failed', mmg()->domain)) ?>', 'error');
+                        btn.prop('disabled', false);
+                    }
+                });
+            });
             $('#mmessage-list').perfectScrollbar({ suppressScrollX: true });
             $('#mmessage-content').perfectScrollbar({ suppressScrollX: true });
             if ($('.load-conv.active').length > 0) { $('.load-conv.active').first().trigger('click'); }
+            
+            // Reply button handler - opens compose form in reply mode
+            $('body').on('click', '.mm-reply-inline', function(e) {
+                e.preventDefault();
+                var conversationId = $(this).data('conversation-id');
+                var container = $('#compose-form-container');
+                
+                console.log('Reply clicked, conversation_id:', conversationId);
+                console.log('Compose container:', container.length);
+                
+                // Set reply mode
+                container.attr('data-reply-mode', '1');
+                container.find('.panel-heading strong').text('<?php echo esc_js(__('Reply', mmg()->domain)); ?>');
+                container.find('.compose-field-sendto, .compose-field-subject').hide();
+                
+                // Show attachment section
+                container.find('.mm-attachments-control').parent().show();
+                
+                // Remove old conversation_id and add new one
+                container.find('input[name="MM_Message_Model[conversation_id]"]').remove();
+                container.find('form').prepend('<input type="hidden" name="MM_Message_Model[conversation_id]" value="' + conversationId + '">');
+                
+                // Clear content and attachments
+                container.find('#mm_compose_content').val('');
+                if (typeof window.mmAttachmentIds !== 'undefined') {
+                    window.mmAttachmentIds = [];
+                    window.mmAttachmentNames = {};
+                }
+                $('#mm-attachments-list').html('');
+                $('#mm-message-model-attachment').val('');
+                
+                // Show form and scroll to it
+                container.show();
+                $('html, body').animate({
+                    scrollTop: container.offset().top - 20
+                }, 300);
+            });
         });
     </script>
 <?php else: ?>

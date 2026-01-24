@@ -131,6 +131,28 @@ class MM_Message_Model
         
         return array_map(array(__CLASS__, 'from_post'), $posts ?: array());
     }
+    
+    /**
+     * Find first message in a conversation
+     */
+    public static function find_first_in_conversation($conversation_id)
+    {
+        $posts = get_posts(array(
+            'post_type' => self::POST_TYPE,
+            'meta_key' => '_conversation_id',
+            'meta_value' => $conversation_id,
+            'posts_per_page' => 1,
+            'orderby' => 'ID',
+            'order' => 'ASC',
+            'suppress_filters' => true,
+        ));
+        
+        if (empty($posts)) {
+            return null;
+        }
+        
+        return self::from_post($posts[0]);
+    }
 
     /**
      * Validate message
@@ -139,18 +161,28 @@ class MM_Message_Model
     {
         $this->errors = array();
         
-        // Set rules based on reply vs new
-        if (empty($this->reply_to)) {
+        // Set rules based on reply vs new message
+        // Reply = conversation_id is set, New = conversation_id is empty
+        if (!empty($this->conversation_id)) {
+            // Reply to existing conversation - only content required
+            $this->rules = array(
+                'content' => 'required',
+            );
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('MM_Message_Model::validate() - Reply mode detected (conversation_id=' . $this->conversation_id . '), only checking content');
+            }
+        } else {
+            // New message - need send_to, subject, content
             $this->rules = array(
                 'subject' => 'required',
                 'content' => 'required',
                 'send_to' => 'required'
             );
-        } else {
-            $this->rules = array(
-                'content' => 'required',
-            );
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('MM_Message_Model::validate() - New message mode (no conversation_id), checking send_to, subject, content');
+            }
         }
+        
         // Normalize arrays coming from request (may be array of IDs)
         if (is_array($this->send_to)) {
             $this->send_to = implode(',', array_map('sanitize_text_field', $this->send_to));
@@ -161,6 +193,10 @@ class MM_Message_Model
             if ($rule === 'required' && empty($this->$field)) {
                 $this->errors[$field] = sprintf(__('%s ist erforderlich', 'private_messaging'), ucfirst($field));
             }
+        }
+        
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('MM_Message_Model::validate() - Result: ' . (empty($this->errors) ? 'PASS' : 'FAIL with errors: ' . json_encode($this->errors)));
         }
         
         return empty($this->errors);

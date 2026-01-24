@@ -2,62 +2,82 @@
     <?php do_action('mm_before_layout') ?>
     <div class="mmessage-container">
         <?php if ($show_nav): ?>
-            <div class="row">
-                <div class="col-md-10 co-sm-12 col-xs-12 no-padding mm-toolbar-btn">
-                    <div class="btn-group btn-group-sm">
-                        <a href="<?php echo esc_url(add_query_arg('box', 'inbox', get_permalink(mmg()->setting()->inbox_page))) ?>"
-                           class="mm-tooltip btn btn-default btn-sm <?php echo mmg()->get('box', 'inbox') == 'inbox' ? 'active' : null ?>"
-                           title="<?php echo MM_Conversation_Model::count_all() ?> <?php _e("message(s)", mmg()->domain) ?>">
-                            <i class="fa fa-inbox"></i> <?php _e("Inbox", mmg()->domain) ?>
+            <?php
+            $mm_current_box = mmg()->get('box', 'inbox');
+            $mm_counts = array(
+                'inbox'   => MM_Conversation_Model::count_all(),
+                'unread'  => MM_Conversation_Model::count_unread(),
+                'read'    => MM_Conversation_Model::count_read(),
+                'sent'    => MM_Conversation_Model::count_sent(),
+                'archive' => MM_Conversation_Model::count_archive(),
+            );
+            ?>
+            <style>
+                .mm-nav-shell {background: #0f172a; color: #e9edf3; border-radius: 12px; padding: 14px 18px; margin-bottom: 15px; box-shadow: 0 6px 18px rgba(0,0,0,0.10);} 
+                .mm-nav-top {display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;} 
+                .mm-nav-title {font-size: 16px; font-weight: 700; letter-spacing: 0.01em;} 
+                .mm-nav-tabs {display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;} 
+                .mm-nav-pill {display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); color: #dfe6ef; padding: 8px 12px; border-radius: 10px; text-decoration: none; border: 1px solid rgba(255,255,255,0.06); transition: all 0.12s ease;} 
+                .mm-nav-pill:hover {background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.12); color: #ffffff;} 
+                .mm-nav-pill.active {background: #9ca3af; color: #0f172a; border-color: #9ca3af; box-shadow: 0 6px 14px rgba(156,163,175,0.32);} 
+                .mm-pill-count {background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 8px; font-weight: 700; font-size: 12px; line-height: 1.2;} 
+                .mm-nav-pill.active .mm-pill-count {background: rgba(15,23,42,0.10);} 
+                .mm-nav-icon {opacity: 0.85;} 
+                .mm-nav-actions {display: inline-flex; gap: 8px;} 
+                .mm-nav-actions .btn {border-radius: 10px;} 
+                .mm-nav-context .btn {border-radius: 9px;} 
+                @media (max-width: 767px) { .mm-nav-tabs {gap: 6px;} .mm-nav-pill {flex: 1 1 calc(50% - 6px); justify-content: center;} }
+            </style>
+            <div class="mm-nav-shell">
+                <div class="mm-nav-top">
+                    <div class="mm-nav-title"><?php _e("Nachrichten", mmg()->domain) ?></div>
+                    <div class="mm-nav-actions">
+                        <a class="btn btn-default btn-sm hidden-xs hidden-sm" href="<?php echo esc_url(add_query_arg('box', 'setting')) ?>">
+                            <i class="fa fa-gear"></i> <?php _e("Einstellungen", mmg()->domain) ?>
                         </a>
-                        <a href="<?php echo esc_url(add_query_arg('box', 'unread', get_permalink(mmg()->setting()->inbox_page))) ?>"
-                           class="mm-tooltip unread-count btn btn-default btn-sm <?php echo mmg()->get('box') == 'unread' ? 'active' : null ?>"
-
-                           data-text="<?php _e("message(s)", mmg()->domain) ?>"
-                           title="<?php echo MM_Conversation_Model::count_unread() ?> <?php _e("message(s)", mmg()->domain) ?>">
-                            <i class="fa fa-envelope"></i> <?php _e("Unread", mmg()->domain) ?>
-                        </a>
-                        <a href="<?php echo esc_url(add_query_arg('box', 'read', get_permalink(mmg()->setting()->inbox_page))) ?>"
-                           class="mm-tooltip btn read-count btn-default btn-sm <?php echo mmg()->get('box') == 'read' ? 'active' : null ?>"
-
-                           data-text="<?php _e("message(s)", mmg()->domain) ?>"
-                           title="<?php echo MM_Conversation_Model::count_read() ?> <?php _e("message(s)", mmg()->domain) ?>">
-                            <i class="glyphicon glyphicon-eye-open"></i> <?php _e("Read", mmg()->domain) ?>
-                        </a>
-
-                        <a href="<?php echo esc_url(add_query_arg('box', 'sent', get_permalink(mmg()->setting()->inbox_page))) ?>"
-                           class="btn btn-default btn-sm <?php echo mmg()->get('box') == 'sent' ? 'active' : null ?>">
-                            <i class="glyphicon glyphicon-send"></i> <?php _e("Sent", mmg()->domain) ?>
-                        </a>
-                        <a href="<?php echo esc_url(add_query_arg('box', 'archive', get_permalink(mmg()->setting()->inbox_page))) ?>"
-                           class="btn btn-default btn-sm <?php echo mmg()->get('box') == 'archive' ? 'active' : null ?>">
-                            <i class="glyphicon glyphicon-briefcase"></i> <?php _e("Archive", mmg()->domain) ?>
-                        </a>
-                        <a class="btn btn-default btn-sm hidden-xs hidden-sm"
-                           href="<?php echo esc_url(add_query_arg('box', 'setting')) ?>">
-                            <i class="fa fa-gear"></i> <?php _e("Settings", mmg()->domain) ?>
-                        </a>
+                        <?php if (is_user_logged_in()): ?>
+                            <a class="btn btn-primary btn-sm mm-compose" href="#compose-form-container">
+                                <span class="mm-compose-icon">+</span> <?php _e("Verfassen", mmg()->domain) ?>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
+                <div class="mm-nav-context" style="display:none; justify-content:flex-end; gap:8px; margin-top:8px; flex-wrap:wrap;">
+                    <button type="button" class="btn btn-primary btn-sm mm-nav-reply"><i class="fa fa-reply"></i> <?php _e("Reply", mmg()->domain) ?></button>
+                    <button type="button" class="btn btn-default btn-sm mm-nav-archive"><i class="fa fa-archive"></i> <?php _e("Archive", mmg()->domain) ?></button>
+                    <button type="button" class="btn btn-danger btn-sm mm-nav-delete"><i class="fa fa-trash"></i> <?php _e("Delete", mmg()->domain) ?></button>
+                </div>
+                <div class="mm-nav-tabs mm-toolbar-btn">
+                    <a data-box="inbox" href="<?php echo esc_url(add_query_arg('box', 'inbox', get_permalink(mmg()->setting()->inbox_page))) ?>" class="mm-nav-pill <?php echo $mm_current_box == 'inbox' ? 'active' : null ?>">
+                        <span class="mm-nav-icon"><i class="fa fa-inbox"></i></span> <?php _e("Eingang", mmg()->domain) ?>
+                        <span class="mm-pill-count"><?php echo intval($mm_counts['inbox']); ?></span>
+                    </a>
+                    <a data-box="unread" href="<?php echo esc_url(add_query_arg('box', 'unread', get_permalink(mmg()->setting()->inbox_page))) ?>" class="mm-nav-pill unread-count <?php echo $mm_current_box == 'unread' ? 'active' : null ?>">
+                        <span class="mm-nav-icon"><i class="fa fa-envelope"></i></span> <?php _e("Ungelesen", mmg()->domain) ?>
+                        <span class="mm-pill-count"><?php echo intval($mm_counts['unread']); ?></span>
+                    </a>
+                    <a data-box="read" href="<?php echo esc_url(add_query_arg('box', 'read', get_permalink(mmg()->setting()->inbox_page))) ?>" class="mm-nav-pill read-count <?php echo $mm_current_box == 'read' ? 'active' : null ?>">
+                        <span class="mm-nav-icon"><i class="glyphicon glyphicon-eye-open"></i></span> <?php _e("Gelesen", mmg()->domain) ?>
+                        <span class="mm-pill-count"><?php echo intval($mm_counts['read']); ?></span>
+                    </a>
+                    <a data-box="sent" href="<?php echo esc_url(add_query_arg('box', 'sent', get_permalink(mmg()->setting()->inbox_page))) ?>" class="mm-nav-pill <?php echo $mm_current_box == 'sent' ? 'active' : null ?>">
+                        <span class="mm-nav-icon"><i class="glyphicon glyphicon-send"></i></span> <?php _e("Gesendet", mmg()->domain) ?>
+                        <span class="mm-pill-count"><?php echo intval($mm_counts['sent']); ?></span>
+                    </a>
+                    <a data-box="archive" href="<?php echo esc_url(add_query_arg('box', 'archive', get_permalink(mmg()->setting()->inbox_page))) ?>" class="mm-nav-pill <?php echo $mm_current_box == 'archive' ? 'active' : null ?>">
+                        <span class="mm-nav-icon"><i class="glyphicon glyphicon-briefcase"></i></span> <?php _e("Archiv", mmg()->domain) ?>
+                        <span class="mm-pill-count"><?php echo intval($mm_counts['archive']); ?></span>
+                    </a>
+                </div>
                 <?php if (is_user_logged_in()): ?>
-                    <div class="col-md-2 hidden-xs hidden-sm no-padding text-right">
-                        <a class="btn btn-primary btn-sm mm-compose" href="#compose-form-container">
-                            <span class="mm-compose-icon">+</span> <?php _e("Compose", mmg()->domain) ?>
+                    <div class="hidden-md hidden-lg" style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                        <a class="btn btn-default btn-sm" style="flex:1 1 48%;" href="<?php echo esc_url(add_query_arg('box', 'setting')) ?>">
+                            <i class="fa fa-gear"></i> <?php _e("Einstellungen", mmg()->domain) ?>
+                        </a>
+                        <a class="btn btn-primary btn-sm mm-compose" style="flex:1 1 48%;" href="#compose-form-container">
+                            <span class="mm-compose-icon">+</span> <?php _e("Verfassen", mmg()->domain) ?>
                         </a>
                     </div>
-                <?php endif; ?>
-                <!--For small viewport-->
-                <?php if (is_user_logged_in()): ?>
-                    <div class="col-sm-12 col-xs-12 hidden-md hidden-lg no-padding">
-                        <br/>
-                        <a class="btn btn-default btn-sm" href="<?php echo esc_url(add_query_arg('box', 'setting')) ?>">
-                            <i class="fa fa-gear"></i> <?php _e("Settings", mmg()->domain) ?>
-                        </a>
-                        <a class="btn btn-primary btn-sm mm-compose" href="#compose-form-container">
-                            <span class="mm-compose-icon">+</span> <?php _e("Compose", mmg()->domain) ?>
-                        </a>
-                    </div>
-                    <div class="clearfix"></div>
                 <?php endif; ?>
             </div>
         <?php endif; ?>
@@ -119,40 +139,43 @@
             }
         });
 
-        // Inline AJAX tab switcher for Inbox/Unread/Read/Sent/Archive
-        var mmBoxNonce = '<?php echo wp_create_nonce('mm_load_box') ?>';
-        $('body').on('click', 'a[href*="box="]', function (e) {
-            var href = $(this).attr('href') || '';
-            if (href.indexOf('box=setting') !== -1) { return; }
-            var boxMatch = href.match(/[?&]box=([^&#]+)/);
-            if (!boxMatch) { return; }
-            e.preventDefault();
-            var box = decodeURIComponent(boxMatch[1]);
-            var btn = $(this);
-            // Ensure any lingering modal overlay is hidden
-            $('#lean_overlay').hide();
-            // Show lightweight loading state in content region
-            var container = $('#mm-inbox-view');
-            if (container.length) {
-                container.css('opacity', 0.6);
+        // Tab persistence with simple page load (no AJAX switcher)
+        var mmBoxStorageKey = 'mm:last-box';
+        var mmInitialBox = '<?php echo esc_js(mmg()->get('box', 'inbox')) ?>';
+
+        $('body').on('click', 'a[data-box]', function () {
+            var box = $(this).data('box');
+            if (box && box !== 'setting') {
+                localStorage.setItem(mmBoxStorageKey, box);
             }
-            $.ajax({
-                type: 'POST',
-                url: '<?php echo admin_url('admin-ajax.php') ?>',
-                data: { action: 'mm_load_box', box: box, _wpnonce: mmBoxNonce },
-                beforeSend: function () { btn.addClass('disabled'); },
-                success: function (data) {
-                    btn.removeClass('disabled');
-                    if (data && data.html) {
-                        $('#mm-inbox-view').html(data.html);
-                        $('.mm-toolbar-btn a, a[href*="box="]').removeClass('active');
-                        btn.addClass('active');
-                        $('html, body').animate({scrollTop: $('#mm-inbox-view').offset().top - 60}, 200);
-                    }
-                    if (container.length) { container.css('opacity', 1); }
-                }
-            });
         });
+
+        // On load, if a stored box differs from current, redirect once to it
+        var mmStoredBox = localStorage.getItem(mmBoxStorageKey);
+        if (mmStoredBox && mmStoredBox !== mmInitialBox && mmStoredBox !== 'setting') {
+            var href = $('a[data-box="' + mmStoredBox + '"]').attr('href');
+            if (href) { window.location.href = href; }
+        } else if (!mmStoredBox) {
+            localStorage.setItem(mmBoxStorageKey, mmInitialBox || 'inbox');
+        }
+
+        // Context actions (Reply/Archive/Delete) proxy the in-view buttons
+        function mmUpdateNavContext() {
+            var container = $('.mm-nav-context');
+            var replyBtn = $('#mmessage-content .mm-reply-inline:visible').first();
+            var archiveBtn = $('#mmessage-content .mm-status').first();
+            var deleteBtn = $('#mmessage-content .mm-delete-conv').first();
+            var hasAny = replyBtn.length || archiveBtn.length || deleteBtn.length;
+            container.toggle(hasAny);
+            container.find('.mm-nav-reply').toggle(!!replyBtn.length).off('click').on('click', function () { if (replyBtn.length) { replyBtn.trigger('click'); } });
+            container.find('.mm-nav-archive').toggle(!!archiveBtn.length).off('click').on('click', function () { if (archiveBtn.length) { archiveBtn.trigger('click'); } });
+            container.find('.mm-nav-delete').toggle(!!deleteBtn.length).off('click').on('click', function () { if (deleteBtn.length) { deleteBtn.trigger('click'); } });
+        }
+
+        // Initial bind and after conversation loads
+        mmUpdateNavContext();
+        $('body').on('ajaxComplete', function () { mmUpdateNavContext(); });
+        $('body').on('click', '.load-conv', function () { setTimeout(mmUpdateNavContext, 200); });
 
         $('body').on('submit', '.compose-form', function () {
             var that = $(this);

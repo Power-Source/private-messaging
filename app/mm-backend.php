@@ -133,13 +133,9 @@ class MM_Backend
             if (!isset($allcaps['upload_files'])) {
                 $flag = false;
                 if (mmg()->post('action') == 'query-attachments') {
-                    ///just query media belong to someone
                     $flag = true;
-                } elseif (mmg()->post('action') == 'upload-attachment') {
-                    //case upload a file, we only allow when upload via je uploader
-                    if (mmg()->post('igu_uploading') == 1) {
-                        $flag = true;
-                    }
+                } elseif (mmg()->post('action') == 'mm_upload_attachment') {
+                    $flag = true;
                 }
                 if ($flag == true) {
                     //check

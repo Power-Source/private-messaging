@@ -97,7 +97,6 @@ if (!class_exists('MMessaging')) {
 
             if ($this->ready_to_use()) {
                 add_action('init', array(&$this, 'dispatch'));
-                add_action('init', array(&$this, 'run_database_migrations'), 15);
             } else {
                 new MM_Upgrade_Controller();
             }
@@ -113,24 +112,6 @@ if (!class_exists('MMessaging')) {
             }
         }
 
-        /**
-         * Run database migrations for optimization
-         * @since 2.5.0
-         */
-        function run_database_migrations()
-        {
-            if (!current_user_can('manage_options')) {
-                return;
-            }
-            
-            $migration_version = get_option('mm_db_migration_version', '0');
-            
-            // Only run if migration hasn't been executed or needs update
-            if (version_compare($migration_version, '1.0', '<')) {
-                require_once $this->plugin_path . 'database-optimization-migration.php';
-            }
-        }
-
         function load_script($scenario = '')
         {
             $runtime_path = $this->can_compress();
@@ -143,10 +124,6 @@ if (!class_exists('MMessaging')) {
                         wp_enqueue_script('jquery');
                         $csses = array('mm_style', 'mm_scroll', 'selectivejs');
                         $jses = array('mm_scroll', 'selectivejs', 'mm_lean_model');
-                        if ($this->can_upload() == true) {
-                            $csses[] = 'igu-uploader';
-                            $jses = array_merge($jses, array('popoverasync', 'jquery-frame-transport'));
-                        }
                         if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
                             $jses = array_merge($jses, array('mm_sceditor','mm_sceditor_translate', 'mm_sceditor_xhtml'));
                         }
@@ -161,11 +138,6 @@ if (!class_exists('MMessaging')) {
                             wp_enqueue_script('mm_sceditor');
                             wp_enqueue_script('mm_sceditor_translate');
                             wp_enqueue_script('mm_sceditor_xhtml');
-                        }
-                        if ($this->setting()->allow_attachment == 1) {
-                            wp_enqueue_style('igu-uploader');
-                            wp_enqueue_script('popoverasync');
-                            wp_enqueue_script('jquery-frame-transport');
                         }
                     }
                 }
@@ -372,11 +344,6 @@ if (!class_exists('MMessaging')) {
             } else {
                 $front = new MM_Frontend();
             }
-            //include components we need to use
-            include($this->plugin_path . 'app/components/ig-uploader.php');
-            //init uploader controller, if user can not upload, we only let it display attachment files
-            ig_uploader()->init_uploader($this->can_upload(), $this->domain);
-
             include $this->plugin_path . 'app/components/mm-addon-table.php';
             include $this->plugin_path . 'app/handlers/pm-attachment-handler.php';
             //load add on

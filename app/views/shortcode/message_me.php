@@ -86,8 +86,14 @@ $r_id = 'reply_' . uniqid();
                                 </div>
                                 <?php wp_nonce_field('compose_message') ?>
                                 <input type="hidden" name="action" value="mm_send_message">
-                                <input type="hidden" name="MM_Message_Model[attachment]" id="mm_message_model-attachment" value="<?php echo esc_attr($model->attachment ?? ''); ?>">
-                                <?php ig_uploader()->show_upload_control($model, 'attachment', $mid) ?>
+
+                                <div class="mm-attachments-control" style="margin-top:10px;">
+                                    <input type="file" id="mm-attachment-input-<?php echo $fid ?>" class="mm-attachment-input" multiple style="display:none;">
+                                    <button type="button" class="btn btn-default btn-sm" onclick="document.getElementById('mm-attachment-input-<?php echo $fid ?>').click(); return false;\"><?php _e("Dateien auswählen", mmg()->domain) ?></button>
+                                    <span class="mm-attachment-status-<?php echo $fid ?>" style="margin-left:10px;color:#666;font-size:12px;"></span>
+                                    <div id="mm-attachments-list-<?php echo $fid ?>" class="mm-attachments-list" style="margin-top:8px;"></div>
+                                    <input type="hidden" name="MM_Message_Model[attachment]" id="mm-message-model-attachment-<?php echo $fid ?>" value="">
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default"
@@ -98,9 +104,86 @@ $r_id = 'reply_' . uniqid();
                         </form>
                             <script type="text/javascript">
                                 jQuery(document).ready(function ($) {
+                                    var attachmentIds = [];
+
+                                    <?php if (mmg()->can_upload()): ?>
+                                    $(document).on('change', '#mm-attachment-input-<?php echo $fid ?>', function() {
+                                        var files = this.files;
+                                        for (var i = 0; i < files.length; i++) {
+                                            uploadAttachment(files[i]);
+                                        }
+                                        this.value = '';
+                                    });
+
+                                    function uploadAttachment(file) {
+                                        var formData = new FormData();
+                                        formData.append('action', 'mm_upload_attachment');
+                                        formData.append('file', file);
+                                        formData.append('conversation_id', 0);
+                                        formData.append('_wpnonce', '<?php echo wp_create_nonce('mm_upload_attachment') ?>');
+
+                                        var statusEl = $('.mm-attachment-status-<?php echo $fid ?>');
+                                        statusEl.text('<?php _e("Uploading", mmg()->domain) ?> ' + file.name + '...').css('color', '#333');
+
+                                        $.ajax({
+                                            url: '<?php echo admin_url('admin-ajax.php') ?>',
+                                            method: 'POST',
+                                            data: formData,
+                                            processData: false,
+                                            contentType: false,
+                                            success: function(data) {
+                                                if (data.success) {
+                                                    var fileData = data.data;
+                                                    attachmentIds.push(fileData.filename);
+                                                    updateAttachmentList(fileData);
+                                                    updateAttachmentField();
+                                                    statusEl.text('');
+                                                } else {
+                                                    statusEl.text('<?php _e("Error", mmg()->domain) ?>: ' + (data.data || '<?php _e("Unknown error", mmg()->domain) ?>')).css('color', '#d9534f');
+                                                }
+                                            },
+                                            error: function() {
+                                                statusEl.text('<?php _e("Upload failed", mmg()->domain) ?>').css('color', '#d9534f');
+                                            }
+                                        });
+                                    }
+
+                                    function updateAttachmentList(fileData) {
+                                        var listEl = $('#mm-attachments-list-<?php echo $fid ?>');
+                                        var fileSizeKB = (fileData.size / 1024).toFixed(1);
+
+                                        var itemHtml = '<div class="mm-attachment-item" data-filename="' + fileData.filename + '" style="padding:8px;background:#f5f5f5;border-radius:4px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">' +
+                                            '<span style="font-size:12px;">' + fileData.display_name + ' (' + fileSizeKB + ' KB)</span>' +
+                                            '<button type="button" class="btn btn-xs btn-danger mm-remove-attachment" data-filename="' + fileData.filename + '">×</button>' +
+                                            '</div>';
+
+                                        listEl.append(itemHtml);
+                                    }
+
+                                    function updateAttachmentField() {
+                                        $('#mm-message-model-attachment-<?php echo $fid ?>').val(attachmentIds.join(','));
+                                    }
+
+                                    $(document).on('click', '.mm-remove-attachment', function() {
+                                        var filename = $(this).data('filename');
+                                        var index = attachmentIds.indexOf(filename);
+                                        if (index > -1) {
+                                            attachmentIds.splice(index, 1);
+                                        }
+                                        $(this).closest('.mm-attachment-item').remove();
+                                        updateAttachmentField();
+
+                                        $.post('<?php echo admin_url('admin-ajax.php') ?>', {
+                                            action: 'mm_delete_attachment',
+                                            conversation_id: 0,
+                                            filename: filename,
+                                            _wpnonce: '<?php echo wp_create_nonce('mm_delete_attachment') ?>'
+                                        });
+                                    });
+                                    <?php endif; ?>
+
                                     $('#<?php echo $cid ?>').on('click', '.reply-submit', function () {
-                                        //finding the form
-                                        var top_parent = $('#<?php echo $cid ?>')
+                                        var top_parent = $('#<?php echo $cid ?>');
                                         var form = top_parent.find('#<?php echo $fid ?>');
                                         var btn = $('<button type="submit" style="width: 0!important;height:0;display: inline - block;background: none;border: none;padding: 0;margin: 0;position: absolute;"></button>');
                                         form.append(btn);

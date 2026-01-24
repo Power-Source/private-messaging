@@ -65,13 +65,20 @@ $model = new MM_Message_Model();
                                     <div class="clearfix"></div>
                                 </div>
                                 <?php wp_nonce_field('compose_message'); ?>
-                                <input type="hidden" name="MM_Message_Model[attachment]" id="mm_message_model-attachment" value="<?php echo esc_attr($model->attachment ?? ''); ?>">
-                                <input type="hidden" name="action" value="mm_send_message">
-                                <?php if (mmg()->can_upload() == true) {
-                                    ig_uploader()->show_upload_control($model, 'attachment', false, array(
-                                        'title' => __("Attach media or other files.", mmg()->domain)
-                                    ));
-                                } ?>
+                                                                <input type="hidden" name="action" value="mm_send_message">
+
+                                                                <?php if (mmg()->can_upload() == true) { ?>
+                                                                <div class="form-group">
+                                                                    <label class="control-label hidden-xs hidden-sm"><?php _e("Anhänge", mmg()->domain); ?></label>
+                                                                    <div class="mm-attachments-control">
+                                                                        <input type="file" id="mm-attachment-input-compose-legacy" class="mm-attachment-input" multiple style="display:none;">
+                                                                        <button type="button" class="btn btn-default btn-sm" onclick="document.getElementById('mm-attachment-input-compose-legacy').click(); return false;\"><?php _e("Dateien auswählen", mmg()->domain) ?></button>
+                                                                        <span class="mm-attachment-status-compose-legacy" style="margin-left:10px;color:#666;font-size:12px;"></span>
+                                                                        <div id="mm-attachments-list-compose-legacy" class="mm-attachments-list" style="margin-top:8px;"></div>
+                                                                        <input type="hidden" name="MM_Message_Model[attachment]" id="mm-message-model-attachment-compose-legacy" value="">
+                                                                    </div>
+                                                                </div>
+                                                                <?php } ?>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default compose-close"

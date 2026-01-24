@@ -1,22 +1,14 @@
-# Private Messaging
-
-**INACTIVE NOTICE: This plugin is unsupported by WPMUDEV, we've published it here for those technical types who might want to fork and maintain it for their needs.**
-
-## Translations
-
-Translation files can be found at https://github.com/wpmudev/translations
-
-## Whether you run a busy forum with hundreds of users or simply want to connect site owners in your Multisite network, Private Messaging will help you build a more engaged and friendly community.
+## Egal, ob Du ein vielbesuchtes Forum mit Hunderten von Nutzern betreibst oder einfach nur Webseiten-Betreiber in Deinem Multisite-Netzwerk vernetzen möchtest, das PSOURCE PM-System hilft Dir dabei, eine engagiertere und freundlichere Community aufzubauen.
 
 
-![Improve response times with bold pop-up notifications.](http://premium.wpmudev.org/wp-content/uploads/2015/01/notifications-735x470.jpg)
+![Verbessere die Reaktionszeiten mit auffälligen Pop-up-Benachrichtigungen.](http://premium.wpmudev.org/wp-content/uploads/2015/01/notifications-735x470.jpg)
 
 
- Improve response times with bold pop-up notifications.
+ Verbessere die Reaktionszeiten mit auffälligen Pop-up-Benachrichtigungen.
 
-### Front-end Messaging
+### Front-End-Messaging
 
-The inbox is accessible to you and your users from anywhere on your site, just click on the mail icon in the admin toolbar. Sending a new message takes no time at all and you can do it from anywhere on your site.  Whether you’re working on a new blog post or tweaking your theme, you can compose a new message without interrupting your workflow. The “Send To” field draws in usernames from across your site and autocompletes so you’ll never have to remember email addresses.  
+Ihr Posteingang ist für Sie und Ihre Nutzer von überall auf Ihrer Website zugänglich. Klicken Sie einfach auf das E-Mail-Symbol in der Admin-Toolbar. Neue Nachrichten lassen sich blitzschnell und von überall auf Ihrer Website aus versenden. Ob Sie gerade an einem neuen Blogbeitrag arbeiten oder Ihr Theme anpassen – Sie können eine neue Nachricht verfassen, ohne Ihren Arbeitsablauf zu unterbrechen. Das Feld „Senden an“ übernimmt Benutzernamen von Ihrer gesamten Website und vervollständigt diese automatisch, sodass Sie sich keine E-Mail-Adressen mehr merken müssen. 
 
 ![Private Messaging attachments makes it easy to share files.](http://premium.wpmudev.org/wp-content/uploads/2015/01/attachments735x4701.jpg)
 

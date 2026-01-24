@@ -18,9 +18,6 @@ class MM_BBPress_Controller
         if (!bbp_get_reply_id()) {
             return $author_link;
         }
-        wp_enqueue_script('popoverasync', ig_uploader()->plugin_url . 'assets/popover/popoverasync.js', array(
-            'jquery', 'ig-bootstrap', 'jquery-frame-transport'));
-        wp_enqueue_style('igu-uploader', ig_uploader()->plugin_url . 'assets/style.css');
         $new_links = explode($r['sep'], $author_link);
         $author_id = bbp_get_reply_author_id(bbp_get_reply_id($r['post_id']));
         $message_link = do_shortcode("[pm_user user_id=$author_id class='btn btn-xs btn-primary']");

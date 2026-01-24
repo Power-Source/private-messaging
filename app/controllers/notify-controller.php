@@ -120,18 +120,15 @@ class Notify_Controller
         }
 
         $from = get_userdata($model->send_from);
-        //prepare atachments
+        // prepare attachments from new handler
         $attachments = array();
-        if ($model->attachment) {
-            $ids = explode(',', $model->attachment);
-            $ids = array_filter($ids);
-            foreach ($ids as $id) {
-                if (filter_var($id, FILTER_VALIDATE_INT)) {
-                    $upload = IG_Uploader_Model::model()->find($id);
-
-                    if (is_object($upload) && $upload->file) {
-                        $attachments[] = get_attached_file($upload->file);
-                    }
+        if (!empty($model->attachment)) {
+            $files = array_filter(array_map('trim', explode(',', $model->attachment)));
+            $dirs = PM_Attachment_Handler::get_conversation_upload_dir($model->conversation_id);
+            foreach ($files as $filename) {
+                $path = $dirs['path'] . '/' . basename($filename);
+                if (file_exists($path)) {
+                    $attachments[] = $path;
                 }
             }
         }

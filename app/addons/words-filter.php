@@ -11,6 +11,8 @@ if (!class_exists('MM_Words_Filter')) {
 
     class MM_Words_Filter
     {
+        use Template_Loader_Trait;
+        
         public function __construct()
         {
             add_action('mm_setting_menu', array(&$this, 'setting_menu'));
@@ -163,7 +165,7 @@ if (!class_exists('MM_Words_Filter')) {
             <div class="page-header">
                 <h4><?php _e("General Settings", mmg()->domain) ?></h4>
             </div>
-            <div class="form-group <?php echo $model->has_error("replacer") ? "has-error" : null ?>">
+            <div class="form-group">
                 <label for="words_filter_model-replacer" class="col-lg-2 control-label">Replacer</label>
                 <div class="col-lg-10">
                     <input type="text" 
@@ -171,7 +173,7 @@ if (!class_exists('MM_Words_Filter')) {
                            id="words_filter_model-replacer" 
                            class="form-control"
                            value="<?php echo esc_attr($model->replacer); ?>">
-                    <span class="help-block m-b-none error-replacer"><?php echo esc_html($model->get_error("replacer")); ?></span>
+                    <span class="help-block m-b-none"><?php _e("Character to replace bad words with", mmg()->domain); ?></span>
                 </div>
                 <div class="clearfix"></div>
             </div>

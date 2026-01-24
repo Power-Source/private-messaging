@@ -50,6 +50,12 @@
                         <div role="tabpanel" class="tab-pane <?php echo mmg()->get('tab') == 'attachment' ? 'active' : null ?>" id="attachment">
                             <?php do_action('mm_setting_attachment', $model); ?>
                         </div>
+                        <div role="tabpanel" class="tab-pane <?php echo mmg()->get('tab') == 'cap' ? 'active' : null ?>" id="cap">
+                            <?php do_action('mm_setting_cap', $model); ?>
+                        </div>
+                        <div role="tabpanel" class="tab-pane <?php echo mmg()->get('tab') == 'filter' ? 'active' : null ?>" id="filter">
+                            <?php do_action('mm_setting_filter', $model); ?>
+                        </div>
                     </div>
                     
                     <!-- URL-aware click-based tab switching -->

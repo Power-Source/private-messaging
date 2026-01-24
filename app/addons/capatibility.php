@@ -8,6 +8,8 @@
 if (!class_exists('MM_User_Capability')) {
     class MM_User_Capability
     {
+        use Template_Loader_Trait;
+        
         public function __construct()
         {
             add_action('mm_setting_menu', array(&$this, 'setting_menu'));
@@ -113,7 +115,6 @@ if (!class_exists('MM_User_Capability')) {
 
         function setting_content()
         {
-            // Bootstrap tabs werden verwendet, jQuery UI Tabs nicht nötig
             $roles = get_editable_roles();
             $index = array_keys($roles);
             $data = get_option('mm_user_cap');
@@ -123,101 +124,86 @@ if (!class_exists('MM_User_Capability')) {
             ?>
             <div class="row">
                 <div class="col-md-12">
-                    <div class="tab-pane active">
-                        <div class="page-header">
-                            <h3><?php _e("Capability Settings", mmg()->domain) ?></h3>
-                        </div>
-                        <?php if ($this->has_flash('mm_user_cap')): ?>
-                            <div class="alert alert-success">
-                                <?php echo $this->get_flash('mm_user_cap') ?>
-                            </div>
-                        <?php endif; ?>
-                        <!-- Nav tabs -->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <form method="post">
-                                    <div class="row" id="tabs">
-                                        <ul id="role-list" class="nav nav-tabs tabs-left col-md-3" role="tablist">
-                                            <?php
-                                            foreach ($roles as $key => $role):
-                                                ?>
-                                                <li style="float: none;clear: both">
-                                                    <a href="#tab_<?php echo $key ?>">
-                                                        <?php echo $role['name'] ?>
-                                                    </a>
-                                                </li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                        <div class="col-md-9" style="padding: 0">
-                                            <div id="myTabContent" class="tab-content" style="min-height: 200px">
-                                                <?php foreach ($roles as $key => $role): ?>
-                                                    <div
-                                                        class=" <?php echo array_search($key, $index) == 0 ? 'active' : '' ?>"
-                                                        id="tab_<?php echo $key ?>">
-                                                        <?php foreach ($roles as $k => $r): ?>
-                                                            <?php if ($k != $key): ?>
-                                                                <?php if (!isset($data[$key])): ?>
-                                                                    <div class="checkbox">
-                                                                        <label>
-                                                                            <input name="mm_role[<?php echo $key ?>][]"
-                                                                                   type="checkbox"
-                                                                                   checked="checked"
-                                                                                   value="<?php echo $k ?>">
-                                                                            <?php _e(sprintf("User from this role can send to <strong>%s</strong>", $r['name']), mmg()->domain) ?>
-                                                                        </label>
-                                                                    </div>
-                                                                <?php else: ?>
-                                                                    <div class="checkbox">
-                                                                        <label>
-                                                                            <input name="mm_role[<?php echo $key ?>][]"
-                                                                                   type="checkbox"
-                                                                                <?php echo checked($data[$key][array_search($k, $data[$key])], $k) ?>
-                                                                                   value="<?php echo $k ?>">
-                                                                            <?php _e(sprintf("User from this role can send to <strong>%s</strong>", $r['name']), mmg()->domain) ?>
-                                                                        </label>
-                                                                    </div>
-                                                                <?php endif; ?>
-                                                            <?php endif; ?>
-                                                        <?php endforeach; ?>
-                                                    </div>
-                                                <?php endforeach; ?>
-                                                <div class="clearfix"></div>
-                                            </div>
-
-                                        </div>
-                                        <div class="clearfix"></div>
-                                        <br/>
-
-                                        <div class="row">
-                                            <div class="col-md-9 col-md-offset-3">
-                                                <button name="mm_user_cap" type="submit"
-                                                        class="btn btn-primary"><?php _e("Save Changes", mmg()->domain) ?></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
+                    <div class="page-header">
+                        <h3><?php _e("Capability Settings", mmg()->domain) ?></h3>
+                        <p class="text-muted"><?php _e("Control which user roles can send messages to other roles.", mmg()->domain) ?></p>
                     </div>
-                    <div class="clearfix"></div>
+                    
+                    <?php if ($this->has_flash('mm_user_cap')): ?>
+                        <div class="alert alert-success">
+                            <?php echo $this->get_flash('mm_user_cap') ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <form method="post">
+                        <div class="row">
+                            <!-- Vertical tabs on left -->
+                            <div class="col-md-3">
+                                <ul class="nav nav-pills nav-stacked" role="tablist" style="margin-bottom:20px;">
+                                    <?php 
+                                    $first = true;
+                                    foreach ($roles as $key => $role): 
+                                    ?>
+                                        <li role="presentation" class="<?php echo $first ? 'active' : ''; ?>">
+                                            <a href="#tab_<?php echo esc_attr($key); ?>" role="tab" data-toggle="tab">
+                                                <?php echo esc_html($role['name']); ?>
+                                            </a>
+                                        </li>
+                                    <?php 
+                                        $first = false;
+                                    endforeach; 
+                                    ?>
+                                </ul>
+                            </div>
+                            
+                            <!-- Tab content on right -->
+                            <div class="col-md-9">
+                                <div class="tab-content" style="min-height:300px;border:1px solid #ddd;padding:20px;background:#f9f9f9;">
+                                    <?php 
+                                    $first = true;
+                                    foreach ($roles as $key => $role): 
+                                    ?>
+                                        <div role="tabpanel" class="tab-pane <?php echo $first ? 'active' : ''; ?>" id="tab_<?php echo esc_attr($key); ?>">
+                                            <h4 style="margin-top:0;"><?php echo esc_html($role['name']); ?> <?php _e("can send to:", mmg()->domain); ?></h4>
+                                            
+                                            <?php foreach ($roles as $k => $r): ?>
+                                                <?php if ($k != $key): ?>
+                                                    <div class="checkbox">
+                                                        <label style="font-weight:normal;">
+                                                            <input name="mm_role[<?php echo esc_attr($key); ?>][]"
+                                                                   type="checkbox"
+                                                                   <?php 
+                                                                   if (!isset($data[$key])) {
+                                                                       echo 'checked="checked"';
+                                                                   } else {
+                                                                       checked(in_array($k, $data[$key]), true);
+                                                                   }
+                                                                   ?>
+                                                                   value="<?php echo esc_attr($k); ?>">
+                                                            <strong><?php echo esc_html($r['name']); ?></strong>
+                                                        </label>
+                                                    </div>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php 
+                                        $first = false;
+                                    endforeach; 
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row" style="margin-top:20px;">
+                            <div class="col-md-9 col-md-offset-3">
+                                <button name="mm_user_cap" type="submit" class="btn btn-primary">
+                                    <?php _e("Save Changes", mmg()->domain) ?>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <script type="text/javascript">
-                jQuery(document).ready(function ($) {
-                    $('#myTabContent').height($('#role-list').height());
-                    $("#tabs").tabs({
-                        active: 0,
-                        activate: function (event, ui) {
-                            ui.newTab.addClass('active');
-                            ui.oldTab.removeClass('active');
-                        },
-                        create: function (event, ui) {
-                            ui.tab.addClass('active');
-                        }
-                    })
-                })
-            </script>
         <?php
         }
 

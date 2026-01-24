@@ -521,7 +521,23 @@ class MM_Conversation_Model
         global $wpdb;
         $table = self::get_table();
         
-        return $wpdb->delete($table, array('id' => $this->id), array('%d')) > 0;
+        $deleted = $wpdb->delete($table, array('id' => $this->id), array('%d')) > 0;
+
+        if ($deleted) {
+            $user_ids = array_filter(explode(',', $this->user_index ?? ''));
+            if (!empty($this->send_from)) {
+                $user_ids[] = (int) $this->send_from;
+            }
+            foreach ($user_ids as $user_id) {
+                delete_transient('mm_count_all_' . $user_id);
+                delete_transient('mm_count_read_' . $user_id);
+                delete_transient('mm_count_unread_' . $user_id);
+                delete_transient('mm_count_archive_' . $user_id);
+                delete_transient('mm_count_sent_' . $user_id);
+            }
+        }
+
+        return $deleted;
     }
 
     /**
@@ -557,6 +573,10 @@ class MM_Conversation_Model
         $this->message_count = count($messages);
 
         $this->save();
+
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('MM_Conversation_Model::update_index conv=' . $this->id . ' user_index=' . $this->user_index . ' message_count=' . $this->message_count . ' message_id=' . $message_id . ' remove=' . ($remove ? '1' : '0'));
+        }
     }
 
     /**
@@ -684,10 +704,15 @@ class MM_Conversation_Model
     private function after_save()
     {
         $user_ids = array_filter(explode(',', $this->user_index ?? ''));
+        if (!empty($this->send_from)) {
+            $user_ids[] = (int) $this->send_from;
+        }
         foreach ($user_ids as $user_id) {
             delete_transient('mm_count_all_' . $user_id);
             delete_transient('mm_count_read_' . $user_id);
             delete_transient('mm_count_unread_' . $user_id);
+            delete_transient('mm_count_archive_' . $user_id);
+            delete_transient('mm_count_sent_' . $user_id);
         }
     }
 

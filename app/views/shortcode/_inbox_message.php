@@ -27,15 +27,18 @@ $mm_render_message_body = function ($msg) {
     return wp_kses($pretty, $allowed);
 };
 $history_messages = array();
-$seen_ids = array();
-$seen_ids[$message->id] = true;
+$seen_fingerprints = array();
+$primary_fp = ($message->id && is_scalar($message->id)) ? ('id:' . $message->id) : md5(($message->content ?? '') . ($message->date ?? ''));
+$seen_fingerprints[$primary_fp] = true;
+
 foreach ($messages as $m) {
-    if (!isset($m->id)) { continue; }
-    if (isset($seen_ids[$m->id])) { continue; }
-    $seen_ids[$m->id] = true;
+    if (!is_object($m)) { continue; }
+    $fp = (isset($m->id) && $m->id) ? ('id:' . $m->id) : md5(($m->content ?? '') . ($m->date ?? ''));
+    if (isset($seen_fingerprints[$fp])) { continue; }
+    $seen_fingerprints[$fp] = true;
     $history_messages[] = $m;
 }
-$has_history = count($history_messages) > 0 && count($seen_ids) > 1;
+$has_history = count($history_messages) > 0;
 ?>
 <div class="ig-container">
     <section class="message-content">
@@ -133,7 +136,7 @@ $has_history = count($history_messages) > 0 && count($seen_ids) > 1;
         $attachment_files = array_filter($attachment_files);
         
         // DEBUG
-        if (defined('WP_DEBUG') && WP_DEBUG) {
+        /*if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log('=== ATTACHMENT DEBUG ===');
             error_log('Message ID: ' . $message->id);
             error_log('Conversation ID: ' . $message->conversation_id);
@@ -141,7 +144,7 @@ $has_history = count($history_messages) > 0 && count($seen_ids) > 1;
             error_log('Attachment files count: ' . count($attachment_files));
             error_log('Attachment files: ' . print_r($attachment_files, true));
         }
-        
+        */ 
         if (count($attachment_files) > 0):
         ?>
             <div class="message-footer" style="margin-top:20px;">
@@ -275,13 +278,13 @@ $has_history = count($history_messages) > 0 && count($seen_ids) > 1;
                     $attachment_files = array_filter($attachment_files);
                     
                     // DEBUG
-                    if (defined('WP_DEBUG') && WP_DEBUG && count($attachment_files) > 0) {
+                    /*if (defined('WP_DEBUG') && WP_DEBUG && count($attachment_files) > 0) {
                         error_log('=== HISTORY ATTACHMENT DEBUG ===');
                         error_log('History Message ID: ' . $message->id);
                         error_log('History Conversation ID: ' . $message->conversation_id);
                         error_log('History Attachment raw: ' . $message->attachment);
                         error_log('History Attachment files count: ' . count($attachment_files));
-                    }
+                    }*/
                     
                     if (count($attachment_files) > 0):
                     ?>

@@ -46,18 +46,18 @@ $r_id = 'reply_' . uniqid();
                         ?>
                         <form method="post" id="<?php echo esc_attr($fid); ?>">
                             <div class="modal-header">
-                                <h4 class="modal-title text-left"><?php _e("Compose Message", mmg()->domain) ?></h4>
+                                <h4 class="modal-title text-left"><?php _e("Nachricht verfassen", mmg()->domain) ?></h4>
                             </div>
                             <div class="modal-body text-left">
                                 <div class="alert alert-success hide mm-notice">
-                                    <?php _e("Your message has been sent", mmg()->domain) ?>
+                                    <?php _e("Deine Nachricht wurde gesendet", mmg()->domain) ?>
                                 </div>
                                 <?php if ($a['subject']): ?>
                                     <input type="hidden" name="MM_Message_Model[subject]" id="mm_message_model-subject" value="<?php echo esc_attr($model->subject); ?>">
                                 <?php else: ?>
                                     <div
                                         class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
-                                        <label for="mm_message_model-subject" class="col-lg-2 control-label">Subject</label>
+                                        <label for="mm_message_model-subject" class="col-lg-2 control-label">Betreff</label>
                                         <div class="col-lg-10">
                                             <input type="text" 
                                                    name="MM_Message_Model[subject]" 
@@ -93,7 +93,7 @@ $r_id = 'reply_' . uniqid();
                                 <button type="button" class="btn btn-default"
                                         data-dismiss="modal"><?php _e("Close", mmg()->domain) ?></button>
                                 <button type="button"
-                                        class="btn btn-primary reply-submit"><?php _e("Send", mmg()->domain) ?></button>
+                                        class="btn btn-primary reply-submit"><?php _e("Senden", mmg()->domain) ?></button>
                             </div>
                         </form>
                             <script type="text/javascript">

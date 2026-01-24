@@ -183,9 +183,41 @@ class MM_Message_Model
             }
         }
         
-        // Normalize arrays coming from request (may be array of IDs)
+        // Normalize recipients to a comma-separated list of user IDs (strip self, dedupe)
         if (is_array($this->send_to)) {
             $this->send_to = implode(',', array_map('sanitize_text_field', $this->send_to));
+        }
+
+        if (!empty($this->send_to) && is_string($this->send_to)) {
+            $raw_ids = explode(',', $this->send_to);
+            $recipient_ids = array();
+            foreach ($raw_ids as $token) {
+                $token = trim($token);
+                if ($token === '') {
+                    continue;
+                }
+                if (ctype_digit($token)) {
+                    $recipient_ids[] = intval($token);
+                    continue;
+                }
+                $user = get_user_by('login', $token);
+                if ($user && isset($user->ID)) {
+                    $recipient_ids[] = intval($user->ID);
+                }
+            }
+
+            $recipient_ids = array_values(array_unique($recipient_ids));
+
+            $current_user_id = get_current_user_id();
+            $recipient_ids = array_values(array_filter($recipient_ids, function ($id) use ($current_user_id) {
+                return $id > 0 && $id !== $current_user_id;
+            }));
+
+            if (empty($recipient_ids)) {
+                $this->errors['send_to'] = __('You cannot send a message to yourself. Please choose a recipient.', 'private_messaging');
+            } else {
+                $this->send_to = implode(',', $recipient_ids);
+            }
         }
         
         // Simple validation

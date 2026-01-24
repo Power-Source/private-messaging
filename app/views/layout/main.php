@@ -177,27 +177,42 @@
         $('body').on('ajaxComplete', function () { mmUpdateNavContext(); });
         $('body').on('click', '.load-conv', function () { setTimeout(mmUpdateNavContext, 200); });
 
-        $('body').on('submit', '.compose-form', function () {
+        var mmCurrentUserId = <?php echo intval(get_current_user_id()); ?>;
+
+        $('body').on('submit', '.compose-form', function (e) {
+            // Prevent duplicate AJAX submits when the inline compose handler (FormData) is active
+            if ($(this).is('#compose-form-inline')) {
+                return true; // let the dedicated inline handler run
+            }
+
+            e.preventDefault();
             var that = $(this);
-            
-            // Sync Selectize values to hidden input before send
             var sendToField = $('#mm_message_model-send_to');
+            var rawRecipients = [];
+            
+            // Sync Selectize values to hidden input before send and strip self
             if (sendToField.length && sendToField[0].selectize) {
                 var selectizeValues = sendToField[0].selectize.getValue();
-                console.log('Selectize values before send:', selectizeValues);
-                console.log('Selectize type:', typeof selectizeValues);
-                
-                // Make sure the value is properly set
-                if (Array.isArray(selectizeValues)) {
-                    sendToField.val(selectizeValues.join(','));
-                } else if (selectizeValues) {
-                    sendToField.val(selectizeValues);
-                } else {
-                    console.warn('Selectize has no value!');
-                }
-                console.log('Send_to field value after sync:', sendToField.val());
+                rawRecipients = Array.isArray(selectizeValues) ? selectizeValues : (selectizeValues ? [selectizeValues] : []);
             } else {
-                console.warn('Selectize not initialized:', sendToField[0]);
+                var rawVal = sendToField.val();
+                rawRecipients = rawVal ? rawVal.split(',') : [];
+            }
+
+            var cleanedRecipients = rawRecipients
+                .map(function (id) { return String(id).trim(); })
+                .filter(function (id) { return id !== '' && id !== String(mmCurrentUserId); });
+
+            sendToField.val(cleanedRecipients.join(','));
+
+            // Block submit when no recipients in new compose
+            var isReply = that.find('input[name="MM_Message_Model[conversation_id]"]').length > 0;
+            if (!isReply && cleanedRecipients.length === 0) {
+                var errorEl = that.find('.error-send_to');
+                errorEl.text('<?php echo esc_js(__('You cannot send a message to yourself. Please choose a recipient.', mmg()->domain)); ?>').show();
+                sendToField.closest('.form-group').addClass('has-error');
+                that.find('button').removeAttr('disabled');
+                return false;
             }
             
             console.log('Form data to send:', $(that).find(":input").serialize());

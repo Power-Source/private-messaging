@@ -70,6 +70,7 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
     // Global attachment tracking
     window.mmAttachmentIds = [];
     window.mmAttachmentNames = {};
+    var mmCurrentUserId = <?php echo intval(get_current_user_id()); ?>;
 
     // Initialize on jQuery ready
     jQuery(document).ready(function($) {
@@ -81,6 +82,37 @@ $conversation_id = isset($conversation_id) ? $conversation_id : null;
             console.log('Form submitted');
             
             var form = $(this);
+
+            // Normalize and validate recipients before building FormData
+            var sendToField = $('#mm_message_model-send_to');
+            var rawRecipients = [];
+
+            if (sendToField.length) {
+                if (sendToField[0].selectize) {
+                    var selectizeValue = sendToField[0].selectize.getValue();
+                    rawRecipients = Array.isArray(selectizeValue) ? selectizeValue : (selectizeValue ? [selectizeValue] : []);
+                } else {
+                    var rawVal = sendToField.val();
+                    rawRecipients = rawVal ? rawVal.split(',') : [];
+                }
+            }
+
+            // Strip current user and empties
+            var cleanedRecipients = rawRecipients
+                .map(function (id) { return String(id).trim(); })
+                .filter(function (id) { return id !== '' && id !== String(mmCurrentUserId); });
+
+            // Push cleaned list back to field for submission
+            sendToField.val(cleanedRecipients.join(','));
+
+            // Inline error when no valid recipients remain
+            if (cleanedRecipients.length === 0 && !$('#compose-form-container').data('reply-mode')) {
+                var errorEl = form.find('.error-send_to');
+                errorEl.text('<?php echo esc_js(__('You cannot send a message to yourself. Please choose a recipient.', mmg()->domain)); ?>').show();
+                sendToField.closest('.form-group').addClass('has-error');
+                return;
+            }
+
             var formData = new FormData(this);
             
             $.ajax({

@@ -25,6 +25,41 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
+// PS Update Manager - Hinweis wenn nicht installiert/aktiviert
+add_action( 'admin_notices', function() {
+    if ( ! function_exists( 'ps_register_product' ) && current_user_can( 'install_plugins' ) ) {
+        $screen = get_current_screen();
+        if ( $screen && in_array( $screen->id, array( 'plugins', 'plugins-network' ) ) ) {
+            $plugin_file = 'ps-update-manager/ps-update-manager.php';
+            $all_plugins = get_plugins();
+            $is_installed = isset( $all_plugins[ $plugin_file ] );
+            
+            echo '<div class="notice notice-warning is-dismissible"><p>';
+            echo '<strong>Bekomme Updates und mehr PSOURCE mit dem PSOURCE Manager:</strong> ';
+            
+            if ( $is_installed ) {
+                // Aktivierungs-Link
+                $activate_url = wp_nonce_url(
+                    admin_url( 'plugins.php?action=activate&plugin=' . urlencode( $plugin_file ) ),
+                    'activate-plugin_' . $plugin_file
+                );
+                echo sprintf(
+                    __( 'Aktiviere den <a href="%s">PSOURCE Manager</a> für automatische Updates.', 'textdomain' ),
+                    esc_url( $activate_url )
+                );
+            } else {
+                // Download-Link
+                echo sprintf(
+                    __( 'Installiere den <a href="%s" target="_blank">PSOURCE Manager</a> für automatische Updates.', 'textdomain' ),
+                    'https://github.com/Power-Source/ps-update-manager/releases/latest'
+                );
+            }
+            
+            echo '</p></div>';
+        }
+    }
+});
+
 if (!class_exists('MMessaging')) {
     class MMessaging
     {

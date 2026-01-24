@@ -149,6 +149,14 @@ class Inbox_Shortcode_Controller
 
         $id = mmg()->decrypt(mmg()->post('id'));
         $model = MM_Conversation_Model::model()->find($id);
+        if (!$model || !$model->exist) {
+            wp_send_json(array(
+                'status' => 'fail',
+                'message' => __('Conversation not found', mmg()->domain),
+            ));
+            exit;
+        }
+
         $html = $this->render_inbox_message($model);
         if (!$model->is_archive()) {
             $model->mark_as_read();
@@ -344,36 +352,38 @@ class Inbox_Shortcode_Controller
                 // New message - check for existing conversation with same recipient + subject
                 $send_to = $model->send_to;
                 $user_ids = $this->logins_to_ids($send_to);
+                $user_ids = array_map('intval', array_unique(array_filter($user_ids)));
+
+                $current_user_id = get_current_user_id();
+
+                // Strip current user to avoid self-send
+                $user_ids = array_values(array_filter($user_ids, function($id) use ($current_user_id) {
+                    return $id > 0 && $id !== $current_user_id;
+                }));
 
                 $cc_list = mmg()->post('cc');
                 $cc_list = explode(',', $cc_list);
-                $cc_list = array_filter($cc_list);
+                $cc_list = array_map('intval', array_unique(array_filter($cc_list)));
+                $cc_list = array_values(array_filter($cc_list, function($id) use ($current_user_id) {
+                    return $id > 0 && $id !== $current_user_id;
+                }));
+
+                if (empty($user_ids) && empty($cc_list)) {
+                    wp_send_json(array(
+                        'status' => 'fail',
+                        'errors' => array('send_to' => __('You cannot send a message to yourself. Please choose a recipient.', mmg()->domain))
+                    ));
+                    exit;
+                }
+
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('MM_Send_Message recipients after filter: primary=' . json_encode($user_ids) . ' cc=' . json_encode($cc_list) . ' current=' . $current_user_id);
+                }
                 
                 if (empty($cc_list)) {
-                    // Single recipient - check for duplicate conversation
+                    // Single recipient: always create a new conversation
                     foreach ($user_ids as $user_id) {
-                        $existing_conv = $this->find_existing_conversation($user_id, $model->subject);
-                        if ($existing_conv) {
-                            // Use existing conversation
-                            $user_ids_conv = $existing_conv->user_index;
-                            $user_ids_conv = $this->logins_to_ids($user_ids_conv);
-                            unset($user_ids_conv[array_search(get_current_user_id(), $user_ids_conv)]);
-                            
-                            foreach ($user_ids_conv as $uid) {
-                                MM_Message_Status_Model::model()->status($existing_conv->id, MM_Message_Status_Model::STATUS_UNREAD, $uid);
-                            }
-                            
-                            $message_id = MM_Message_Model::reply(implode(',', $user_ids_conv), 0, $existing_conv->id, $model->export());
-                            $existing_conv->update_index($message_id);
-                            
-                            // Move attachments from temporary (0) to conversation directory
-                            if (!empty($model->attachment)) {
-                                PM_Attachment_Handler::move_attachments_to_conversation($model->attachment, 0, $existing_conv->id);
-                            }
-                        } else {
-                            // Create new conversation
-                            $this->_send_message($user_id, $model);
-                        }
+                        $this->_send_message($user_id, $model);
                     }
                 } else {
                     foreach ($user_ids as $user_id) {
@@ -419,15 +429,23 @@ class Inbox_Shortcode_Controller
 
     function _send_message($user_id, $model)
     {
+        $current_user_id = get_current_user_id();
+        $user_id = intval($user_id);
+        if ($user_id <= 0 || $user_id === $current_user_id) {
+            return false;
+        }
+
         //create new conservation
         $conservation = new MM_Conversation_Model();
         $conservation->save();
-        //apply status of this conversation for sender and receive
-        MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_READ, get_current_user_id());
-        //apply status for receive
+        // Apply status for recipient only (do not add sender to status to keep sender out of inbox)
         MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
         $id = MM_Message_Model::send($user_id, $conservation->id, $model->export());
         $conservation->update_index($id);
+
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('MM_Send_Message::_send_message created conv=' . $conservation->id . ' msg=' . $id . ' from=' . $current_user_id . ' to=' . $user_id . ' user_index=' . $conservation->user_index . ' message_count=' . $conservation->message_count);
+        }
         
         // Move attachments from temporary (0) to conversation directory
         if (!empty($model->attachment)) {
@@ -442,54 +460,24 @@ class Inbox_Shortcode_Controller
      */
     function find_existing_conversation($user_id, $subject)
     {
-        global $wpdb;
-        
-        $current_user = get_current_user_id();
-        $table = $wpdb->prefix . 'mm_conversation';
-        $message_table = $wpdb->prefix . 'mm_message';
-        
-        // Find conversations where user_index contains both current user and target user
-        $conversations = $wpdb->get_results($wpdb->prepare(
-            "SELECT c.* FROM {$table} c 
-            WHERE (c.user_index LIKE %s OR c.user_index LIKE %s OR c.user_index LIKE %s OR c.user_index = %s)
-            ORDER BY c.id DESC",
-            $current_user . ',%',
-            '%,' . $current_user . ',%',
-            '%,' . $current_user,
-            $current_user
-        ));
-        
-        foreach ($conversations as $conv) {
-            $user_index = explode(',', $conv->user_index);
-            $user_index = array_map('intval', $user_index);
-            
-            // Check if conversation has exactly 2 participants (current user + target user)
-            if (count($user_index) === 2 && in_array($current_user, $user_index) && in_array($user_id, $user_index)) {
-                // Get first message to check subject
-                $first_message = $wpdb->get_row($wpdb->prepare(
-                    "SELECT * FROM {$message_table} WHERE conversation_id = %d ORDER BY id ASC LIMIT 1",
-                    $conv->id
-                ));
-                
-                if ($first_message && trim($first_message->subject) === trim($subject)) {
-                    // Found existing conversation with same subject
-                    $conversation = new MM_Conversation_Model();
-                    $conversation->import((array)$conv);
-                    return $conversation;
-                }
-            }
-        }
-        
         return false;
     }
 
     function _send_message_group($user_ids, $model)
     {
+        $current_user_id = get_current_user_id();
+        $user_ids = array_values(array_filter(array_map('intval', (array)$user_ids), function($id) use ($current_user_id) {
+            return $id > 0 && $id !== $current_user_id;
+        }));
+
+        if (empty($user_ids)) {
+            return false;
+        }
+
         //create new conservation
         $conservation = new MM_Conversation_Model();
         $conservation->save();
-        //apply status of this conversation for sender and receive
-        MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_READ, get_current_user_id());
+        // Apply status for recipients only
         foreach ($user_ids as $user_id) {
             MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
         }

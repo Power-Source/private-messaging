@@ -2,8 +2,8 @@
 
 /**
  * Author: PSOURCE
- * Name: Group Conversation (Beta)
- * Description: Enable group conversations and invitations to join a group conversation.
+ * Name: Gruppengespräch (Beta)
+ * Description: Ermöglicht Gruppengespräche und Einladungen zur Teilnahme an einem Gruppengespräch.
  */
 class MM_Group_Conversation
 {

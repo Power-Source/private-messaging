@@ -2,8 +2,8 @@
 
 /**
  * Author: PSOURCE
- * Name: Message Filters
- * Description: Allow users to filter messages by (whatever parameters they can use to filter)
+ * Name: Bad Words Filter
+ * Description: Filtere Schimpfwörter aus Nachrichteninhalten heraus.
  * Icon:fa-user-secret
  */
 if (!class_exists('MM_Words_Filter')) {

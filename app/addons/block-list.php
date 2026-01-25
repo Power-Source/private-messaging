@@ -2,8 +2,8 @@
 
 /**
  * Author: PSOURCE
- * Name: Block List
- * Description: Allows users to block messages from another user.
+ * Name: Blacklist
+ * Description: Ermöglicht es Benutzern, Nachrichten von anderen Benutzern zu blockieren.
  */
 if (!class_exists('MM_Block_List')) {
     class MM_Block_List

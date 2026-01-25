@@ -2,7 +2,7 @@
 /**
  * Author: PSOURCE
  * Name: bbPress integration
- * Description: Flawless integration with BBpress.
+ * Description: Nahtlose Integration mit BBpress.
  */
 
 /**

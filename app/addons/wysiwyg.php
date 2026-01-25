@@ -3,7 +3,7 @@
 /**
  * Author: PSOURCE
  * Name: WYISWYG
- * Description: Adds a WYSIWYG editor to the message composer.
+ * Description: Fügt dem Nachrichteneditor einen WYSIWYG-Editor hinzu.
  */
 if (!class_exists('MM_WYSIWYG')) {
     class MM_WYSIWYG

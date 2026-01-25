@@ -2,9 +2,8 @@
 
 /**
  * Author: PSOURCE
- * Name: Notifications
- * Description: Display a visual notification for users when a new message is received.
- * Modern rewrite with native Browser Notifications API and Toast system.
+ * Name: Benachrichtigungen
+ * Description: Zeigt eine visuelle Benachrichtigung für Benutzer an, wenn eine neue Nachricht empfangen wird.
  */
 if (!class_exists('MM_Push_Notification')) {
     class MM_Push_Notification

@@ -2,8 +2,8 @@
 
 /**
  * Author: PSOURCE
- * Name: Capabilities
- * Description: Limit sending capabilities to specific WordPress roles.
+ * Name: Sendeberechtigungen
+ * Description: Beschränke die Sendeberechtigungen auf bestimmte WordPress-Rollen.
  */
 if (!class_exists('MM_User_Capability')) {
     class MM_User_Capability

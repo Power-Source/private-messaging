@@ -3,7 +3,7 @@
  * Template Loader Trait
  * 
  * Modern replacement for IG_Request render functionality.
- * Uses WordPress native template loading instead of reflection-based paths.
+ * Uses ClassicPress native template loading instead of reflection-based paths.
  * 
  * @package PrivateMessaging
  * @since 2.0.0
@@ -123,7 +123,7 @@ trait Template_Loader_Trait {
     }
     
     /**
-     * Set flash message using WordPress Transients
+     * Set flash message using ClassicPress Transients
      * 
      * Modern replacement for IG_Request flash messages.
      * Uses transients with user-specific keys for better performance.

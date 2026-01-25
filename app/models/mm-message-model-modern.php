@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MM_Message_Model - Modern WordPress-Native Implementation
+ * MM_Message_Model - Modern ClassicPress-Native Implementation
  * Replaces IG_Post_Model with native WP APIs
  * 
  * @author: Hoang Ngo (Modernized)
@@ -34,7 +34,7 @@ class MM_Message_Model_Modern
     private $rules = array();
 
     /**
-     * Load message from WordPress
+     * Load message from ClassicPress
      */
     public static function find($id)
     {

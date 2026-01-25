@@ -29,7 +29,7 @@ class MM_Storage_Model
         $table_posts = $wpdb->prefix . 'posts';
         $table_postmeta = $wpdb->prefix . 'postmeta';
         
-        // Get total size of message content (stored as WordPress posts)
+        // Get total size of message content (stored as ClassicPress posts)
         $query = "SELECT COALESCE(SUM(
                     CHAR_LENGTH(COALESCE(post_content, '')) + 
                     CHAR_LENGTH(COALESCE(post_title, '')) +

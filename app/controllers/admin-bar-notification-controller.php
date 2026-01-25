@@ -2,7 +2,7 @@
 
 /**
  * Admin Bar Notification Controller
- * Adds messaging notifications and compose button to WordPress admin bar
+ * Adds messaging notifications and compose button to ClassicPress admin bar
  * 
  * @package PrivateMessaging
  * @since 1.0.0

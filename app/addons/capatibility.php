@@ -3,7 +3,7 @@
 /**
  * Author: PSOURCE
  * Name: Sendeberechtigungen
- * Description: Beschränke die Sendeberechtigungen auf bestimmte WordPress-Rollen.
+ * Description: Beschränke die Sendeberechtigungen auf bestimmte ClassicPress-Rollen.
  */
 if (!class_exists('MM_User_Capability')) {
     class MM_User_Capability

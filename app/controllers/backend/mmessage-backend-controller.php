@@ -2,7 +2,7 @@
 
 /**
  * Backend Controller
- * Handles WordPress admin interface for messaging
+ * Handles ClassicPress admin interface for messaging
  * 
  * @package PrivateMessaging
  * @since 1.0.0

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MM_Conversation_Model - Modern WordPress-Native Implementation
+ * MM_Conversation_Model - Modern ClassicPress-Native Implementation
  * Replaces IG_DB_Model_Ex with native $wpdb prepared statements
  * 
  * @author: Hoang Ngo (Modernized)

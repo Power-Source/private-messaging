@@ -2,7 +2,7 @@
 
 /**
  * Author: Hoang Ngo
- * Modern replacement using WordPress Options API
+ * Modern replacement using ClassicPress Options API
  */
 class MM_Setting_Model
 {
@@ -53,12 +53,12 @@ class MM_Setting_Model
         Die Nachricht, die du an TO_NAME auf SITE_NAME gesendet hast, wurde gelesen.";
         $this->receipt_subject = "Die Nachricht, die du an TO_NAME auf SITE_NAME gesendet hast, wurde gelesen.";
         
-        // Load settings from WordPress options
+        // Load settings from ClassicPress options
         $this->load_settings();
     }
 
     /**
-     * Load settings from WordPress options API
+     * Load settings from ClassicPress options API
      * @return void
      */
     public function load_settings()
@@ -84,7 +84,7 @@ class MM_Setting_Model
     }
 
     /**
-     * Save settings to WordPress options API
+     * Save settings to ClassicPress options API
      * @return bool
      */
     public function save()

@@ -1,4 +1,4 @@
-## Egal, ob Du ein vielbesuchtes Forum mit Hunderten von Nutzern betreibst oder einfach nur Webseiten-Betreiber in Deinem Multisite-Netzwerk vernetzen möchtest, das PSOURCE PM-System hilft Dir dabei, eine engagiertere und freundlichere Community aufzubauen.
+## Egal, ob Du ein vielbesuchtes Forum mit Hunderten von Nutzern betreibst oder einfach nur Webseiten-Betreiber in Deinem Multisite-Netzwerk vernetzen möchtest, das PSOURCE PM System hilft Dir dabei, eine engagiertere und freundlichere Community aufzubauen.
 
 
 ![Verbessere die Reaktionszeiten mit auffälligen Pop-up-Benachrichtigungen.](http://premium.wpmudev.org/wp-content/uploads/2015/01/notifications-735x470.jpg)

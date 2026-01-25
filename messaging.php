@@ -285,7 +285,7 @@ if (!class_exists('MMessaging')) {
 
         function scripts()
         {
-            // Register Bootstrap from WordPress (usually available in most setups)
+            // Register Bootstrap from ClassicPress (usually available in most setups)
             // If not available, we'll register our own versions
             if (!wp_style_is('bootstrap', 'registered')) {
                 // Fallback: Bootstrap CDN if not available locally

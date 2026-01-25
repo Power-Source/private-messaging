@@ -3,7 +3,7 @@
  * PM_Avatar_Handler
  * 
  * Handles avatar rendering with fallback to initials.
- * Supports WordPress user data (first_name, last_name, display_name).
+ * Supports ClassicPress user data (first_name, last_name, display_name).
  */
 class PM_Avatar_Handler {
 
@@ -27,7 +27,7 @@ class PM_Avatar_Handler {
     /**
      * Get HTML avatar element (image or initials)
      * 
-     * @param int $user_id WordPress user ID
+     * @param int $user_id ClassicPress user ID
      * @param int $size Avatar size in pixels (default: 36)
      * @param string $classes Additional CSS classes
      * 
@@ -40,7 +40,7 @@ class PM_Avatar_Handler {
             return self::_render_initials_avatar('?', $size, $classes);
         }
 
-        // Try to get WordPress avatar URL
+        // Try to get ClassicPress avatar URL
         $avatar_url = self::get_avatar_url($user_id);
         
         // Check if it's a real avatar (not default gravatar)
@@ -64,7 +64,7 @@ class PM_Avatar_Handler {
     /**
      * Get user initials from first/last name or display_name
      * 
-     * @param WP_User $user WordPress user object
+     * @param WP_User $user ClassicPress user object
      * 
      * @return string 1-2 character initials
      */
@@ -95,7 +95,7 @@ class PM_Avatar_Handler {
     /**
      * Get deterministic color for user based on ID
      * 
-     * @param int $user_id WordPress user ID
+     * @param int $user_id ClassicPress user ID
      * 
      * @return string Hex color code
      */
@@ -105,9 +105,9 @@ class PM_Avatar_Handler {
     }
 
     /**
-     * Get WordPress avatar URL
+     * Get ClassicPress avatar URL
      * 
-     * @param int $user_id WordPress user ID
+     * @param int $user_id ClassicPress user ID
      * 
      * @return string|false Avatar URL or false
      */
@@ -182,7 +182,7 @@ class PM_Avatar_Handler {
     /**
      * Get user display name with fallback
      * 
-     * @param int $user_id WordPress user ID
+     * @param int $user_id ClassicPress user ID
      * 
      * @return string User display name
      */

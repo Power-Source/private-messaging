@@ -1,151 +1,164 @@
 ---
 layout: psource-theme
-title: "PS Pretty Plugins"
+title: "PS PM System"
 ---
 
-<h2 align="center" style="color:#38c2bb;">PS Pretty Plugins</h2>
+<h2 align="center" style="color:#38c2bb;">PS PM System</h2>
 
 <div class="menu">
-  <a href="https://github.com/Power-Source/ps-pretty-plugins/releases" style="color:#38c2bb;">Download</a>
+  <a href="https://github.com/Power-Source/private-messaging/releases" style="color:#38c2bb;">Download</a>
   <a href="https://power-source.github.io/ps-update-manager/" style="color:#38c2bb;">PSOURCE MANAGER</a>
 </div>
 
 
-Verleihe Deinen Plugin-Seiten in Multisite-Netzwerken das Aussehen eines App Stores mit ausgewählten Bildern, Kategorien und einer erstaunlichen Suche.
+## Egal, ob Du ein vielbesuchtes Forum mit Hunderten von Nutzern betreibst oder einfach nur Webseiten-Betreiber in Deinem Multisite-Netzwerk vernetzen möchtest, das PSOURCE PM System hilft Dir dabei, eine engagiertere und freundlichere Community aufzubauen.
 
-## Mit Pretty Plugins kannst Du Plugins in Kategorien gruppieren, ihnen auffällige Funktionsbilder geben und sie in einem benutzerfreundlichen Raster anzeigen.
 
-Mache das Finden und Installieren von Plugins zum Kinderspiel. PS-Pretty Plugins ist ein unverzichtbares Tool für jeden Netzwerkbesitzer. Es bietet eine zentrale Steuerung und Konfiguration der Plugins-Seite jeder Webseite. Kombiniere es mit [PS Bloghosting](https://power-source.github.io/ps-bloghosting/), um einen fantastischen kostenpflichtigen Plugin-Shop zu erstellen.
+![Verbessere die Reaktionszeiten mit auffälligen Pop-up-Benachrichtigungen.](http://premium.wpmudev.org/wp-content/uploads/2015/01/notifications-735x470.jpg)
 
-Große Symbole und ein vertrautes Rasterlayout sorgen für ein optisch weitaus ansprechenderes Layout im Vergleich zum standardmäßigen Basiseintrag.
 
-![Screenshot der Plugins-Seite mit dem Rasterlayout](assets/images/prettyplugins-ss12.png)
+ Verbessere die Reaktionszeiten mit auffälligen Pop-up-Benachrichtigungen.
 
-  Große Symbole und ein Rasterlayout machen das Entdecken von Plugins zum Kinderspiel
+### Front-End-Messaging
 
-  Plugins können in mehrere Kategorien gruppiert werden, die vom Netzwerkadministrator definiert werden, was es Webseitenbesitzern erleichtert, neue Funktionen zu entdecken und zu installieren.
+Dein Posteingang ist für Dich und Deine Nutzer von überall auf Deiner Webseite zugänglich. Klicke einfach auf das E-Mail-Symbol in der Admin-Toolbar. Neue Nachrichten lassen sich blitzschnell und von überall auf Deiner Webseite aus versenden. Ob Du gerade an einem neuen Blogbeitrag arbeitest oder Dein Theme anpasst – Du kannst eine neue Nachricht verfassen, ohne Deinen Arbeitsablauf zu unterbrechen. Das Feld „Senden an“ übernimmt Benutzernamen von Deiner gesamten Webseite und vervollständigt diese automatisch, sodass man sich keine E-Mail-Adressen mehr merken muss. 
 
-![Screenshot der Plugin-Kategorien](assets/images/prettyplugins-ss2.png)
+![Anhänge in privaten Nachrichten erleichtern das Teilen von Dateien.](http://premium.wpmudev.org/wp-content/uploads/2015/01/attachments735x4701.jpg)
 
-  Gruppiere Plugins in Kategorien, um sie leichter finden zu können
 
-  Eine umfassende Einstellungsseite ermöglicht es einem Netzwerkbesitzer, alle Aspekte der Plugins-Seite zu verwalten, einschließlich Titel, Untertitel, Bilder und die Sichtbarkeit von Beschreibungen. Die Einstellungen können sogar exportiert und importiert werden!
+ Anhänge in privaten Nachrichten erleichtern das Teilen von Dateien.
 
-![Screenshot der Einstellungsseite](assets/images/prettyplugins-ss11.png)
+### Privater Dateiaustausch
 
-  Konfiguriere alle Aspekte des Verhaltens und Aussehens der Plugins-Seite
+Teile Fotos und Screenshots privat mit anderen Nutzern oder beschränke die Berechtigung zum Teilen von Bildern je nach Nutzerrolle. Mit aktiviertem PS Bloghosting kannst Du die Dateifreigabe sogar als exklusive Funktion für zahlende Mitglieder anbieten.
 
-  Für jedes Plugin wird eine genauere Steuerung bereitgestellt. Als Netzwerkadministrator kannst Du den Plugin-Namen, den Link und die Beschreibung überschreiben – Du kannst das Plugin beliebig vielen vorhandenen Kategorien zuweisen oder neue erstellen – und Du kannst ein vorgestelltes Bild laden.
+### Einfache Einrichtung
 
-![Screenshot der Plugin-Details-Bearbeitungsfunktion](assets/images/prettyplugins-ss41.png)
+Die Einrichtung von Private Messaging ist kinderleicht. Einfach das Plugin installieren und aktivieren. Private Messaging ist sofort einsatzbereit, sodass Du dich nicht mit Einstellungen herumschlagen musst. Es gibt sogar eine Option, automatisch Posteingangsseiten für Deine Nutzer zu erstellen.  
 
-  Überschreibe alle Plugin-Attribute
+### Getting Started
 
-  PS Pretty Plugins gibt Dir eine beispiellose Kontrolle über das Aussehen und Verhalten der Plugins-Seite und macht es für Webseitenbesitzer einfacher denn je, ihre Plugins selbst zu verwalten und neue Funktionen zu finden und zu ihrer Webseite hinzuzufügen.
+Once installed and activated, you'll see a new menu item in your dashboard: Messaging.
 
-## Verwendung
 
-### Für den Anfang
+![Messaging Menu Item](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-messaging-menu-item.png)
 
-Wenn Du neu bei Word/ClassicPress bist, Beachte dass dieses Plugin nur für Multisite-Installationen konzipiert ist und nicht auf einzelnen Webseiten funktioniert.
 
-### Konfigurieren der Einstellungen
+We'll need to assign a page for Private Messaging to use as the Inbox page, so let's head over to: Messaging -> Settings Once there, you'll see the "Inbox Page" section on the page:
 
-Nach der Installation und Aktivierung siehst Du in Deinem Menü „Netzwerkeinstellungen“ einen neuen Menüpunkt: PS Pretty Plugins. Klicke jetzt auf den Menüpunkt PS Pretty Plugins.
 
-![pretty-plugins-1000-menu](assets/images/pretty-plugins-1000-menu.png)
+![Create Inbox Page](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-create-inbox-page.png)
 
-  Die Einstellungen sind recht einfach. Aber lasse uns sie trotzdem durchgehen, ja? 
 
-![1\. Setup-Modus aktivieren/deaktivieren. 2\. Wähle Dein bevorzugtes Design. 3\. Wähle das Ziel des Plugin-Links aus. 4\. Wähle Deine Screenshot-Einstellungen aus. 5\. Plugin-Beschreibungen ein-/ausblenden. 6\. Passe die Beschriftungen an.](assets/images/pretty-plugins-1000-settings.png)
+You can assign an existing page to use by clicking on the drop-down menu and selecting a page, but for the purposes of this tutorial, we'll just create a new page. Click on "Create Page", and that'll create a page for Private Messaging to use as the Inbox page. Once you've done that, click on Save Changes at the bottom of this page, and we'll head off to the new Inbox page. :)
 
-  1\. Setup-Modus aktivieren/deaktivieren.
-2\. Wähle Dein bevorzugtes Design.
-3\. Wähle das Ziel des Plugin-Links aus.
-4\. Wähle Deine Screenshot-Einstellungen aus.
-5\. Plugin-Beschreibungen ein-/ausblenden.
-6\. Passe die Beschriftungen an.
+### Using your Inbox
 
-  1\. Wahrscheinlich möchtest Du _Setup-Modus aktivieren_ auf „WAHR“ gesetzt lassen, während Du die Dinge konfigurierst.
+You might have noticed a mail icon on the admin bar above. Hover over that, and click on "View Inbox":
 
-* Wenn der Setup-Modus aktiviert ist, kannst Du beim Aufrufen der Hauptseite nur eine Vorschau anzeigen. Die Unterseiten sind davon nicht betroffen.
-* Sobald Du fertig und mit Deiner Konfiguration zufrieden bist, setze sie auf „FFALSCH“, um Deine neue Pretty Plugins-Seite auf allen Unterseiten in Deinem Netzwerk zu aktivieren.
 
-2\. _Theme für Plugin-Seite auswählen_ ist genau das: Du kannst das Theme auswählen, das zur Anzeige der verfügbaren Plugins auf allen Unterseiten verwendet wird.
+![Visit Inbox Page](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-visit-inbox-page.png)
 
-* Derzeit sind in diesem Plugin folgende Themes enthalten: QuickSand / 3Eight / Material.
-* Um Dein eigenes benutzerdefiniertes Theme zu erstellen, kopiere einfach das QuickSand-Theme in /pretty-plugins/themes/ und benenne es um. Anschließend kannst Du das Layout und das Stylesheet bearbeiten und Dein benutzerdefiniertes Design in Deinen Ordner /wp-content/uploads/prettyplugins/themes/ hochladen. Es steht dann zur Auswahl zur Verfügung.
 
-3\. Um auszuwählen, wohin der Plugin-Link verweist, hast Du vier Möglichkeiten:
+You'll then be taken to the Inbox page, which has an interface similar to a basic email client:
 
-* _Plugin-Original-URL_ verweist auf die URL, die der Plugin-Autor in das Plugin eingefügt hat.
-* _Benutzerdefinierte Plugin-URL_ verweist auf die URLs, die Du für jedes Plugin festgelegt hast (wir werden weiter unten darauf eingehen).
-* _Info URL des Plugins oder, falls keine Info URL vorhanden ist, Original-URL_ bietet Dir das Beste aus beidem: Wenn Du keine Info URL für ein Plugin eingibst, wird als Link standardmäßig die URL verwendet, die der Autor des Plugins eingefügt hat.
-* _Disable_ deaktiviert effektiv alle Plugin-Links.
 
-4\. Hier wählen wir aus, welche Screenshots für Plugins verwendet und angezeigt werden sollen.
+![Inbox Page](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-inbox-page.png)
 
-* Wenn „WAHR" eingestellt ist, verwendet _Ersten Screenshot automatisch laden_ automatisch Screenshots aus dem Plugin-Root-Verzeichnis. Dadurch wird Pretty Plugins angewiesen, im Hauptverzeichnis des Plugins nach Bildern zu suchen - zuerst _screenshot-1.png_, dann _logo.png_ und zuletzt _logo.jpg_. Wenn keine dieser Dateien vorhanden ist, wird für dieses Plugin nichts angezeigt.
-* Wenn auf WAHR gesetzt, weist _Screenshot automatisch mit korrektem Namen laden_ Pretty Plugins an, in Deinem Ordner /wp-content/upload/prettyplugins/screenshots/ nach Dateien zu suchen, die _Du_ dort mit den richtigen Namen hochgeladen hast.
-     * Wenn sich das Plugin beispielsweise unter _wp-content/plugins/akismet/akismet.php_ befindet, sollte der Screenshot-Name _akismet-akismet.png_ lauten. Beachte, dass mit dieser Methode nur PNG-Bilder funktionieren.
 
-5\. Du kannst _Beschreibungen minimieren_ auf WAHR setzen, um nur Screenshots auf Unterseiten-Plugin-Seiten anzuzeigen. Dadurch wird die Anzeige eines Links aktiviert, auf den Deine Benutzer klicken können, um die Beschreibung umzuschalten, wenn sie weitere Informationen über das Plugin wünschen. 6\. Mit den Einstellungen „Beschriftungen für Plugin-Seite verwalten“ kannst Du anpassen, wie Plugins den Benutzern Deiner Unterseiten angezeigt werden.
+You can start composing a message to another user by clicking on the "Compose" button on the page:
 
-* _Plugin-Seitentitel_ ändert den Namen des Menüelements und den Seitenanfangstitel auf der Plugin-Seite. Möglicherweise bevorzugst Du beispielsweise das Wort „Addons“.
-* _Plugin-Seitenbeschreibung_ ist der benutzerdefinierte beschreibende Text, der direkt unter dem Titel der Plugin-Seite angezeigt wird.
-* _Benutzerdefiniertes Link-Label_ ist das, worauf Benutzer klicken, um die Plugin-URL zu besuchen, die Du oben unter _WWähle wohin Plugin Links zeigen_ festgelegt hast. Wenn Du dies auf „Deaktiviert“ eingestellt hast, wird dies ausgeblendet.
 
-### Zusätzliche Tools
+![Compose Message](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-compose-message.png)
 
-Es werden einige zusätzliche Tools bereitgestellt, mit denen Du Plugin-Daten und -Einstellungen verwalten kannst.
 
-![1\. Datei config.xml exportieren/importieren. 2\. Alle Daten löschen.](assets/images/pretty-plugins-1000-tools.png)
+You can also do this by hovering over the mail icon on the admin bar, and clicking on "Send New Message". For any messages that you wish to move out of the Inbox, and be saved for later, you can click on the archive button:
 
-  1\. Datei config.xml exportieren/importieren.
-2\. Alle Daten löschen.
 
-  1\. Du kannst eine config.xml-Datei _exportieren_, um Deine Einstellungen auf Deinem Computer zu sichern, und sie dann in Deinen Ordner /wp-content/uploads/prettyplugins/ _importieren_.
- 
-  2\. Die _Reset_-Funktion ist praktisch, wenn Du von vorne beginnen möchtest. :) :)
+![Archive Message Option](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-archive-message-option.png)
 
-### Plugin-Details bearbeiten
 
-Schauen wir uns nun an, wie Du anpassen kannst, wie einzelne Plugins in der Plugin-Liste auf allen Webseiten angezeigt werden. Gehe in Deinem Netzwerkadministrator zu Plugins > Installierte Plugins und klicke auf den Link Details bearbeiten für jedes Plugin, das Du bearbeiten möchtest.
+They'll be stored in the Archives tab, from which you can also choose to either move the message back into the Inbox, or delete forever:
 
-![pretty-plugins-1000-edit](assets/images/pretty-plugins-1000-edit.png)
 
-  Dadurch wird ein vertrauter Bereich geöffnet, der dem Schnellbearbeitungsbereich beim Bearbeiten von Beiträgen ähnelt. Schauen wir uns nun den ersten Teil genauer an.
+![Inbox - Archive Tab](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-inbox-archive-tab.png)
 
-![pretty-plugins-1000-edit-details](assets/images/pretty-plugins-1000-edit-details.png)
 
-  Gib einen benutzerdefinierten _Namen_ ein, um den Anzeigenamen des Plugins zu ersetzen. Wenn nichts eingegeben wird, wird wie immer der tatsächliche Name des Plugins angezeigt. Du kannst eine _Info URL_ eingeben, um die vom Plugin-Autor angegebene URL zu ersetzen. Beachte, dass diese URL nur verwendet wird, wenn Du oben unter _Wähle wohin Plugin Links zeigen_ eine der benutzerdefinierten URL-Anzeigeoptionen ausgewählt hast. Du kannst auch eine benutzerdefinierte _Bild-URL_ hochladen oder darauf verlinken. Dadurch wird das Bild festgelegt, das für dieses Plugin angezeigt wird.
+We'll touch on the Settings tab inside the Inbox in a moment, but first, let's head back over to the General Settings page.
 
-* Zum Hochladen kannst Du ein Bild aus Deiner Medienbibliothek auswählen oder den Namen der Datei eingibst, die Du in /wp-content/uploads/prettyplugins/screenshots/ hochgeladen hast.
-* Wenn Du lieber auf ein anderswo gehostetes Bild verlinken möchtest, gib einfach die URL ein.
-* Die empfohlenen Bildabmessungen betragen 600 x 450 Pixel.
+### Configuring the Settings
 
-Schauen wir uns nun den anderen Teil an.
+##### General Settings
 
-![pretty-plugins-1000-edit-details-2](assets/images/pretty-plugins-1000-edit-details-2.png)
+Above the "Create Page" section (which we've already touched on), you'll notice two options there:
 
-  Um _Kategorien_ hinzuzufügen, klicke auf den Link _Neue Kategorie_, gib Deinen Kategorienamen ein und klicke auf _Hinzufügen_. Anschließend kannst Du Deine Kategorie aus der Liste auswählen.
 
-* Du kannst für jedes Plugin mehrere Kategorien auswählen, wenn Du möchtest.
-* Alle Kategorien, die nicht von Plugins verwendet werden, werden automatisch gelöscht.
+![General Options - Receipts](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-general-options-receipts.png)
 
-Du kannst eine benutzerdefinierte _Beschreibung_ eingeben, die die vom Plugin-Autor hinzugefügte Beschreibung ersetzt. Lasse das Feld leer, um stattdessen diese Beschreibung zu verwenden. Wenn Du mit der Bearbeitung fertig bist und auf die Schaltfläche „Aktualisieren“ geklickt hast, werden Deine Anpassungen direkt in der Plugin-Liste in Deinem Netzwerkadministrator angezeigt.
 
-![pretty-plugins-1000-edit-details-3](assets/images/pretty-plugins-1000-edit-details-3.png)
+The _Enable Message Receipt_ option allows a user to be notified when his message has been seen by another user. The companion feature, _Allow the user to disable read message receipts?_, allows a user to choose whether or not his reading of a message from another user sends a notification to the sender. Both of these boxes are checked by default inside Private Messaging, and can be configured by the user inside the Settings tab for the Inbox:
 
-### Erfahrung als Webseiten-Administrator
 
-Sobald alles konfiguriert ist und Du „Setup-Modus aktivieren“ in den allgemeinen Einstellungen auf „Falsch“ setzt, sehen Deine Webseiten-Administratoren etwas, das diesem Bild sehr ähnlich ist.
+![Inbox - Settings Tab](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-inbox-settings-tab.png)
 
-![pretty-plugins-1000-site-view](assets/images/pretty-plugins-1000-site-view.png)
 
-  Aktive Plugins werden mit einem grünen Band im Bild angezeigt. In unserem Beispiel haben wir die Beschreibungen so eingestellt, dass sie nicht angezeigt werden, sodass Webseiten-Administratoren sie anzeigen können, indem sie auf den Detaillink klicken. Wenn Du lieber Deine eigenen Bilder für die Bänder verwenden möchtest, ersetze einfach die Standardbilder in /pretty-plugins/themes/quick-sand/images/. Wenn Du Dein eigenes Design erstellt hast, ersetze natürlich stattdessen die Designs im Ordner /images/. Oben (und im Plugins-Menü) befinden sich die Filteroptionen. Das sind alle Kategorien, die wir für unsere Plugins eingerichtet haben. Wenn Du auf einen dieser Links klickst, werden nur Plugins angezeigt, die dieser Kategorie zugeordnet sind.
+Moving down the General Settings page here brings us to the Add-ons section:
 
-### PS Bloghosting-Integration
 
-Oh ja, das haben wir! Alle Plugins, die Du den Ebenen [PS Bloghosting](https://power-source.github.io/ps-bloghosting//) im Premium-Plugin-Modul hinzugefügt hast, werden auf allen „Pro“-Webseiten mit einem Menüband in der Ecke des Plugin-Bildes angezeigt. Bewege Deinen Mauszeiger über ein beliebiges Plugin, das Du im Premium-Plugin-Modul für PS Bloghosting-Stufen festgelegt hast, und Du erhältst die Meldung „Upgrade auf [Stufe]“. Wenn die Webseite nicht auf die PS Bloghosting-Ebene aktualisiert wurde und der Webseiten-Administrator auf eines dieser Plugins klickt, wird er zu Deiner PS Bloghosting-Upgrade-Seite weitergeleitet. 
-Wie cool ist das? Möglicherweise hast Du im obigen Screenshot auch bemerkt, dass wir Pretty Plugins-Kategorien erstellt haben, die unsere PS Bloghosting-Stufen widerspiegeln: Free, Premium und Super. Das macht es für Deine Webseiten-Administratoren einfach zu einfach, auf einen Blick die Vorteile eines Upgrades ihrer Webseite auf eine kostenpflichtige PS Bloghosting-Stufe in Deinem Netzwerk zu erkennen. Gern geschehen. :) Wir hoffen, dass Du und Deine Benutzer Pretty Plugins genießen und das Beste daraus machen!
+![Add-ons List](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-addons-list.png)
+
+
+The _BBPress integration_ grants the ability to message a user from within a bbPress thread, by means of a "Message Me" button:
+
+
+![bbPress Add-on Message Button](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-bbpress-addon-message-button.png)
+
+
+The _Block List_ add-on allows users to block messages from one or more users, a field is added to the Settings tab inside the Inbox page:
+
+
+![Block List Add-on Option Field](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-block-list-addon-option-field.png)
+
+
+The _Capability_ add-on allows you to restrict the sending of messages on your site to specific user roles. Once this add-on is activated, you can configure it further from: Messaging -> Settings -> Capability Settings
+
+
+![Capability Add-on Settings Page](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-capability-addon-settings-page.png)
+
+
+The _Notification_ add-on allows users to be notified of new messages sent to them:
+
+
+![Notfication Add-on Popup](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-notfication-addon-popup.png)
+
+
+Note: This add-on (as noted on the settings page) is in BETA, so there may be certain aspects that aren't quite right yet. The _WYISWYG_ add-on converts the default text editor into a more feature filled text editor, allow more styling to be added to your messsages:
+
+
+![WYSIWYG Editor Add-on](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-wysiwyg-editor-addon.png)
+
+
+##### Email Settings
+
+Here, you can adjust the subject lines & message content for email notifications, for when messages are received (as well as notifications that a user has read your message).
+
+
+![Email Settings](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-email-settings.png)
+
+
+You can also adjust the amount of emails to be displayed per page on the Inbox page by adjusting the value for "Per Page".
+
+##### Shortcodes
+
+Here, you can see the available shortcodes for Private Messaging, as well as the parameters available:
+
+
+![Shortcodes List](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-shortcodes-list.png)
+
+
+##### Attachments
+
+Here, you can configure which user roles can add attachments to messages being sent:
+
+
+![Attachments Permissions](https://premium.wpmudev.org/wp-content/uploads/2015/01/private-messaging-1000-attachments-permissions.png)

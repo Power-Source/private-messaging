@@ -82,6 +82,7 @@ if (!class_exists('MMessaging')) {
             $this->plugin_path = plugin_dir_path(__FILE__);
             $this->domain = 'private_messaging';
             $this->prefix = 'mm_';
+            require_once $this->plugin_path . 'app/mm-privacy.php';
             //load the framework
 
             //autoload

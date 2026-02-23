@@ -23,7 +23,7 @@ title: "PS PM System"
 
 Dein Posteingang ist für Dich und Deine Nutzer von überall auf Deiner Webseite zugänglich. Klicke einfach auf das E-Mail-Symbol in der Admin-Toolbar. Neue Nachrichten lassen sich blitzschnell und von überall auf Deiner Webseite aus versenden. Ob Du gerade an einem neuen Blogbeitrag arbeitest oder Dein Theme anpasst – Du kannst eine neue Nachricht verfassen, ohne Deinen Arbeitsablauf zu unterbrechen. Das Feld „Senden an“ übernimmt Benutzernamen von Deiner gesamten Webseite und vervollständigt diese automatisch, sodass man sich keine E-Mail-Adressen mehr merken muss. 
 
-![Anhänge in privaten Nachrichten erleichtern das Teilen von Dateien.](http://premium.wpmudev.org/wp-content/uploads/2015/01/attachments735x4701.jpg)
+![Anhänge in privaten Nachrichten erleichtern das Teilen von Dateien.](assets/images/attachments735x4701.png)
 
 
  Anhänge in privaten Nachrichten erleichtern das Teilen von Dateien.

@@ -1,9 +1,8 @@
-<div class="tab-pane active">
-    <div class="page-header" style="margin-top: 0">
-        <h3> <?php _e("Allgemeine Optionen", mmg()->domain) ?></h3>
-    </div>
+<div class="page-header" style="margin-top: 0">
+    <h3> <?php _e("Allgemeine Optionen", mmg()->domain) ?></h3>
+</div>
 
-    <form method="post" class="form-horizontal">
+<form method="post" class="form-horizontal">
     <div class="form-group <?php echo $model->has_error("enable_receipt") ? "has-error" : null ?>">
         <label for="mm_setting_model-enable_receipt" class="col-lg-2 control-label"><?php _e("Lesebestätigung aktivieren", mmg()->domain); ?></label>
         <div class="col-lg-10">
@@ -138,7 +137,6 @@
         </div>
     </div>
     </form>
-</div>
 <script type="text/javascript">
     function updateStorageLimit() {
         const displayValue = document.getElementById('mm_setting_model-storage_limit').value;
@@ -169,7 +167,7 @@
             e.preventDefault();
             $.ajax({
                 type: 'POST',
-                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                url: '<?php echo admin_url("admin-ajax.php") ?>',
                 data: {
                     action: 'mm_plugin_action',
                     id: $(this).data('id')
@@ -193,20 +191,20 @@
                     m_type: $(this).data('id'),
                     action: 'mm_create_message_page'
                 },
-                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                url: '<?php echo admin_url("admin-ajax.php") ?>',
                 beforeSend: function () {
-                    that.prop('disabled', true).text('<?php echo esc_js(__('Erstellen...',mmg()->domain)) ?>');
+                    that.prop('disabled', true).text('<?php echo esc_js(__("Erstellen...",mmg()->domain)) ?>');
                 },
                 success: function (data) {
                     var element = that.parent().parent().find('select').first();
-                    $.get("<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" ?>", function (html) {
+                    $.get("<?php echo esc_url($_SERVER['REQUEST_URI']) ?>", function (html) {
                         html = $(html);
                         var clone = html.find('select[name="' + element.attr('name') + '"]');
                         element.replaceWith(clone);
-                        that.prop('disabled', false).text('<?php echo esc_js(__('Seite erstellen',mmg()->domain)) ?>');
-                    })
+                        that.prop('disabled', false).text('<?php echo esc_js(__("Seite erstellen",mmg()->domain)) ?>');
+                    });
                 }
-            })
-        })
-    })
+            });
+        });
+    });
 </script>

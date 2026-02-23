@@ -292,6 +292,7 @@ if (!class_exists('MMessaging')) {
             // Use unminified CSS to ensure new nav/mobile styles load until minified bundle is refreshed
             wp_register_style('mm_style', $this->plugin_url . 'assets/main.css', array(), $this->version);
             wp_register_style('mm_style_admin', $this->plugin_url . 'assets/admin.css', array(), $this->version);
+            wp_register_script('mm_admin_tabs', $this->plugin_url . 'assets/admin-tabs.js', array(), $this->version, true);
             
             // Perfect Scrollbar v1.5.5 (modern version)
             wp_register_style('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.css', array(), $this->version);

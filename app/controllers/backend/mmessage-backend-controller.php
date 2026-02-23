@@ -105,6 +105,7 @@ class MMessage_Backend_Controller
     public function main()
     {
         wp_enqueue_style('mm_style_admin');
+        wp_enqueue_script('mm_admin_tabs');
         include mmg()->plugin_path . 'app/components/mm-messages-table.php';
         $this->load_template_part('backend/main');
     }
@@ -129,6 +130,7 @@ class MMessage_Backend_Controller
     function view()
     {
         wp_enqueue_style('mm_style_admin');
+        wp_enqueue_script('mm_admin_tabs');
         $id = mmg()->get('id', 0);
         // Decrypt ID if it's encrypted (from URL)
         if (!empty($id) && !is_numeric($id)) {
@@ -148,6 +150,8 @@ class MMessage_Backend_Controller
     function setting()
     {
         wp_enqueue_style('mm_style');
+        wp_enqueue_style('mm_style_admin');
+        wp_enqueue_script('mm_admin_tabs');
         add_action('mm_setting_general', array(&$this, 'general_view'));
         add_action('mm_setting_email', array(&$this, 'email_view'));
         add_action('mm_setting_shortcode', array(&$this, 'shortcode_view'));

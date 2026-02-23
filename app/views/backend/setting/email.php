@@ -1,7 +1,6 @@
-<div class="tab-pane active">
-    <div class="page-header">
-        <h3><?php _e("Email Einstellungen", mmg()->domain) ?></h3>
-    </div>
+<div class="page-header">
+    <h3><?php _e("Email Einstellungen", mmg()->domain) ?></h3>
+</div>
 
     <?php
     $data = stripslashes_deep($model->export());
@@ -86,4 +85,3 @@
         </div>
     </div>
     </form>
-</div>

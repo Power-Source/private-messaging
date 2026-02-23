@@ -123,7 +123,7 @@ if (!class_exists('MM_Block_List')) {
                             if (!query.length) return callback();
                             $.ajax({
                                 type: 'POST',
-                                url: '<?php echo admin_url('admin-ajax.php?action=mm_all_users&_wpnonce='.wp_create_nonce('mm_all_users')) ?>',
+                                url: '<?php echo admin_url("admin-ajax.php?action=mm_all_users&_wpnonce=".wp_create_nonce("mm_all_users")) ?>',
                                 data: {
                                     'query': query
                                 },

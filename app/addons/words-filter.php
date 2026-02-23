@@ -156,8 +156,8 @@ if (!class_exists('MM_Words_Filter')) {
         function setting_menu()
         {
             ?>
-            <li class="<?php echo mmg()->get('tab') == 'filter' ? 'active' : null ?>">
-                <a href="<?php echo esc_url(add_query_arg('tab', 'filter')) ?>">
+            <li role="presentation" class="<?php echo mmg()->get('tab') == 'filter' ? 'active' : null ?>">
+                <a href="<?php echo esc_url(add_query_arg('tab', 'filter')) ?>" role="tab" class="mm-tab-link" data-tab="filter" data-target="#filter">
                     <i class="fa fa-filter"></i> <?php _e("Words Filter", mmg()->domain) ?></a>
             </li>
         <?php
@@ -298,7 +298,7 @@ if (!class_exists('MM_Words_Filter')) {
                             data: {
                                 action: 'mmg_add_word',
                                 data: that.serialize(),
-                                _wpnonce: '<?php echo wp_create_nonce('mmg_add_word') ?>'
+                                _wpnonce: '<?php echo wp_create_nonce("mmg_add_word") ?>'
                             },
                             url: ajaxurl,
                             beforeSend: function () {
@@ -311,7 +311,7 @@ if (!class_exists('MM_Words_Filter')) {
                                 } else {
                                     $('.alert-words-list').addClass('alert-success').removeClass('hide').html(data.message);
                                     that.find(':input').val('');
-                                    $.get("<?php echo $_SERVER['REQUEST_URI'] ?>", function(html) {
+                                    $.get("<?php echo esc_url($_SERVER['REQUEST_URI']) ?>", function(html) {
                                         $('#badword-list-table').html($(html).find('#badword-list-table').html());
                                     });
                                 }
@@ -354,7 +354,7 @@ if (!class_exists('MM_Words_Filter')) {
                                 },
                                 url: ajaxurl,
                                 success: function () {
-                                    $.get("<?php echo $_SERVER['REQUEST_URI'] ?>", function(html) {
+                                    $.get("<?php echo esc_url($_SERVER['REQUEST_URI']) ?>", function(html) {
                                         $('#badword-list-table').html($(html).find('#badword-list-table').html());
                                     });
                                 }

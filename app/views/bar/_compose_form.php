@@ -101,154 +101,277 @@ $form_id = 'compose-form-admin-bar';
 <!-- /.modal -->
 
 <script type="text/javascript">
-    jQuery(document).ready(function ($) {
+    (function() {
+        'use strict';
         var formId = '<?php echo $form_id ?>';
         var attachmentIds = [];
+        var modalEl = document.getElementById('compose-form-container-admin-bar');
+        var overlayEl = null;
 
-        if($(".mm-compose-admin-bar a").length > 0) {
-            $(".mm-compose-admin-bar a").modernModal({
-                closeButton: ".compose-close",
-                top: '5%',
-                width: '90%',
-                maxWidth: 659
-            });
-
-            <?php if (mmg()->can_upload()): ?>
-            $(document).on('change', '#mm-attachment-input-' + formId, function() {
-                var files = this.files;
-                for (var i = 0; i < files.length; i++) {
-                    uploadAttachment(files[i]);
-                }
-                this.value = '';
-            });
-
-            function uploadAttachment(file) {
-                var formData = new FormData();
-                formData.append('action', 'mm_upload_attachment');
-                formData.append('file', file);
-                formData.append('conversation_id', 0);
-                formData.append('_wpnonce', '<?php echo wp_create_nonce('mm_upload_attachment') ?>');
-
-                var statusEl = $('.mm-attachment-status-' + formId);
-                statusEl.text('<?php _e("Uploading", mmg()->domain) ?> ' + file.name + '...').css('color', '#333');
-
-                $.ajax({
-                    url: '<?php echo admin_url('admin-ajax.php') ?>',
-                    method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(data) {
-                        if (data.success) {
-                            var fileData = data.data;
-                            attachmentIds.push(fileData.filename);
-                            updateAttachmentList(fileData);
-                            updateAttachmentField();
-                            statusEl.text('');
-                        } else {
-                            statusEl.text('<?php _e("Fehler", mmg()->domain) ?>: ' + (data.data || '<?php _e("Unbekannter Fehler", mmg()->domain) ?>')).css('color', '#d9534f');
+        function initAdminBarCompose() {
+            console.log('Initializing Admin Bar Compose Modal');
+            console.log('Modal element:', modalEl);
+            
+            // Use event delegation for admin bar link (loaded dynamically)
+            document.addEventListener('click', function(e) {
+                // Check if clicked element or parent has the compose classes
+                var targetEl = e.target;
+                
+                // Walk up the tree to find a link with our class
+                while (targetEl && targetEl !== document) {
+                    if (targetEl.matches && targetEl.matches('a')) {
+                        var parentLi = targetEl.closest('#wp-admin-bar-mm-compose-button');
+                        if (parentLi) {
+                            console.log('Compose link clicked via parent!', targetEl);
+                            e.preventDefault();
+                            e.stopPropagation();
+                            showModal();
+                            return;
                         }
-                    },
-                    error: function() {
-                        statusEl.text('<?php _e("Upload fehlgeschlagen", mmg()->domain) ?>').css('color', '#d9534f');
                     }
+                    targetEl = targetEl.parentElement;
+                }
+            }, true); // Use capture phase to catch event earlier
+
+            // Close button handlers
+            if (modalEl) {
+                var closeButtons = modalEl.querySelectorAll('.compose-close, [data-dismiss="modal"]');
+                closeButtons.forEach(function(btn) {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        hideModal();
+                    });
+                });
+            }
+        }
+
+        function showModal() {
+            console.log('showModal called');
+            console.log('modalEl exists:', !!modalEl);
+            
+            if (!modalEl) {
+                console.error('Modal element not found!');
+                return;
+            }
+            
+            // Create overlay if needed
+            if (!overlayEl) {
+                console.log('Creating overlay');
+                overlayEl = document.createElement('div');
+                overlayEl.id = 'mm_modal_overlay';
+                document.body.appendChild(overlayEl);
+                overlayEl.addEventListener('click', hideModal);
+            }
+            
+            console.log('Showing modal and overlay');
+            overlayEl.style.display = 'block';
+            modalEl.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            console.log('Modal display:', modalEl.style.display);
+            console.log('Overlay display:', overlayEl.style.display);
+        }
+
+        function hideModal() {
+            if (overlayEl) overlayEl.style.display = 'none';
+            if (modalEl) modalEl.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // Attachment upload functionality
+        <?php if (mmg()->can_upload()): ?>
+        (function() {
+            // Attachment upload handler
+            var attachmentInput = document.getElementById('mm-attachment-input-' + formId);
+            if (attachmentInput) {
+                attachmentInput.addEventListener('change', function() {
+                    var files = this.files;
+                    for (var i = 0; i < files.length; i++) {
+                        uploadAttachment(files[i]);
+                    }
+                    this.value = '';
                 });
             }
 
-            function updateAttachmentList(fileData) {
-                var listEl = $('#mm-attachments-list-' + formId);
-                var fileSizeKB = (fileData.size / 1024).toFixed(1);
+        function uploadAttachment(file) {
+            var formData = new FormData();
+            formData.append('action', 'mm_upload_attachment');
+            formData.append('file', file);
+            formData.append('conversation_id', 0);
+            formData.append('_wpnonce', '<?php echo wp_create_nonce("mm_upload_attachment") ?>');
 
-                var itemHtml = '<div class="mm-attachment-item" data-filename="' + fileData.filename + '" style="padding:8px;background:#f5f5f5;border-radius:4px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">' +
-                    '<span style="font-size:12px;">' + fileData.display_name + ' (' + fileSizeKB + ' KB)</span>' +
-                    '<button type="button" class="btn btn-xs btn-danger mm-remove-attachment" data-filename="' + fileData.filename + '">×</button>' +
-                    '</div>';
-
-                listEl.append(itemHtml);
+            var statusEl = document.querySelector('.mm-attachment-status-' + formId);
+            if (statusEl) {
+                statusEl.textContent = '<?php echo esc_js(__("Uploading", mmg()->domain)) ?> ' + file.name + '...';
+                statusEl.style.color = '#333';
             }
 
-            function updateAttachmentField() {
-                $('#mm-message-model-attachment-' + formId).val(attachmentIds.join(','));
-            }
-
-            $(document).on('click', '.mm-remove-attachment', function() {
-                var filename = $(this).data('filename');
-                var index = attachmentIds.indexOf(filename);
-                if (index > -1) {
-                    attachmentIds.splice(index, 1);
-                }
-                $(this).closest('.mm-attachment-item').remove();
-                updateAttachmentField();
-
-                $.post('<?php echo admin_url('admin-ajax.php') ?>', {
-                    action: 'mm_delete_attachment',
-                    conversation_id: 0,
-                    filename: filename,
-                    _wpnonce: '<?php echo wp_create_nonce('mm_delete_attachment') ?>'
-                });
-            });
-            <?php endif; ?>
-
-            $('body').on('submit', '#'+formId, function () {
-                var that = $(this);
-                $.ajax({
-                    type: 'POST',
-                    url: '<?php echo admin_url('admin-ajax.php') ?>',
-                    data: $(that).find(":input").serialize(),
-                    beforeSend: function () {
-                        that.parent().parent().find('button').prop('disabled', true);
-                    },
-                    success: function (data) {
-                        that.find('.form-group').removeClass('has-error has-success');
-                        that.parent().parent().find('button').prop('disabled', false);
-                        if (data.status == 'success') {
-                            that.find('.form-control').val('');
-                            $('.compose-admin-bar-alert').removeClass('hide');
-                            location.reload();
-                        } else {
-                            $.each(data.errors, function (i, v) {
-                                var element = that.find('.error-' + i);
-                                element.parent().parent().addClass('has-error');
-                                element.html(v);
-                            });
-                            that.find('.form-group').each(function () {
-                                if (!$(this).hasClass('has-error')) {
-                                    $(this).find('.m-b-none').text('');
-                                    $(this).addClass('has-success');
-                                }
-                            });
-                        }
+            fetch('<?php echo admin_url("admin-ajax.php") ?>', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    var fileData = data.data;
+                    attachmentIds.push(fileData.filename);
+                    updateAttachmentList(fileData);
+                    updateAttachmentField();
+                    if (statusEl) statusEl.textContent = '';
+                } else {
+                    if (statusEl) {
+                        statusEl.textContent = '<?php echo esc_js(__("Fehler", mmg()->domain)) ?>: ' + (data.data || '<?php echo esc_js(__("Unbekannter Fehler", mmg()->domain)) ?>');
+                        statusEl.style.color = '#d9534f';
                     }
-                })
-                return false;
+                }
+            })
+            .catch(function() {
+                if (statusEl) {
+                    statusEl.textContent = '<?php echo esc_js(__("Upload fehlgeschlagen", mmg()->domain)) ?>';
+                    statusEl.style.color = '#d9534f';
+                }
             });
         }
 
-        window.mm_compose_select = $('#admin-bar-mm-send-to').selectize({
-            valueField: 'id',
-            labelField: 'name',
-            searchField: 'name',
-            options: [],
-            create: false,
-            load: function (query, callback) {
-                if (!query.length) return callback();
-                $.ajax({
-                    url: '<?php echo admin_url('admin-ajax.php') ?>?action=mm_suggest_users&_wpnonce=<?php echo wp_create_nonce('mm_suggest_users') ?>',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        query: query,
-                        page: 1
-                    },
-                    error: function () {
-                        callback();
-                    },
-                    success: function (res) {
-                        callback(res);
-                    }
-                });
-            }
-        });
-    })
-</script>
+        function updateAttachmentList(fileData) {
+            var listEl = document.getElementById('mm-attachments-list-' + formId);
+            if (!listEl) return;
+            
+            var fileSizeKB = (fileData.size / 1024).toFixed(1);
+            var itemDiv = document.createElement('div');
+            itemDiv.className = 'mm-attachment-item';
+            itemDiv.setAttribute('data-filename', fileData.filename);
+            itemDiv.style.cssText = 'padding:8px;background:#f5f5f5;border-radius:4px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;';
+            
+            itemDiv.innerHTML = '<span style="font-size:12px;">' + fileData.display_name + ' (' + fileSizeKB + ' KB)</span>' +
+                '<button type="button" class="btn btn-xs btn-danger mm-remove-attachment" data-filename="' + fileData.filename + '">×</button>';
+            
+            listEl.appendChild(itemDiv);
+        }
 
+        function updateAttachmentField() {
+            var field = document.getElementById('mm-message-model-attachment-' + formId);
+            if (field) {
+                field.value = attachmentIds.join(',');
+            }
+        }
+
+            // Remove attachment handler (event delegation)
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('mm-remove-attachment')) {
+                    e.preventDefault();
+                    var filename = e.target.getAttribute('data-filename');
+                    var index = attachmentIds.indexOf(filename);
+                    if (index > -1) {
+                        attachmentIds.splice(index, 1);
+                    }
+                    var item = e.target.closest('.mm-attachment-item');
+                    if (item) item.remove();
+                    updateAttachmentField();
+
+                    // Delete on server
+                    fetch('<?php echo admin_url("admin-ajax.php") ?>', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({
+                            action: 'mm_delete_attachment',
+                            conversation_id: 0,
+                            filename: filename,
+                            _wpnonce: '<?php echo wp_create_nonce("mm_delete_attachment") ?>'
+                        }),
+                        credentials: 'same-origin'
+                    });
+                }
+            });
+        })();
+        <?php endif; ?>
+
+        // Form submit handler
+        var form = document.getElementById(formId);
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                var buttons = modalEl.querySelectorAll('button');
+                
+                // Disable buttons
+                buttons.forEach(function(btn) { btn.disabled = true; });
+
+                fetch('<?php echo admin_url("admin-ajax.php") ?>', {
+                    method: 'POST',
+                    body: new URLSearchParams(formData),
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    credentials: 'same-origin'
+                })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    // Reset error states
+                    form.querySelectorAll('.form-group').forEach(function(group) {
+                        group.classList.remove('has-error', 'has-success');
+                    });
+                    
+                    // Re-enable buttons
+                    buttons.forEach(function(btn) { btn.disabled = false; });
+
+                    if (data.status == 'success') {
+                        form.querySelectorAll('.form-control').forEach(function(input) {
+                            if (input.tagName !== 'SELECT') input.value = '';
+                        });
+                        location.reload();
+                    } else if (data.errors) {
+                        Object.keys(data.errors).forEach(function(key) {
+                            var errorEl = form.querySelector('.error-' + key);
+                            if (errorEl) {
+                                var formGroup = errorEl.closest('.form-group');
+                                if (formGroup) formGroup.classList.add('has-error');
+                                errorEl.innerHTML = data.errors[key];
+                            }
+                        });
+                        // Mark success for fields without errors
+                        form.querySelectorAll('.form-group').forEach(function(group) {
+                            if (!group.classList.contains('has-error')) {
+                                var errorEl = group.querySelector('.m-b-none');
+                                if (errorEl) errorEl.textContent = '';
+                                group.classList.add('has-success');
+                            }
+                        });
+                    }
+                })
+                .catch(function() {
+                    buttons.forEach(function(btn) { btn.disabled = false; });
+                });
+            });
+        }
+
+        // Initialize Tom-Select for recipient field
+        var recipientField = document.getElementById('admin-bar-mm-send-to');
+        if (recipientField && typeof TomSelect !== 'undefined') {
+            new TomSelect(recipientField, {
+                valueField: 'id',
+                labelField: 'name',
+                searchField: 'name',
+                create: false,
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+                    
+                    fetch('<?php echo admin_url("admin-ajax.php") ?>?action=mm_suggest_users&_wpnonce=<?php echo wp_create_nonce("mm_suggest_users") ?>', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({ query: query, page: 1 }),
+                        credentials: 'same-origin'
+                    })
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) { callback(data); })
+                    .catch(function() { callback(); });
+                }
+            });
+        }
+
+        // Initialize everything when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initAdminBarCompose);
+        } else {
+            initAdminBarCompose();
+        }
+    })();
+</script>

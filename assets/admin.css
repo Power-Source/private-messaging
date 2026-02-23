@@ -1,3 +1,126 @@
 .mm-messages-table a.button {
     text-decoration: none;
 }
+
+/* Admin Bar Message Counter and Icon */
+#wp-admin-bar-mm-button .ab-icon:before {
+    content: "\f466";
+    font-size: 20px;
+}
+
+#wp-admin-bar-mm-button .ab-label {
+    display: inline-block;
+    background: #d9534f;
+    color: #fff;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 5px;
+    min-width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    vertical-align: top;
+    position: relative;
+    top: 3px;
+}
+
+/* Tab Navigation Styles */
+.nav-tabs {
+    border-bottom: 1px solid #ddd;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.nav-tabs li {
+    margin: 0;
+    margin-bottom: -1px;
+}
+
+.nav-tabs li a {
+    display: block;
+    padding: 10px 15px;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+    color: #0073aa;
+    text-decoration: none;
+    position: relative;
+    background: transparent;
+    margin-right: 2px;
+}
+
+.nav-tabs li a:hover {
+    background-color: #f5f5f5;
+    border-color: #e3e3e3 #e3e3e3 #ddd;
+}
+
+.nav-tabs li.active a,
+.nav-tabs li.active a:hover,
+.nav-tabs li.active a:focus {
+    color: #555;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+    cursor: default;
+}
+
+.nav-tabs li a i {
+    margin-right: 5px;
+}
+
+/* Tab Content */
+.tab-content {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-top: none;
+    background: #fff;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* Vertical Pills (Capability Settings) */
+.nav-pills {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-pills li {
+    margin: 0 0 5px 0;
+}
+
+.nav-pills li a {
+    display: block;
+    padding: 10px 15px;
+    border-radius: 4px;
+    color: #0073aa;
+    text-decoration: none;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+}
+
+.nav-pills li a:hover {
+    background-color: #e5e5e5;
+}
+
+.nav-pills li.active a,
+.nav-pills li.active a:hover,
+.nav-pills li.active a:focus {
+    color: #fff;
+    background-color: #0073aa;
+    border-color: #0073aa;
+}
+
+.nav-stacked li {
+    display: block;
+}

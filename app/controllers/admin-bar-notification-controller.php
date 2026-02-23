@@ -18,7 +18,19 @@ class Admin_Bar_Notification_Controller
             add_action('admin_bar_menu', array(&$this, 'notification_buttons'), 80);
             add_action('wp_footer', array(&$this, 'compose_form_footer'));
             add_action('admin_footer', array(&$this, 'compose_form_footer'));
+            add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+            add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
         }
+    }
+
+    function enqueue_scripts()
+    {
+        // Enqueue Tom-Select for recipient field
+        wp_enqueue_script('tom-select');
+        wp_enqueue_style('tom-select');
+        wp_enqueue_script('tom-select-compat');
+        // Enqueue main styles for modal
+        wp_enqueue_style('mm_style');
     }
 
     function compose_form_footer()
@@ -35,9 +47,11 @@ class Admin_Bar_Notification_Controller
         $unread = MM_Conversation_Model::count_unread();
         $args = array(
             'id' => 'mm-button',
-            'title' => __('<div class="ig-container mm-admin-bar"><i class="fa fa-envelope"></i>&nbsp;<span>' . $unread . '</span>
-</div>', mmg()->domain),
+            'title' => '<span class="ab-icon dashicons dashicons-email-alt"></span><span class="ab-label">' . $unread . '</span>',
             'href' => '#',
+            'meta' => array(
+                'class' => 'mm-admin-bar-menu'
+            )
         );
         $wp_admin_bar->add_menu($args);
 

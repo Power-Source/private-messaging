@@ -206,7 +206,7 @@ class MM_Group_Conversation
                         var instance = window.mm_cc_bar_input[0].selectize;
                         $.ajax({
                             type: 'POST',
-                            url: '<?php echo admin_url('admin-ajax.php?action=mm_suggest_users&_wpnonce='.wp_create_nonce('mm_suggest_users')) ?>',
+                            url: '<?php echo admin_url("admin-ajax.php?action=mm_suggest_users&_wpnonce=".wp_create_nonce("mm_suggest_users")) ?>',
                             data: {
                                 'query': query
                             },
@@ -250,7 +250,7 @@ class MM_Group_Conversation
                         var instance = window.mm_cc_input[0].selectize;
                         $.ajax({
                             type: 'POST',
-                            url: '<?php echo admin_url('admin-ajax.php?action=mm_suggest_users&_wpnonce='.wp_create_nonce('mm_suggest_users')) ?>',
+                            url: '<?php echo admin_url("admin-ajax.php?action=mm_suggest_users&_wpnonce=".wp_create_nonce("mm_suggest_users")) ?>',
                             data: {
                                 'query': query
                             },
@@ -355,7 +355,7 @@ class MM_Group_Conversation
 
                         $.ajax({
                             type: 'POST',
-                            url: '<?php echo admin_url('admin-ajax.php?action=mm_suggest_include_users&_wpnonce='.wp_create_nonce('mm_suggest_include_users')) ?>',
+                            url: '<?php echo admin_url("admin-ajax.php?action=mm_suggest_include_users&_wpnonce=".wp_create_nonce("mm_suggest_include_users")) ?>',
                             data: {
                                 'query': query,
                                 'parent_id': '<?php echo $model->conversation_id ?>'
@@ -388,9 +388,9 @@ class MM_Group_Conversation
                     if (confirm('<?php echo $confirm_drop ?>')) {
                         $.ajax({
                             type: 'POST',
-                            url: '<?php echo admin_url('admin-ajax.php') ?>',
+                            url: '<?php echo admin_url("admin-ajax.php") ?>',
                             data: {
-                                _nonce: '<?php echo wp_create_nonce('drop_user') ?>',
+                                _nonce: '<?php echo wp_create_nonce("drop_user") ?>',
                                 user: $(this).data('user'),
                                 action: 'mm_drop_user',
                                 conversation_id: $(this).data('id')
@@ -439,7 +439,7 @@ class MM_Group_Conversation
                             if (!query.length) return callback();
                             $.ajax({
                                 type: 'POST',
-                                url: '<?php echo admin_url('admin-ajax.php?action=mm_suggest_include_users&_wpnonce='.wp_create_nonce('mm_suggest_include_users')) ?>',
+                                url: '<?php echo admin_url("admin-ajax.php?action=mm_suggest_include_users&_wpnonce=".wp_create_nonce("mm_suggest_include_users")) ?>',
                                 data: {
                                     query: query,
                                     parent_id: conversationId
@@ -458,10 +458,10 @@ class MM_Group_Conversation
                             // Add user to conversation via AJAX
                             $.ajax({
                                 type: 'POST',
-                                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                                url: '<?php echo admin_url("admin-ajax.php") ?>',
                                 data: {
                                     action: 'mm_add_cc_user',
-                                    _wpnonce: '<?php echo wp_create_nonce('mm_add_cc_user') ?>',
+                                    _wpnonce: '<?php echo wp_create_nonce("mm_add_cc_user") ?>',
                                     user_id: value,
                                     conversation_id: conversationId
                                 },

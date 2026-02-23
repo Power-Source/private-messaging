@@ -58,32 +58,7 @@
                         </div>
                     </div>
                     
-                    <!-- URL-aware click-based tab switching -->
-                    <script type="text/javascript">
-                        jQuery(document).ready(function($) {
-                            $('.mm-tab-link').on('click', function(e) {
-                                e.preventDefault();
-                                var target = $(this).data('target') || ('#' + $(this).data('tab'));
-                                var url = $(this).attr('href');
-                                
-                                // Update URL query (?tab=...)
-                                if (window.history && window.history.replaceState) {
-                                    window.history.replaceState({}, '', url);
-                                }
-                                
-                                // Toggle active class on tabs
-                                $('.nav-tabs li').removeClass('active');
-                                $(this).closest('li').addClass('active');
-                                
-                                // Reset inline styles to avoid lingering display:none
-                                $('.tab-pane').removeAttr('style');
-                                
-                                // Switch panes by class only (Bootstrap CSS handles display)
-                                $('.tab-pane').removeClass('active');
-                                $(target).addClass('active');
-                            });
-                        });
-                    </script>
+                    <!-- Tab switching handled by admin-tabs.js -->
                 </div>
             </div>
         </div>

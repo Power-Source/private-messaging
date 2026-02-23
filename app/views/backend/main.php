@@ -24,7 +24,7 @@
 </div>
 <script type="text/javascript">
     jQuery(function ($) {
-        $('.lock-conv').click(function (e) {
+        $('.lock-conv').on('click', function (e) {
             e.preventDefault();
             var that = $(this);
             $.ajax({

@@ -311,13 +311,15 @@ if (!class_exists('MM_Words_Filter')) {
                                 } else {
                                     $('.alert-words-list').addClass('alert-success').removeClass('hide').html(data.message);
                                     that.find(':input').val('');
-                                    $('#badword-list-table').load("<?php echo $_SERVER['REQUEST_URI'] ?> #badword-list-table")
+                                    $.get("<?php echo $_SERVER['REQUEST_URI'] ?>", function(html) {
+                                        $('#badword-list-table').html($(html).find('#badword-list-table').html());
+                                    });
                                 }
                             }
                         })
                         return false;
                     });
-                    $('input[name="is_regex"]').click(function () {
+                    $('input[name="is_regex"]').on('click', function () {
                         var form = $(this).closest('form');
                         if ($(this).prop('checked') == true) {
                             $('.regex-group').removeClass('hide');
@@ -325,7 +327,7 @@ if (!class_exists('MM_Words_Filter')) {
                             $('.regex-group').addClass('hide');
                         }
                     });
-                    $('.test-regex').click(function () {
+                    $('.test-regex').on('click', function () {
                         var form = $(this).closest('form');
                         $.ajax({
                             type: 'POST',
@@ -352,7 +354,9 @@ if (!class_exists('MM_Words_Filter')) {
                                 },
                                 url: ajaxurl,
                                 success: function () {
-                                    $('#badword-list-table').load("<?php echo $_SERVER['REQUEST_URI'] ?> #badword-list-table")
+                                    $.get("<?php echo $_SERVER['REQUEST_URI'] ?>", function(html) {
+                                        $('#badword-list-table').html($(html).find('#badword-list-table').html());
+                                    });
                                 }
                             })
                         }

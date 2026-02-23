@@ -124,7 +124,7 @@ if (!class_exists('MMessaging')) {
                         wp_enqueue_style('bootstrap');
                         wp_enqueue_script('jquery');
                         $csses = array('mm_style', 'mm_scroll', 'selectivejs');
-                        $jses = array('mm_scroll', 'selectivejs', 'mm_lean_model');
+                        $jses = array('mm_scroll', 'selectivejs', 'mm_modern_modal');
                         if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
                             $jses = array_merge($jses, array('mm_sceditor','mm_sceditor_translate', 'mm_sceditor_xhtml'));
                         }
@@ -134,7 +134,7 @@ if (!class_exists('MMessaging')) {
                         wp_enqueue_script('mm_scroll');
                         wp_enqueue_script('selectivejs');
                         wp_enqueue_style('selectivejs');
-                        wp_enqueue_script('mm_lean_model');
+                        wp_enqueue_script('mm_modern_modal');
                         if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
                             wp_enqueue_script('mm_sceditor');
                             wp_enqueue_script('mm_sceditor_translate');
@@ -152,7 +152,7 @@ if (!class_exists('MMessaging')) {
                 'login' => function () {
                     // Minimal assets for login modal
                     wp_enqueue_style('mm_style', $this->plugin_url . 'assets/main.css', array('bootstrap'), $this->version);
-                    wp_enqueue_script('mm_lean_model', $this->plugin_url . 'assets/jquery.leanModal.min.js', array('jquery'), $this->version);
+                    wp_enqueue_script('mm_modern_modal', $this->plugin_url . 'assets/modern-modal.js', array('jquery'), $this->version);
                 },
                 'backend' => function () use ($enqueue_core) {
                     // Backend views still need core styles
@@ -304,7 +304,7 @@ if (!class_exists('MMessaging')) {
             wp_register_script('selectivejs', $this->plugin_url . 'assets/selectivejs/js/standalone/selectize.js', array('jquery'), $this->version);
             wp_register_style('selectivejs', $this->plugin_url . 'assets/selectivejs/css/selectize.bootstrap3.css', array('bootstrap'), $this->version);
 
-            wp_register_script('mm_lean_model', $this->plugin_url . 'assets/jquery.leanModal.min.js', array('jquery'), $this->version);
+            wp_register_script('mm_modern_modal', $this->plugin_url . 'assets/modern-modal.js', array('jquery'), $this->version);
 
             $this->load_script();
         }

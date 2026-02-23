@@ -36,14 +36,14 @@ class MM_BroadCast_Messages
         <script type="text/javascript">
             jQuery(function ($) {
                 var selectize = window.mm_compose_select[0].selectize;
-                $('#mmg-broadcast').click(function () {
+                $('#mmg-broadcast').on('click', function () {
                     if ($(this).is(':checked')) {
                         selectize.disable();
                     } else {
                         selectize.enable();
                     }
-                })
-            })
+                });
+            });
         </script>
     <?php
     }

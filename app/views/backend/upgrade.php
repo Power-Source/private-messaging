@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_status` (<br/>
 </div>
 <script type="text/javascript">
     jQuery(function ($) {
-        $('.fix-table').click(function () {
+        $('.fix-table').on('click', function () {
             var that = $(this);
             $.ajax({
                 type: "POST",

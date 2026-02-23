@@ -140,13 +140,13 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_status` (<br/>
                     type: that.data('type')
                 },
                 beforeSend: function () {
-                    that.attr('disabled', 'disabled').text('Fixing...');
+                    that.prop('disabled', true).text('Fixing...');
                 },
                 success: function (data) {
                     if (data.status == "success") {
                         location.reload();
                     } else {
-                        that.removeAttr('disabled').text('Fix');
+                        that.prop('disabled', false).text('Fix');
                         $('.mmessage-container .alert').html(data.error).removeClass('hide');
                     }
                 }

@@ -195,7 +195,7 @@
                 },
                 url: '<?php echo admin_url('admin-ajax.php') ?>',
                 beforeSend: function () {
-                    that.attr('disabled', 'disabled').text('<?php echo esc_js(__('Erstellen...',mmg()->domain)) ?>');
+                    that.prop('disabled', true).text('<?php echo esc_js(__('Erstellen...',mmg()->domain)) ?>');
                 },
                 success: function (data) {
                     var element = that.parent().parent().find('select').first();
@@ -203,7 +203,7 @@
                         html = $(html);
                         var clone = html.find('select[name="' + element.attr('name') + '"]');
                         element.replaceWith(clone);
-                        that.removeAttr('disabled').text('<?php echo esc_js(__('Seite erstellen',mmg()->domain)) ?>');
+                        that.prop('disabled', false).text('<?php echo esc_js(__('Seite erstellen',mmg()->domain)) ?>');
                     })
                 }
             })

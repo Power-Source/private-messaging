@@ -291,7 +291,7 @@ if (!class_exists('MM_Words_Filter')) {
             </table>
             <script type="text/javascript">
                 jQuery(document).ready(function ($) {
-                    $('#words-list-frm').submit(function () {
+                    $('body').on('submit', '#words-list-frm', function () {
                         var that = $(this);
                         $.ajax({
                             type: 'POST',
@@ -302,10 +302,10 @@ if (!class_exists('MM_Words_Filter')) {
                             },
                             url: ajaxurl,
                             beforeSend: function () {
-                                that.find('button').attr('disabled', 'disabled');
+                                that.find('button').prop('disabled', true);
                             },
                             success: function (data) {
-                                that.find('button').removeAttr('disabled');
+                                that.find('button').prop('disabled', false);
                                 if (data.status == 0) {
                                     $('.alert-words-list').addClass('alert-danger').removeClass('hide').html(data.errors);
                                 } else {

@@ -37,10 +37,10 @@
                     _wpnonce: '<?php echo wp_create_nonce('mm_lock_conversation'); ?>'
                 },
                 beforeSend: function () {
-                    that.attr('disabled', 'disabled')
+                    that.prop('disabled', true)
                 },
                 success: function (data) {
-                    that.removeAttr('disabled');
+                    that.prop('disabled', false);
                     that.data('type', data.type);
                     that.html(data.text)
                 }

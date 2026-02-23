@@ -176,12 +176,12 @@
             var data = $($(this).data('target'));
             var subject = data.find('.subject').first().text();
             var send_to = data.find('.send_to').first().text();
-            if ($.trim(subject).length != 0) {
-                $('.message-me-no-subject').addClass('hide').find('input').attr('disabled', 'disabled');
+            if (subject.trim().length != 0) {
+                $('.message-me-no-subject').addClass('hide').find('input').prop('disabled', true);
                 $('.message-me-has-subject').removeClass('hide').find('input').val(subject);
             } else {
                 $('.message-me-has-subject').addClass('hide');
-                $('.message-me-no-subject').removeClass('hide').find('input').removeAttr('disabled');
+                $('.message-me-no-subject').removeClass('hide').find('input').prop('disabled', false);
             }
             $('.message-me-send-to').val(send_to);
         });
@@ -192,11 +192,11 @@
                 url: '<?php echo admin_url('admin-ajax.php') ?>',
                 data: $(that).find(":input").serialize(),
                 beforeSend: function () {
-                    that.parent().parent().find('button').attr('disabled', 'disabled');
+                    that.parent().parent().find('button').prop('disabled', true);
                 },
                 success: function (data) {
                     that.find('.form-group').removeClass('has-error has-success');
-                    that.parent().parent().find('button').removeAttr('disabled');
+                    that.parent().parent().find('button').prop('disabled', false);
                     if (data.status == 'success') {
                         that.find('.form-control').val('');
                         $('#message-me-modal').find('.mm-notice').removeClass('hide');

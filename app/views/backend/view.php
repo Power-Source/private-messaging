@@ -177,11 +177,11 @@ $messages = $model->get_messages();
                 url: '<?php echo admin_url('admin-ajax.php') ?>',
                 data: $(that).find(":input").serialize(),
                 beforeSend: function () {
-                    that.parent().parent().find('button').attr('disabled', 'disabled');
+                    that.parent().parent().find('button').prop('disabled', true);
                 },
                 success: function (data) {
                     that.find('.form-group').removeClass('has-error has-success');
-                    that.parent().parent().find('button').removeAttr('disabled');
+                    that.parent().parent().find('button').prop('disabled', false);
                     if (data.status == 'success') {
                         that.find('.form-control').val('');
                         $('.compose-admin-bar-alert').removeClass('hide');
@@ -213,7 +213,7 @@ $messages = $model->get_messages();
             width: '90%',
             maxWidth: 659
         });
-        $('.message-save-form').submit(function () {
+        $('body').on('submit', '.message-save-form', function () {
             var that = $(this);
             var send = that.serializeAssoc();
             var editor_id = 'message-content-' + send['id'];
@@ -230,10 +230,10 @@ $messages = $model->get_messages();
                 },
                 url: ajaxurl,
                 beforeSend: function () {
-                    that.find('button').attr('disabled');
+                    that.find('button').prop('disabled', true);
                 },
                 success: function (data) {
-                    that.find('button').removeAttr('disabled');
+                    that.find('button').prop('disabled', false);
                     if (data.status == 0) {
                         that.parent().find('.alert').html(data.errors).removeClass('hide');
                     } else {
@@ -250,7 +250,7 @@ $messages = $model->get_messages();
             })
             return false;
         });
-        $('.delete-message-frm').submit(function () {
+        $('body').on('submit', '.delete-message-frm', function () {
             if (confirm('<?php __("Bist du sicher?",mmg()->domain) ?>')) {
                 var that = $(this);
                 $.ajax({

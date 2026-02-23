@@ -176,7 +176,7 @@ if (!$is_ajax_reload && isset($compose_html)) {
                             type: 'POST',
                             url: '<?php echo admin_url('admin-ajax.php') ?>',
                             data: { action: 'mm_status', id: $(this).data('id'), _wpnonce: '<?php echo wp_create_nonce('mm_status') ?>', type: status },
-                            beforeSend: function () { that.attr('disabled', 'disabled'); },
+                            beforeSend: function () { that.prop('disabled', true); },
                             success: function () { $('.load-conv.active').remove(); $('.load-conv').first().trigger('click'); }
                         })
                     }
@@ -185,7 +185,7 @@ if (!$is_ajax_reload && isset($compose_html)) {
                         type: 'POST',
                         url: '<?php echo admin_url('admin-ajax.php') ?>',
                         data: { action: 'mm_status', id: $(this).data('id'), _wpnonce: '<?php echo wp_create_nonce('mm_status') ?>', type: status },
-                        beforeSend: function () { that.attr('disabled', 'disabled'); },
+                        beforeSend: function () { that.prop('disabled', true); },
                         success: function () { $('.load-conv.active').remove(); $('.load-conv').first().trigger('click'); }
                     })
                 }

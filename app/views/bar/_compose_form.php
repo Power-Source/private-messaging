@@ -105,7 +105,7 @@ $form_id = 'compose-form-admin-bar';
         var formId = '<?php echo $form_id ?>';
         var attachmentIds = [];
 
-        if($(".mm-compose-admin-bar a").size() > 0) {
+        if($(".mm-compose-admin-bar a").length > 0) {
             $(".mm-compose-admin-bar a").modernModal({
                 closeButton: ".compose-close",
                 top: '5%',
@@ -196,11 +196,11 @@ $form_id = 'compose-form-admin-bar';
                     url: '<?php echo admin_url('admin-ajax.php') ?>',
                     data: $(that).find(":input").serialize(),
                     beforeSend: function () {
-                        that.parent().parent().find('button').attr('disabled', 'disabled');
+                        that.parent().parent().find('button').prop('disabled', true);
                     },
                     success: function (data) {
                         that.find('.form-group').removeClass('has-error has-success');
-                        that.parent().parent().find('button').removeAttr('disabled');
+                        that.parent().parent().find('button').prop('disabled', false);
                         if (data.status == 'success') {
                             that.find('.form-control').val('');
                             $('.compose-admin-bar-alert').removeClass('hide');

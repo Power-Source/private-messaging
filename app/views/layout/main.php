@@ -214,7 +214,7 @@
                 var errorEl = that.find('.error-send_to');
                 errorEl.text('<?php echo esc_js(__('You cannot send a message to yourself. Please choose a recipient.', mmg()->domain)); ?>').show();
                 sendToField.closest('.form-group').addClass('has-error');
-                that.find('button').removeAttr('disabled');
+                that.find('button').prop('disabled', false);
                 return false;
             }
             
@@ -223,11 +223,11 @@
                 url: '<?php echo admin_url('admin-ajax.php') ?>',
                 data: $(that).find(":input").serialize(),
                 beforeSend: function () {
-                    that.find('button').attr('disabled', 'disabled');
+                    that.find('button').prop('disabled', true);
                 },
                 success: function (data) {
                     that.find('.form-group').removeClass('has-error has-success');
-                    that.find('button').removeAttr('disabled');
+                    that.find('button').prop('disabled', false);
                     if (data.status == 'success') {
                         that.find('.form-control').val('');
                         location.reload();

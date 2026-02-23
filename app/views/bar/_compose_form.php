@@ -107,10 +107,17 @@ $form_id = 'compose-form-admin-bar';
         var attachmentIds = [];
         var modalEl = document.getElementById('compose-form-container-admin-bar');
         var overlayEl = null;
+        var tomSelectInitialized = false;
 
         function initAdminBarCompose() {
             console.log('Initializing Admin Bar Compose Modal');
             console.log('Modal element:', modalEl);
+            
+            // Initialize TomSelect once
+            if (!tomSelectInitialized) {
+                initTomSelect();
+                tomSelectInitialized = true;
+            }
             
             // Use event delegation for admin bar link (loaded dynamically)
             document.addEventListener('click', function(e) {
@@ -142,6 +149,33 @@ $form_id = 'compose-form-admin-bar';
                         hideModal();
                     });
                 });
+            }
+        }
+        
+        function initTomSelect() {
+            var recipientField = document.getElementById('admin-bar-mm-send-to');
+            if (recipientField && typeof TomSelect !== 'undefined' && !recipientField.tomselect) {
+                new TomSelect(recipientField, {
+                    valueField: 'id',
+                    labelField: 'name',
+                    searchField: 'name',
+                    create: false,
+                    load: function(query, callback) {
+                        if (!query.length) return callback();
+                        
+                        fetch('<?php echo admin_url("admin-ajax.php") ?>?action=mm_suggest_users&_wpnonce=<?php echo wp_create_nonce("mm_suggest_users") ?>', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: new URLSearchParams({ query: query, page: 1 }),
+                            credentials: 'same-origin'
+                        })
+                        .then(function(response) { return response.json(); })
+                        .then(function(data) { callback(data); })
+                        .catch(function() { callback(); });
+                    }
+                });
+            } else if (recipientField && recipientField.tomselect) {
+                console.log('TomSelect already initialized on recipient field, skipping');
             }
         }
 
@@ -340,30 +374,6 @@ $form_id = 'compose-form-admin-bar';
                 .catch(function() {
                     buttons.forEach(function(btn) { btn.disabled = false; });
                 });
-            });
-        }
-
-        // Initialize Tom-Select for recipient field
-        var recipientField = document.getElementById('admin-bar-mm-send-to');
-        if (recipientField && typeof TomSelect !== 'undefined') {
-            new TomSelect(recipientField, {
-                valueField: 'id',
-                labelField: 'name',
-                searchField: 'name',
-                create: false,
-                load: function(query, callback) {
-                    if (!query.length) return callback();
-                    
-                    fetch('<?php echo admin_url("admin-ajax.php") ?>?action=mm_suggest_users&_wpnonce=<?php echo wp_create_nonce("mm_suggest_users") ?>', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({ query: query, page: 1 }),
-                        credentials: 'same-origin'
-                    })
-                    .then(function(response) { return response.json(); })
-                    .then(function(data) { callback(data); })
-                    .catch(function() { callback(); });
-                }
             });
         }
 

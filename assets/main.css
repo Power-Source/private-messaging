@@ -427,16 +427,18 @@
     position: fixed;
     z-index: 100000;
     display: none;
-    top: 46px; /* Below WordPress admin bar (32px on frontend, 46px in admin) */
+    top: 56px; /* Below WordPress admin bar with spacing */
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
-    max-width: 660px;
+    width: 94%;
+    max-width: 800px;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
 }
 
 /* Adjust for frontend (smaller admin bar) */
 body.admin-bar:not(.wp-admin) #compose-form-container-admin-bar {
-    top: 32px;
+    top: 42px;
 }
 
 #compose-form-container-admin-bar .modal-dialog {
@@ -445,9 +447,109 @@ body.admin-bar:not(.wp-admin) #compose-form-container-admin-bar {
 }
 
 #compose-form-container-admin-bar .modal-content {
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    border-radius: 8px;
     background: #fff;
+    border: 1px solid #ddd;
+}
+
+#compose-form-container-admin-bar .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e5e5;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+#compose-form-container-admin-bar .modal-body {
+    padding: 24px;
+    overflow: visible;
+}
+
+#compose-form-container-admin-bar .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #e5e5e5;
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+}
+
+/* Better spacing for form fields in admin bar modal */
+#compose-form-container-admin-bar .form-group {
+    margin-bottom: 20px;
+}
+
+#compose-form-container-admin-bar .form-control {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+}
+
+#compose-form-container-admin-bar .form-control:focus {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+    outline: none;
+}
+
+/* Tom-Select styling in admin bar modal */
+#compose-form-container-admin-bar .ts-wrapper {
+    width: 100% !important;
+    display: none;
+}
+
+#compose-form-container-admin-bar .ts-control {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+    min-height: 38px;
+}
+
+#compose-form-container-admin-bar .ts-control:focus-within {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+}
+
+#compose-form-container-admin-bar .ts-dropdown {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Ensure nothing overflows */
+#compose-form-container-admin-bar * {
+    box-sizing: border-box;
+}
+
+#compose-form-container-admin-bar .col-md-10,
+#compose-form-container-admin-bar .col-sm-12,
+#compose-form-container-admin-bar .col-xs-12 {
+    float: none;
+    width: 100%;
+    padding: 0;
+}
+
+#compose-form-container-admin-bar .control-label {
+    text-align: left;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+#compose-form-container-admin-bar textarea.form-control {
+    resize: vertical;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* Modal Overlay */
+#mm_modal_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99999;
+    display: none;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
 }
 
 .mmessage-container .mm-drop-user {

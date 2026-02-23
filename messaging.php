@@ -123,17 +123,20 @@ if (!class_exists('MMessaging')) {
                     if ($runtime_path) {
                         wp_enqueue_style('bootstrap');
                         wp_enqueue_script('jquery');
-                        $csses = array('mm_style', 'mm_scroll', 'selectivejs');
-                        $jses = array('mm_scroll', 'selectivejs', 'mm_modern_modal');
+                        $csses = array('mm_style', 'mm_scroll', 'tom-select');
+                        $jses = array('mm_scroll', 'mm_scroll_compat', 'tom-select', 'tom-select-compat', 'mm_modern_modal');
                         if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
                             $jses = array_merge($jses, array('mm_sceditor','mm_sceditor_translate', 'mm_sceditor_xhtml'));
                         }
                         $this->compress_assets($csses, $jses, $runtime_path);
                     } else {
                         wp_enqueue_style('mm_style');
+                        wp_enqueue_style('mm_scroll');
                         wp_enqueue_script('mm_scroll');
-                        wp_enqueue_script('selectivejs');
-                        wp_enqueue_style('selectivejs');
+                        wp_enqueue_script('mm_scroll_compat');
+                        wp_enqueue_style('tom-select');
+                        wp_enqueue_script('tom-select');
+                        wp_enqueue_script('tom-select-compat');
                         wp_enqueue_script('mm_modern_modal');
                         if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
                             wp_enqueue_script('mm_sceditor');
@@ -298,11 +301,20 @@ if (!class_exists('MMessaging')) {
             // Use unminified CSS to ensure new nav/mobile styles load until minified bundle is refreshed
             wp_register_style('mm_style', $this->plugin_url . 'assets/main.css', array('bootstrap'), $this->version);
             wp_register_style('mm_style_admin', $this->plugin_url . 'assets/admin.css', array('bootstrap'), $this->version);
+            
+            // Perfect Scrollbar v1.5.5 (modern version)
             wp_register_style('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.css', array(), $this->version);
-            wp_register_script('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.js', array('jquery'), $this->version);
+            wp_register_script('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.js', array(), $this->version);
+            wp_register_script('mm_scroll_compat', $this->plugin_url . 'assets/perfect-scrollbar-compat.js', array('jquery', 'mm_scroll'), $this->version);
 
-            wp_register_script('selectivejs', $this->plugin_url . 'assets/selectivejs/js/standalone/selectize.js', array('jquery'), $this->version);
-            wp_register_style('selectivejs', $this->plugin_url . 'assets/selectivejs/css/selectize.bootstrap3.css', array('bootstrap'), $this->version);
+            // Tom-Select v2.3.1 (modern Selectize replacement, no jQuery-UI dependency)
+            wp_register_script('tom-select', $this->plugin_url . 'assets/tom-select/tom-select.complete.min.js', array(), $this->version);
+            wp_register_style('tom-select', $this->plugin_url . 'assets/tom-select/tom-select.bootstrap5.min.css', array('bootstrap'), $this->version);
+            wp_register_script('tom-select-compat', $this->plugin_url . 'assets/tom-select/tom-select-compat.js', array('jquery', 'tom-select'), $this->version);
+            
+            // Keep old selectivejs registration for backward compatibility (use tom-select instead)
+            wp_register_script('selectivejs', $this->plugin_url . 'assets/tom-select/tom-select.complete.min.js', array(), $this->version);
+            wp_register_style('selectivejs', $this->plugin_url . 'assets/tom-select/tom-select.bootstrap5.min.css', array('bootstrap'), $this->version);
 
             wp_register_script('mm_modern_modal', $this->plugin_url . 'assets/modern-modal.js', array('jquery'), $this->version);
 

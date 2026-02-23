@@ -106,7 +106,7 @@ $form_id = 'compose-form-admin-bar';
         var attachmentIds = [];
 
         if($(".mm-compose-admin-bar a").size() > 0) {
-            $(".mm-compose-admin-bar a").leanModal({
+            $(".mm-compose-admin-bar a").modernModal({
                 closeButton: ".compose-close",
                 top: '5%',
                 width: '90%',

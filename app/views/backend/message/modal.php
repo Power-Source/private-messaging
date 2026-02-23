@@ -83,7 +83,7 @@ $form_id = 'inject-message-form';
         var formId = '<?php echo $form_id ?>';
         var attachmentIds = [];
 
-        $(".inject-message").leanModal({
+        $(".inject-message").modernModal({
             closeButton: ".compose-close",
             top: '5%',
             width: '90%',

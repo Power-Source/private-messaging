@@ -164,7 +164,7 @@ $messages = $model->get_messages();
 <!-- /.modal -->
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
-        $(".inject-message").leanModal({
+        $(".inject-message").modernModal({
             closeButton: ".compose-close",
             top: '5%',
             width: '90%',
@@ -207,7 +207,7 @@ $messages = $model->get_messages();
 
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
-        $(".leanmodal-trigger").leanModal({
+        $(".leanmodal-trigger").modernModal({
             closeButton: ".compose-close",
             top: '5%',
             width: '90%',

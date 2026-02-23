@@ -166,7 +166,7 @@
         <?php endif; ?>
         <?php } ?>
 
-        $('.message-me-btn').leanModal({
+        $('.message-me-btn').modernModal({
             closeButton: ".compose-close",
             top: '5%',
             width: '90%',

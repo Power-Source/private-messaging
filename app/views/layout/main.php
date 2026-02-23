@@ -263,7 +263,7 @@
             $('.attachments-footer').append(element);
             var a = $('<a/>').attr('href', '#' + $(this).data('target'));
             $('.attachments-footer').append(a);
-            a.leanModal({
+            a.modernModal({
                 closeButton: '.attachment-close',
                 top: '5%',
                 width: '90%',

@@ -121,7 +121,6 @@ if (!class_exists('MMessaging')) {
             $enqueue_core = function () use ($runtime_path) {
                 if (is_user_logged_in()) {
                     if ($runtime_path) {
-                        wp_enqueue_style('bootstrap');
                         wp_enqueue_script('jquery');
                         $csses = array('mm_style', 'mm_scroll', 'tom-select');
                         $jses = array('mm_scroll', 'mm_scroll_compat', 'tom-select', 'tom-select-compat', 'mm_modern_modal');
@@ -154,7 +153,7 @@ if (!class_exists('MMessaging')) {
                 },
                 'login' => function () {
                     // Minimal assets for login modal
-                    wp_enqueue_style('mm_style', $this->plugin_url . 'assets/main.css', array('bootstrap'), $this->version);
+                    wp_enqueue_style('mm_style', $this->plugin_url . 'assets/main.css', array(), $this->version);
                     wp_enqueue_script('mm_modern_modal', $this->plugin_url . 'assets/modern-modal.js', array('jquery'), $this->version);
                 },
                 'backend' => function () use ($enqueue_core) {
@@ -289,18 +288,10 @@ if (!class_exists('MMessaging')) {
 
         function scripts()
         {
-            // Register Bootstrap from ClassicPress (usually available in most setups)
-            // If not available, we'll register our own versions
-            if (!wp_style_is('bootstrap', 'registered')) {
-                // Fallback: Bootstrap CDN if not available locally
-                wp_register_style('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css', array(), $this->version);
-                wp_register_script('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js', array('jquery'), $this->version);
-            }
-
-            // Register plugin styles without framework dependency
+            // Register plugin styles without external framework dependencies
             // Use unminified CSS to ensure new nav/mobile styles load until minified bundle is refreshed
-            wp_register_style('mm_style', $this->plugin_url . 'assets/main.css', array('bootstrap'), $this->version);
-            wp_register_style('mm_style_admin', $this->plugin_url . 'assets/admin.css', array('bootstrap'), $this->version);
+            wp_register_style('mm_style', $this->plugin_url . 'assets/main.css', array(), $this->version);
+            wp_register_style('mm_style_admin', $this->plugin_url . 'assets/admin.css', array(), $this->version);
             
             // Perfect Scrollbar v1.5.5 (modern version)
             wp_register_style('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.css', array(), $this->version);

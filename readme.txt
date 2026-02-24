@@ -2,8 +2,8 @@
 Contributors: psource
 Tags: private messaging, pm, attachments, notifications, bbpress, block list, multisite
 Requires at least: TBD
-Tested up to: ClassicPress 2.6.0
-Stable tag: 1.0.0
+Tested up to: WordPress 6.8.0, ClassicPress 2.6.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,5 +49,12 @@ Private Benutzer-zu-Benutzer-Kommunikation zur Abgabe von Angeboten, zum Teilen 
 5. Add-ons Ueberblick inkl. bbPress, Block List, Capability, Notification, WYSIWYG.
 
 == Changelog ==
+
+= 1.0.1 =
+* Jquery UI wurde restlos entfernt
+* UI Overhaul
+* Bugfixes
+* Securityfixes
+
 = 1.0.0 =
 * Erste Veroeffentlichung basierend auf PS PM-System.

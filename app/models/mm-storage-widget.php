@@ -58,7 +58,7 @@ if (!class_exists('MM_Storage_Widget')) {
                 transition: all 0.12s ease;
                 position: absolute;
                 right: 18px;
-                bottom: 14px;
+                top: 60px;
             " onmouseover="this.style.background='rgba(255, 255, 255, 0.12)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.08)'">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 16px;">📦</span>

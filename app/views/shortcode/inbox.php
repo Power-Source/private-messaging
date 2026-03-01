@@ -23,5 +23,5 @@
 ), false); ?>
 </div>
 <?php else: ?>
-    <div class="well well-sm no-margin"><?php _e("No message found!", mmg()->domain) ?></div>
+    <div class="well well-sm no-margin"><?php _e("Keine Nachrichten im Postfach!", mmg()->domain) ?></div>
 <?php endif; ?>

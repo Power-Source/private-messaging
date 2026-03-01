@@ -73,7 +73,7 @@ if (!class_exists('MM_WYSIWYG')) {
 
                     function load_editor() {
                         if (typeof wp === 'undefined' || typeof wp.editor === 'undefined') {
-                            console.warn('WordPress Editor API nicht verfügbar');
+                            console.warn('ClassicPress Editor API nicht verfügbar');
                             return;
                         }
 
@@ -124,7 +124,7 @@ if (!class_exists('MM_WYSIWYG')) {
 
         function scripts()
         {
-            // WordPress TinyMCE Editor laden
+            // ClassicPress TinyMCE Editor laden
             wp_enqueue_editor();
             wp_enqueue_media();
         }

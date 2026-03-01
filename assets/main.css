@@ -440,7 +440,7 @@
     position: fixed;
     z-index: 100000;
     display: none;
-    top: 56px; /* Below WordPress admin bar with spacing */
+    top: 56px; /* Below ClassicPress admin bar with spacing */
     left: 50%;
     transform: translateX(-50%);
     width: 94%;

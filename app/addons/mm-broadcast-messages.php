@@ -35,14 +35,17 @@ class MM_BroadCast_Messages
         ?>
         <script type="text/javascript">
             jQuery(function ($) {
-                var selectize = window.mm_compose_select[0].selectize;
-                $('#mmg-broadcast').on('click', function () {
-                    if ($(this).is(':checked')) {
-                        selectize.disable();
-                    } else {
-                        selectize.enable();
-                    }
-                });
+                // Only initialize if window.mm_compose_select exists and has elements
+                if (window.mm_compose_select && window.mm_compose_select.length > 0 && window.mm_compose_select[0].selectize) {
+                    var selectize = window.mm_compose_select[0].selectize;
+                    $('#mmg-broadcast').on('click', function () {
+                        if ($(this).is(':checked')) {
+                            selectize.disable();
+                        } else {
+                            selectize.enable();
+                        }
+                    });
+                }
             });
         </script>
     <?php

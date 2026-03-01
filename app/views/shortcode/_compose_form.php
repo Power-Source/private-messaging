@@ -107,6 +107,9 @@ $model = new MM_Message_Model();
                 create: false,
                 load: function (query, callback) {
                     if (!query.length) return callback();
+                    if (!window.mm_compose_select || !window.mm_compose_select[0] || !window.mm_compose_select[0].selectize) {
+                        return callback();
+                    }
                     var instance = window.mm_compose_select[0].selectize;
                     $.ajax({
                         type: 'POST',

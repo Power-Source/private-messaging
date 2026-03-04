@@ -1,9 +1,10 @@
 === PS PM-System ===
 Contributors: psource
 Tags: private messaging, pm, attachments, notifications, bbpress, block list, multisite
-Requires at least: TBD
-Tested up to: WordPress 6.8.0, ClassicPress 2.6.0
-Stable tag: 1.0.1
+Requires at least: 4.9
+Tested up to: WordPress 6.8.0 
+ClassicPress: 2.6.0
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,14 +42,11 @@ Private Benutzer-zu-Benutzer-Kommunikation zur Abgabe von Angeboten, zum Teilen 
 - Shortcodes: In den Einstellungen einsehbar, inklusive Parameter.
 - Attachments: Festlegen, welche Rollen Dateianhaenge senden duerfen.
 
-== Screenshots ==
-1. Auffaellige Pop-up-Benachrichtigungen fuer bessere Reaktionszeiten.
-2. Anhaenge in privaten Nachrichten erleichtern das Teilen von Dateien.
-3. Admin-Toolbar mit Messaging-Menue und Posteingangs-Button.
-4. Posteingangs-Seite mit Compose-Button und Tabs fuer Inbox/Archives/Settings.
-5. Add-ons Ueberblick inkl. bbPress, Block List, Capability, Notification, WYSIWYG.
-
 == Changelog ==
+
+= 1.0.2 =
+
+* Optimierte Kompatibilität mit PS Smart CRM und PS Jobboard
 
 = 1.0.1 =
 * Jquery UI wurde restlos entfernt

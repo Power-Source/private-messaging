@@ -4,6 +4,11 @@
         <?php if ($show_nav): ?>
             <?php
             $mm_current_box = mmg()->get('box', 'inbox');
+            $mm_in_profile_tab = (isset($_GET['tab']) && $_GET['tab'] === 'messages');
+            $mm_base_url = get_permalink(mmg()->setting()->inbox_page);
+            if ($mm_in_profile_tab) {
+                $mm_base_url = remove_query_arg('box');
+            }
 
             // Cache inbox counts to avoid repeated queries on every view render
             $cache_key = 'mm_counts_' . get_current_user_id() . '_' . get_current_blog_id();
@@ -38,23 +43,23 @@
                 </div>
                 <!-- Top-bar action buttons removed (actions remain in conversation view) -->
                 <div class="mm-nav-tabs mm-toolbar-btn">
-                    <a data-box="inbox" href="<?php echo esc_url(add_query_arg('box', 'inbox', get_permalink(mmg()->setting()->inbox_page))) ?>" class="mm-nav-pill <?php echo $mm_current_box == 'inbox' ? 'active' : null ?>">
+                    <a data-box="inbox" href="<?php echo esc_url(add_query_arg('box', 'inbox', $mm_base_url)) ?>" class="mm-nav-pill <?php echo $mm_current_box == 'inbox' ? 'active' : null ?>">
                         <span class="mm-nav-icon"><i class="fa fa-inbox"></i></span> <?php _e("Eingang", mmg()->domain) ?>
                         <span class="mm-pill-count"><?php echo intval($mm_counts['inbox']); ?></span>
                     </a>
-                    <a data-box="unread" href="<?php echo esc_url(add_query_arg('box', 'unread', get_permalink(mmg()->setting()->inbox_page))) ?>" class="mm-nav-pill unread-count <?php echo $mm_current_box == 'unread' ? 'active' : null ?>">
+                    <a data-box="unread" href="<?php echo esc_url(add_query_arg('box', 'unread', $mm_base_url)) ?>" class="mm-nav-pill unread-count <?php echo $mm_current_box == 'unread' ? 'active' : null ?>">
                         <span class="mm-nav-icon"><i class="fa fa-envelope"></i></span> <?php _e("Ungelesen", mmg()->domain) ?>
                         <span class="mm-pill-count"><?php echo intval($mm_counts['unread']); ?></span>
                     </a>
-                    <a data-box="read" href="<?php echo esc_url(add_query_arg('box', 'read', get_permalink(mmg()->setting()->inbox_page))) ?>" class="mm-nav-pill read-count <?php echo $mm_current_box == 'read' ? 'active' : null ?>">
+                    <a data-box="read" href="<?php echo esc_url(add_query_arg('box', 'read', $mm_base_url)) ?>" class="mm-nav-pill read-count <?php echo $mm_current_box == 'read' ? 'active' : null ?>">
                         <span class="mm-nav-icon"><i class="glyphicon glyphicon-eye-open"></i></span> <?php _e("Gelesen", mmg()->domain) ?>
                         <span class="mm-pill-count"><?php echo intval($mm_counts['read']); ?></span>
                     </a>
-                    <a data-box="sent" href="<?php echo esc_url(add_query_arg('box', 'sent', get_permalink(mmg()->setting()->inbox_page))) ?>" class="mm-nav-pill <?php echo $mm_current_box == 'sent' ? 'active' : null ?>">
+                    <a data-box="sent" href="<?php echo esc_url(add_query_arg('box', 'sent', $mm_base_url)) ?>" class="mm-nav-pill <?php echo $mm_current_box == 'sent' ? 'active' : null ?>">
                         <span class="mm-nav-icon"><i class="glyphicon glyphicon-send"></i></span> <?php _e("Gesendet", mmg()->domain) ?>
                         <span class="mm-pill-count"><?php echo intval($mm_counts['sent']); ?></span>
                     </a>
-                    <a data-box="archive" href="<?php echo esc_url(add_query_arg('box', 'archive', get_permalink(mmg()->setting()->inbox_page))) ?>" class="mm-nav-pill <?php echo $mm_current_box == 'archive' ? 'active' : null ?>">
+                    <a data-box="archive" href="<?php echo esc_url(add_query_arg('box', 'archive', $mm_base_url)) ?>" class="mm-nav-pill <?php echo $mm_current_box == 'archive' ? 'active' : null ?>">
                         <span class="mm-nav-icon"><i class="glyphicon glyphicon-briefcase"></i></span> <?php _e("Archiv", mmg()->domain) ?>
                         <span class="mm-pill-count"><?php echo intval($mm_counts['archive']); ?></span>
                     </a>
@@ -148,19 +153,59 @@
 
         // Tab persistence with simple page load (no AJAX switcher)
         var mmBoxStorageKey = 'mm:last-box';
+        var mmLoadBoxNonce = '<?php echo wp_create_nonce('mm_load_box') ?>';
+        var mmIsProfileContext = <?php echo $mm_in_profile_tab ? 'true' : 'false'; ?>;
         var mmInitialBox = '<?php echo esc_js(mmg()->get('box', 'inbox')) ?>';
 
-        $('body').on('click' + layoutNS, 'a[data-box]', function () {
+        function mmLoadBoxContent(box) {
+            if (!$('#mm-inbox-view').length) {
+                window.location.href = $('a[data-box="' + box + '"]').attr('href');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                data: {
+                    action: 'mm_load_box',
+                    box: box,
+                    _wpnonce: mmLoadBoxNonce
+                },
+                success: function (res) {
+                    if (res && typeof res.html !== 'undefined') {
+                        $('#mm-inbox-view').html(res.html);
+                    }
+                }
+            });
+        }
+
+        $('body').on('click' + layoutNS, 'a[data-box]', function (e) {
             var box = $(this).data('box');
             if (box && box !== 'setting') {
                 localStorage.setItem(mmBoxStorageKey, box);
+
+                if (mmIsProfileContext) {
+                    e.preventDefault();
+                    $('a[data-box]').removeClass('active');
+                    $(this).addClass('active');
+                    mmLoadBoxContent(box);
+
+                    if (window.history && window.history.replaceState) {
+                        var newUrl = new URL(window.location.href);
+                        newUrl.searchParams.set('tab', 'messages');
+                        newUrl.searchParams.set('box', box);
+                        window.history.replaceState({ box: box }, '', newUrl.toString());
+                    }
+
+                    return false;
+                }
             }
         });
 
         // On load, if a stored box differs from current, redirect once to it
         // BUT: never redirect FROM setting tab (let user stay there until they click away)
         var mmStoredBox = localStorage.getItem(mmBoxStorageKey);
-        if (mmInitialBox !== 'setting' && mmStoredBox && mmStoredBox !== mmInitialBox && mmStoredBox !== 'setting') {
+        if (!mmIsProfileContext && mmInitialBox !== 'setting' && mmStoredBox && mmStoredBox !== mmInitialBox && mmStoredBox !== 'setting') {
             var href = $('a[data-box="' + mmStoredBox + '"]').attr('href');
             if (href) { window.location.href = href; }
         } else if (!mmStoredBox) {

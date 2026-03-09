@@ -50,6 +50,7 @@ if (!class_exists('MMessaging')) {
             $this->domain = 'private_messaging';
             $this->prefix = 'mm_';
             require_once $this->plugin_path . 'app/mm-privacy.php';
+            require_once $this->plugin_path . 'app/traits/template-loader-trait.php';
             //load the framework
 
             //autoload
@@ -306,9 +307,6 @@ if (!class_exists('MMessaging')) {
 
         function dispatch()
         {
-            // Load Template_Loader_Trait first for all controllers
-            require_once $this->plugin_path . 'app/traits/template-loader-trait.php';
-            
             //load post type
             $this->load_post_type();
 

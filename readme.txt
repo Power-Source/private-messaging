@@ -4,7 +4,7 @@ Tags: private messaging, pm, attachments, notifications, bbpress, block list, mu
 Requires at least: 4.9
 Tested up to: WordPress 6.8.0 
 ClassicPress: 2.6.0
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,6 +43,12 @@ Private Benutzer-zu-Benutzer-Kommunikation zur Abgabe von Angeboten, zum Teilen 
 - Attachments: Festlegen, welche Rollen Dateianhaenge senden duerfen.
 
 == Changelog ==
+
+= 1.0.4 =
+
+* Fatal Error beim Aktivieren behoben: `Template_Loader_Trait` wird vor der Nutzung im Upgrade-Controller geladen
+* Datenbank-Upgrade in Multisite korrigiert: konsistente Nutzung von `base_prefix` für `mm_conversation`
+* Stabilitätsfix für MarketPress-Addon-Aktivierung: Schutz vor ungültigen Addon-Objekten/-Pfaden zur Vermeidung von `path`/`file_exists()` Warnungen
 
 = 1.0.3 =
 

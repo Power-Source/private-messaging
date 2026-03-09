@@ -4,7 +4,7 @@ Plugin Name: PS PM-System
 Author: PSOURCE
 Plugin URI: https://power-source.github.io/private-messaging/
 Description: Private Benutzer-zu-Benutzer-Kommunikation zur Abgabe von Angeboten, zum Teilen von Projektspezifikationen und zur versteckten internen Kommunikation. Komplett mit Front-End-Integration, geschützten Kontaktinformationen und geschützter Dateifreigabe.
-Version: 1.0.3
+Version: 1.0.4
 ClassicPress: 2.6.0
 Author URI: https://github.com/Power-Source
 Text Domain: private_messaging
@@ -35,7 +35,7 @@ if (!class_exists('MMessaging')) {
         public $domain;
         public $prefix;
 
-        public $version = "1.0.3";
+        public $version = "1.0.4";
         public $db_version = '1.0';
 
         public $global = array();

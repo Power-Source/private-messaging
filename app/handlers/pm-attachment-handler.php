@@ -160,6 +160,11 @@ class PM_Attachment_Handler
         ], admin_url('admin-ajax.php'));
     }
 
+    public static function get_preview_url($conversation_id, $filename)
+    {
+        return add_query_arg('preview', 1, self::get_download_url($conversation_id, $filename));
+    }
+
     /**
      * Get file information (size, extension, display name)
      */
@@ -281,8 +286,15 @@ class PM_Attachment_Handler
             }
 
         // Serve file
+            $inline_types = array('application/pdf');
+            $is_inline_type = in_array($mime_type['type'], $inline_types, true)
+                || strpos($mime_type['type'], 'image/') === 0
+                || strpos($mime_type['type'], 'video/') === 0
+                || strpos($mime_type['type'], 'audio/') === 0;
+            $disposition = !empty($_GET['preview']) && $is_inline_type ? 'inline' : 'attachment';
+
             header('Content-Type: ' . esc_attr($mime_type['type']));
-            header('Content-Disposition: attachment; filename="' . esc_attr($filename) . '"');
+            header('Content-Disposition: ' . $disposition . '; filename="' . esc_attr($filename) . '"');
             header('Content-Length: ' . filesize($real_file_path));
             header('Cache-Control: no-cache, no-store, must-revalidate');
             header('Pragma: no-cache');

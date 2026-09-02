@@ -7,7 +7,11 @@
             $mm_in_profile_tab = (isset($_GET['tab']) && $_GET['tab'] === 'messages');
             $mm_base_url = get_permalink(mmg()->setting()->inbox_page);
             if ($mm_in_profile_tab) {
-                $mm_base_url = remove_query_arg('box');
+                $mm_profile_referrer = wp_validate_redirect(wp_get_referer(), '');
+                $mm_base_url = $mm_profile_referrer
+                    ? remove_query_arg('box', $mm_profile_referrer)
+                    : remove_query_arg('box');
+                $mm_base_url = add_query_arg('tab', 'messages', $mm_base_url);
             }
 
             // Cache inbox counts to avoid repeated queries on every view render
@@ -31,7 +35,7 @@
                 <div class="mm-nav-top">
                     <div class="mm-nav-title"><?php _e("Nachrichten", mmg()->domain) ?></div>
                     <div class="mm-nav-actions">
-                        <a class="btn btn-default btn-sm hidden-xs hidden-sm" href="<?php echo esc_url(add_query_arg('box', 'setting')) ?>">
+                        <a class="btn btn-default btn-sm hidden-xs hidden-sm" href="<?php echo esc_url(add_query_arg('box', 'setting', $mm_base_url)) ?>">
                             <i class="fa fa-gear"></i> <?php _e("Einstellungen", mmg()->domain) ?>
                         </a>
                         <?php if (is_user_logged_in()): ?>
@@ -79,7 +83,7 @@
                 ?>
                 <?php if (is_user_logged_in()): ?>
                     <div class="hidden-md hidden-lg mm-mobile-actions">
-                        <a class="btn btn-default btn-sm mm-mobile-btn" href="<?php echo esc_url(add_query_arg('box', 'setting')) ?>">
+                        <a class="btn btn-default btn-sm mm-mobile-btn" href="<?php echo esc_url(add_query_arg('box', 'setting', $mm_base_url)) ?>">
                             <i class="fa fa-gear"></i> <?php _e("Einstellungen", mmg()->domain) ?>
                         </a>
                         <a class="btn btn-primary btn-sm mm-compose mm-mobile-btn" href="#compose-form-container">

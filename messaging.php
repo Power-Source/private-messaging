@@ -121,7 +121,7 @@ if (!class_exists('MMessaging')) {
                 },
                 'login' => function () {
                     // Minimal assets for login modal
-                    wp_enqueue_style('mm_style', $this->plugin_url . 'assets/main.css', array(), $this->version);
+                    wp_enqueue_style('mm_style', $this->plugin_url . 'assets/main.css', array(), filemtime(__DIR__ . '/assets/main.css'));
                     wp_enqueue_script('mm_modern_modal', $this->plugin_url . 'assets/modern-modal.js', array('jquery'), $this->version);
                 },
                 'backend' => function () use ($enqueue_core) {
@@ -258,7 +258,7 @@ if (!class_exists('MMessaging')) {
         {
             // Register plugin styles without external framework dependencies
             // Use unminified CSS to ensure new nav/mobile styles load until minified bundle is refreshed
-            wp_register_style('mm_style', $this->plugin_url . 'assets/main.css', array(), $this->version);
+            wp_register_style('mm_style', $this->plugin_url . 'assets/main.css', array(), filemtime(__DIR__ . '/assets/main.css'));
             wp_register_style('mm_style_admin', $this->plugin_url . 'assets/admin.css', array(), $this->version);
             wp_register_script('mm_admin_tabs', $this->plugin_url . 'assets/admin-tabs.js', array(), $this->version, true);
             
@@ -318,6 +318,7 @@ if (!class_exists('MMessaging')) {
             include $this->plugin_path . 'app/components/mm-addon-table.php';
             include $this->plugin_path . 'app/handlers/pm-attachment-handler.php';
             include $this->plugin_path . 'app/handlers/pm-avatar-handler.php';
+            include_once $this->plugin_path . 'app/components/mm-community-media.php';
             //load add on
             $addons = $this->setting()->plugins;
             if (!is_array($addons)) {

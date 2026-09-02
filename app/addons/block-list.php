@@ -87,58 +87,30 @@ if (!class_exists('MM_Block_List')) {
             if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'mm_block_list_nonce')) {
                 return;
             }
-            $block_list = isset($_POST['mm_user_block']) ? sanitize_text_field($_POST['mm_user_block']) : '';
+            $block_list = isset($_POST['mm_user_block']) ? sanitize_textarea_field(wp_unslash($_POST['mm_user_block'])) : '';
+            $usernames = preg_split('/[\r\n,]+/', $block_list);
+            $usernames = array_filter(array_map('sanitize_user', $usernames));
+            $block_list = implode(',', array_unique($usernames));
             update_user_meta(get_current_user_id(), 'mm_block_list', $block_list);
         }
 
         function append_form()
         {
-            wp_enqueue_style('selectivejs');
-            wp_enqueue_script('selectivejs');
             $block_list = get_user_meta(get_current_user_id(), 'mm_block_list', true);
 
             if (!$block_list) {
                 $block_list = '';
             }
+            $block_list = implode("\n", array_filter(array_map('trim', explode(',', $block_list))));
             ?>
-            <div class="form-group">
+            <div class="form-group mm-block-list-setting">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <p class="help-block"><?php _e("Liste der blockierten Benutzer, durch Kommas getrennt", mmg()->domain) ?></p>
-                    <input id="mm-block-list-input" name="mm_user_block" type="text" class="form-control"
-                           value="<?php echo $block_list ?>"/>
+                    <label for="mm-block-list-input"><?php _e("Blockierte Benutzer", mmg()->domain) ?></label>
+                    <p class="help-block"><?php _e("Ein Benutzername pro Zeile. Blockierte Benutzer können Dir keine Nachrichten senden.", mmg()->domain) ?></p>
+                    <textarea id="mm-block-list-input" name="mm_user_block" class="form-control" rows="6"><?php echo esc_textarea($block_list) ?></textarea>
                 </div>
                 <div class="clearfix"></div>
             </div>
-            <script type="text/javascript">
-                jQuery(document).ready(function ($) {
-                    $('#mm-block-list-input').selectize({
-                        plugins: ['remove_button'],
-                        delimiter: ',',
-                        persist: false,
-                        create: false,
-                        valueField: 'name',
-                        labelField: 'name',
-                        searchField: 'name',
-                        load: function (query, callback) {
-                            if (!query.length) return callback();
-                            $.ajax({
-                                type: 'POST',
-                                url: '<?php echo admin_url("admin-ajax.php?action=mm_all_users&_wpnonce=".wp_create_nonce("mm_all_users")) ?>',
-                                data: {
-                                    'query': query
-                                },
-                                beforeSend: function () {
-                                    $('.selectize-input').append('<i style="position: absolute;right: 10px;" class="fa fa-circle-o-notch fa-spin"></i>');
-                                },
-                                success: function (data) {
-                                    $('.selectize-input').find('i').remove();
-                                    callback(data);
-                                }
-                            });
-                        }
-                    });
-                })
-            </script>
         <?php
         }
     }

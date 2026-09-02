@@ -7,28 +7,26 @@ if (!$is_ajax_reload && isset($compose_html)) {
 } 
 ?>
 <?php if (count($models)): ?>
-    <br/>
-    <div class="row">
-        <div class="col-md-5 col-sm-3 col-xs-3 no-padding">
+    <div class="mm-inbox-layout">
+        <aside class="mm-inbox-sidebar">
             <div class="message-list">
-                <div class="mm-search-form" style="position:relative;margin-bottom:10px;">
-                    <div class="input-group input-group-sm" style="position:relative;">
-                        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;z-index:5;">
+                <div class="mm-search-form">
+                    <div class="input-group input-group-sm">
+                        <span class="mm-search-icon">
                             <i class="fa fa-search"></i>
                         </span>
                         <input type="text" class="form-control mm-search-input"
                                id="mm-search-input"
                                value="<?php echo esc_attr(mmg()->get('query', '')) ?>"
-                               placeholder="<?php _e("Suchen...", mmg()->domain) ?>"
-                               style="border-radius:6px;padding-left:35px;padding-right:35px;">
+                               placeholder="<?php _e("Suchen...", mmg()->domain) ?>">
                         <button class="btn btn-link" type="button" id="mm-search-clear"
-                               style="position:absolute;right:8px;top:50%;transform:translateY(-50%);z-index:10;border:none;background:none;color:#dc2626;display:none;padding:0;font-size:16px;cursor:pointer;">
+                               aria-label="<?php esc_attr_e('Suche leeren', mmg()->domain) ?>">
                             <i class="fa fa-times"></i>
                         </button>
                         <div class="clearfix"></div>
                     </div>
                     <div id="mm-search-dropdown" class="mm-search-dropdown" 
-                         style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 6px 6px;max-height:400px;overflow-y:auto;z-index:100;display:none;box-shadow:0 4px 16px rgba(0,0,0,0.12);margin-top:-1px;"></div>
+                         aria-live="polite"></div>
                 </div>
                 <div class="ps-container ps-active-x ps-active-y" id="mmessage-list">
                     <ul class="list-group no-margin">
@@ -43,55 +41,47 @@ if (!$is_ajax_reload && isset($compose_html)) {
                             ?>
                             <?php $message = $model->get_last_message(); $is_unread = $model->has_unread(); ?>
                             <li data-id="<?php echo mmg()->encrypt($model->id) ?>"
-                                class="load-conv list-group-item <?php echo $is_unread ? 'unread' : 'read' ?> <?php echo $active_conversation == true ? 'active' : null ?>"
-                                style="display:flex;align-items:flex-start;gap:12px;border:none;border-bottom:1px solid #e5e7eb;padding:10px 12px;cursor:pointer;margin:0;">
-                                <div style="flex-shrink:0;width:36px;height:36px;">
-                                    <?php echo PM_Avatar_Handler::get_avatar_html($message->send_from, 36, 'mm-list-avatar'); ?>
+                                class="load-conv list-group-item mm-conversation-row <?php echo $is_unread ? 'unread' : 'read' ?> <?php echo $active_conversation == true ? 'active' : null ?>">
+                                <div class="mm-conversation-top">
+                                    <div class="mm-conversation-avatar">
+                                        <?php echo PM_Avatar_Handler::get_avatar_html($message->send_from, 28, 'mm-list-avatar'); ?>
+                                    </div>
+                                    <div class="mm-conversation-meta">
+                                        <?php if (!empty($message->attachment)) : ?>
+                                            <i class="fa fa-paperclip" role="img" aria-label="<?php esc_attr_e('Anhang', mmg()->domain) ?>"></i>
+                                        <?php endif; ?>
+                                        <time datetime="<?php echo esc_attr(date('c', strtotime($message->date))) ?>">
+                                            <?php echo date('j. M H:i', strtotime($message->date)) ?>
+                                        </time>
+                                    </div>
                                 </div>
-                                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
-                                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap;">
-                                        <strong style="<?php echo $is_unread ? 'font-weight:600;color:#111827;' : 'color:#374151;'; ?>;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                <div class="mm-conversation-summary">
+                                    <div class="mm-conversation-heading">
+                                        <strong class="mm-conversation-sender">
                                             <?php echo $message->get_name($message->send_from) ?>
                                         </strong>
-                                        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-                                            <?php if (!empty($message->attachment)) : ?>
-                                                <i class="fa fa-paperclip" title="<?php esc_attr_e('Anhang', mmg()->domain) ?>" style="color:#6b7280;font-size:11px;"></i>
-                                            <?php endif; ?>
-                                            <span style="background:#eef2ff;color:#374151;border-radius:12px;padding:2px 8px;font-size:11px;white-space:nowrap;">
-                                                <?php echo date('j M', strtotime($message->date)) ?>
-                                            </span>
-                                        </div>
                                     </div>
-                                    <div style="display:flex;gap:4px;align-items:center;">
-                                        <span style="<?php echo $is_unread ? 'font-weight:600;color:#111827;' : 'color:#111827;'; ?>;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                                            <?php
-                                                $fmessage = $model->get_first_message();
-                                                $subject = trim(strip_tags(apply_filters('mm_message_subject', $fmessage->subject)), "\n");
-                                                echo mmg()->mb_word_wrap($subject, 40);
-                                            ?>
-                                        </span>
-                                    </div>
-                                    <div style="margin:0;">
-                                        <span style="color:#6b7280;font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;">
-                                            <?php
-                                                $content = trim(strip_tags(apply_filters('mm_message_content', $message->content)), "\n");
-                                                echo mmg()->mb_word_wrap($content, 80);
-                                            ?>
-                                        </span>
-                                    </div>
+                                </div>
+                                <div class="mm-conversation-subject">
+                                    <span>
+                                        <?php
+                                            $fmessage = $model->get_first_message();
+                                            $subject = trim(strip_tags(apply_filters('mm_message_subject', $fmessage->subject)), "\n");
+                                            echo mmg()->mb_word_wrap($subject, 40);
+                                        ?>
+                                    </span>
                                 </div>
                             </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
             </div>
-        </div>
-        <div class="col-md-7 col-xs-9 col-sm-9 no-padding">
+        </aside>
+        <section class="mm-message-pane">
             <div id="mmessage-content" class="ps-container ps-active-x ps-active-y">
                 <?php echo $this->render_inbox_message(reset($models)) ?>
             </div>
-        </div>
-        <div class="clearfix"></div>
+        </section>
     </div>
     <?php if ($total_pages > 1): ?>
         <div class="row mm-paging">

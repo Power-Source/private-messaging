@@ -54,8 +54,8 @@ class MMessage_Backend_Controller
 
     function scripts()
     {
-        wp_enqueue_style('wp-pointer');
-        wp_enqueue_script('wp-pointer');
+        wp_enqueue_style( 'pmessaging-pointer-polyfill', plugins_url( 'pointer-polyfill.css', __FILE__ ), array(), '1.0.0' );
+        wp_enqueue_script( 'pmessaging-pointer-polyfill', plugins_url( 'pointer-polyfill.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
     }
 
     function plugins_action()

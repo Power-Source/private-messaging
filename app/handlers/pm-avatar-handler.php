@@ -169,7 +169,7 @@ class PM_Avatar_Handler {
         $bg_color = $user_id ? self::get_avatar_color($user_id) : '#ccc';
         
         return sprintf(
-            '<div style="width:%dpx;height:%dpx;border-radius:50%%;background:%s;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-size:%dpx;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,0.1);" class="%s" title="Avatar">%s</div>',
+            '<div style="width:%dpx;height:%dpx;border-radius:50%%;background:%s;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-size:%dpx;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,0.1);" class="%s">%s</div>',
             $size,
             $size,
             esc_attr($bg_color),

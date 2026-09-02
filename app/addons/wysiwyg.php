@@ -126,6 +126,9 @@ if (!class_exists('MM_WYSIWYG')) {
         {
             // ClassicPress TinyMCE Editor laden
             wp_enqueue_editor();
+            if (is_multisite() && !function_exists('multisite_over_quota_message')) {
+                require_once ABSPATH . 'wp-admin/includes/media.php';
+            }
             wp_enqueue_media();
         }
     }

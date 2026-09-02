@@ -517,7 +517,7 @@ class Inbox_Shortcode_Controller
         //get all the message from this conversation
         $messages = $model->get_messages();
         $this->messages = $messages;
-        return $this->load_template_part('shortcode/_inbox_message', array(
+        return $this->load_template_part('shortcode/conversation_modern', array(
             'messages' => $messages
         ), false);
     }

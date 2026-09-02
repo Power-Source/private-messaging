@@ -2,16 +2,16 @@
 /*
 Plugin Name: PS PM-System
 Author: PSOURCE
-Plugin URI: https://power-source.github.io/private-messaging/
+Plugin URI: https://psource.eimen.net/wiki/ps-pm-system/
 Description: Private Benutzer-zu-Benutzer-Kommunikation zur Abgabe von Angeboten, zum Teilen von Projektspezifikationen und zur versteckten internen Kommunikation. Komplett mit Front-End-Integration, geschützten Kontaktinformationen und geschützter Dateifreigabe.
-Version: 1.0.4
+Version: 1.0.5
 ClassicPress: 2.6.0
 Author URI: https://github.com/Power-Source
 Text Domain: private_messaging
 */
 
 /*
-Copyright 2014 - 2026 PSOURCE (https://github.com/Power-Source)
+Copyright 2014 - 2026 PSOURCE (https://psource.eimen.net)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -35,7 +35,7 @@ if (!class_exists('MMessaging')) {
         public $domain;
         public $prefix;
 
-        public $version = "1.0.4";
+        public $version = "1.0.5";
         public $db_version = '1.0';
 
         public $global = array();

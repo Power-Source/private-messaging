@@ -2,9 +2,9 @@
 Contributors: psource
 Tags: private messaging, pm, attachments, notifications, bbpress, block list, multisite
 Requires at least: 4.9
-Tested up to: WordPress 6.8.0 
-ClassicPress: 2.6.0
-Stable tag: 1.0.4
+Tested up to: WordPress 7.1.0 
+ClassicPress: 2.7.1
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,19 +44,25 @@ Private Benutzer-zu-Benutzer-Kommunikation zur Abgabe von Angeboten, zum Teilen 
 
 == Changelog ==
 
-= 1.0.4 =
+= 1.0.5 =
+* Frontend-Posteingang umfassend ueberarbeitet: kompakte Konversationsliste, verbesserte Lesbarkeit und responsive Detailansicht mit Fokus auf der Nachricht.
+* Konversationsansicht modernisiert: Nachrichten-Thread, Aktionen zum Antworten, Archivieren und Loeschen sowie verbesserte Darstellung privater Anhaenge.
+* Blockliste im Frontend verbessert: mehrzeilige, dependency-freie Eingabe; Benutzernamen werden beim Speichern einheitlich verarbeitet.
+* PS Community Medienintegration erweitert: kompatible Anhaenge lassen sich aus privaten Unterhaltungen in eigene Community-Galerien uebernehmen.
+* Avatar-Darstellung und Metadaten in der Inbox verbessert; native, nicht hilfreiche Browser-Tooltips entfernt.
+* Asset-Build modernisiert: Grunt 1.6, CSS-Minifizierung mit reproduzierbarem `package-lock.json` und `npm run build`.
+* Neue `README.md` mit Funktionsuebersicht, Installation, Add-ons, PSOURCE-Integrationen, Datenschutz- und Entwicklungsinformationen.
 
+= 1.0.4 =
 * Fatal Error beim Aktivieren behoben: `Template_Loader_Trait` wird vor der Nutzung im Upgrade-Controller geladen
 * Datenbank-Upgrade in Multisite korrigiert: konsistente Nutzung von `base_prefix` für `mm_conversation`
 * Stabilitätsfix für MarketPress-Addon-Aktivierung: Schutz vor ungültigen Addon-Objekten/-Pfaden zur Vermeidung von `path`/`file_exists()` Warnungen
 
 = 1.0.3 =
-
 * Wartungsrelease: Kompatibilitäts- und Stabilitätsverbesserungen
 * Kleinere Korrekturen für aktuelle ClassicPress/WordPress-Umgebungen
 
 = 1.0.2 =
-
 * Optimierte Kompatibilität mit PS Smart CRM und PS Jobboard
 
 = 1.0.1 =

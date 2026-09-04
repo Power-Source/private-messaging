@@ -34,11 +34,11 @@ $form_id = 'compose-form-admin-bar';
                             <?php do_action('mm_before_subject_field', $model, 'admin-bar') ?>
                             <div style="margin-bottom: 0"
                                  class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
-                                <label for="mm_message_model-subject" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Betreff", mmg()->domain); ?></label>
+                                <label for="admin-bar-mm-subject" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Betreff", mmg()->domain); ?></label>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
                                     <input type="text"
                                            name="MM_Message_Model[subject]"
-                                           id="mm_message_model-subject"
+                                           id="admin-bar-mm-subject"
                                            class="form-control"
                                            placeholder="<?php echo esc_attr__('Betreff', mmg()->domain); ?>"
                                            value="<?php echo esc_attr($model->subject); ?>">
@@ -49,12 +49,13 @@ $form_id = 'compose-form-admin-bar';
                             </div>
                             <div style="margin-bottom: 0"
                                  class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
-                                <label for="mm_compose_content" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Inhalt", mmg()->domain); ?></label>
+                                <label for="admin-bar-mm-content" class="control-label col-sm-2 hidden-xs hidden-sm"><?php _e("Inhalt", mmg()->domain); ?></label>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
                                     <textarea
                                         name="MM_Message_Model[content]"
-                                        id="mm_compose_content"
+                                        id="admin-bar-mm-content"
                                         class="form-control mm_wsysiwyg"
+                                        data-mm-wysiwyg-lazy="true"
                                         style="min-height:160px"
                                         rows="8"
                                         placeholder="<?php echo esc_attr__('Inhalt', mmg()->domain); ?>"
@@ -110,9 +111,6 @@ $form_id = 'compose-form-admin-bar';
         var tomSelectInitialized = false;
 
         function initAdminBarCompose() {
-            console.log('Initializing Admin Bar Compose Modal');
-            console.log('Modal element:', modalEl);
-            
             // Initialize TomSelect once
             if (!tomSelectInitialized) {
                 initTomSelect();
@@ -129,7 +127,6 @@ $form_id = 'compose-form-admin-bar';
                     if (targetEl.matches && targetEl.matches('a')) {
                         var parentLi = targetEl.closest('#wp-admin-bar-mm-compose-button');
                         if (parentLi) {
-                            console.log('Compose link clicked via parent!', targetEl);
                             e.preventDefault();
                             e.stopPropagation();
                             showModal();
@@ -174,15 +171,10 @@ $form_id = 'compose-form-admin-bar';
                         .catch(function() { callback(); });
                     }
                 });
-            } else if (recipientField && recipientField.tomselect) {
-                console.log('TomSelect already initialized on recipient field, skipping');
             }
         }
 
         function showModal() {
-            console.log('showModal called');
-            console.log('modalEl exists:', !!modalEl);
-            
             if (!modalEl) {
                 console.error('Modal element not found!');
                 return;
@@ -190,19 +182,20 @@ $form_id = 'compose-form-admin-bar';
             
             // Create overlay if needed
             if (!overlayEl) {
-                console.log('Creating overlay');
                 overlayEl = document.createElement('div');
                 overlayEl.id = 'mm_modal_overlay';
                 document.body.appendChild(overlayEl);
                 overlayEl.addEventListener('click', hideModal);
             }
             
-            console.log('Showing modal and overlay');
             overlayEl.style.display = 'block';
             modalEl.style.display = 'block';
             document.body.style.overflow = 'hidden';
-            console.log('Modal display:', modalEl.style.display);
-            console.log('Overlay display:', overlayEl.style.display);
+            var editor = modalEl.querySelector('.mm_wsysiwyg[data-mm-wysiwyg-lazy="true"]');
+            if (editor && editor.getAttribute('data-mm-wysiwyg-active') !== 'true') {
+                editor.setAttribute('data-mm-wysiwyg-active', 'true');
+                jQuery(document.body).trigger('mm:wysiwyg:load');
+            }
         }
 
         function hideModal() {

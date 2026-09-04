@@ -1,10 +1,11 @@
 === PS PM-System ===
 Contributors: psource
 Tags: private messaging, pm, attachments, notifications, bbpress, block list, multisite
-Requires at least: 4.9
+Requires at least: 5.0
+Requires CP: 1.4
 Tested up to: WordPress 7.1.0 
-ClassicPress: 2.7.1
-Stable tag: 1.0.5
+ClassicPress: 2.7.2
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,6 +44,14 @@ Private Benutzer-zu-Benutzer-Kommunikation zur Abgabe von Angeboten, zum Teilen 
 - Attachments: Festlegen, welche Rollen Dateianhaenge senden duerfen.
 
 == Changelog ==
+
+= 1.0.6 =
+* WYSIWYG-Initialisierung stabilisiert: vorhandene TinyMCE-Instanzen bleiben erhalten, doppelte Initialisierungen werden verhindert und dynamisch geladene Editoren sicher erkannt.
+* Eindeutige Editor-IDs fuer mehrfach eingebundene Nachrichtenformulare sichergestellt, um Konflikte zwischen Posteingang, Kontaktformular und Admin-Bar zu vermeiden.
+* Kompatibilitaet von TinyMCE 4.9.11 mit aktuellen Chromium-Browsern verbessert: `unload` wird ueber die Permissions Policy und direkt fuer Editor-Iframes freigegeben.
+* Admin-Bar-Nachrichteneditor auf Lazy-Initialisierung umgestellt; der versteckte Editor wird erst beim Oeffnen des Modals geladen.
+* Admin-Bar-Formular bereinigt: eindeutige Feld-IDs vergeben und verbliebene Debug-Ausgaben aus der Browserkonsole entfernt.
+* Veraltete Dokumentationsdateien und Bildressourcen entfernt und einen neuen Plugin-Screenshot hinzugefuegt.
 
 = 1.0.5 =
 * Frontend-Posteingang umfassend ueberarbeitet: kompakte Konversationsliste, verbesserte Lesbarkeit und responsive Detailansicht mit Fokus auf der Nachricht.
